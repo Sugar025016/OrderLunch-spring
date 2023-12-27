@@ -28,6 +28,6 @@ public class ShopResponse {
         if (shop.getFileData() != null) {
             this.imgUrl = shop.getFileData().getFileName();
         }
-        this.address = shop.getAddress().getCity() + shop.getAddress().getArea() + shop.getAddress().getDetail();
+        this.address = shop.getAddress().getAddressData().getCity() + shop.getAddress().getAddressData().getArea() + shop.getAddress().getDetail();
     }
 }

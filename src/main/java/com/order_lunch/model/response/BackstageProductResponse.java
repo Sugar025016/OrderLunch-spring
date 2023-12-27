@@ -4,9 +4,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.beans.BeanUtils;
 
-import com.order_lunch.entity.Product;
-import com.order_lunch.entity.Tab;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.order_lunch.entity.Product;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -35,9 +34,9 @@ public class BackstageProductResponse {
 
     public BackstageProductResponse(Product product) {
         BeanUtils.copyProperties(product, this);
-        Tab tab = product.getTab();
+        // Tab tab = product.getTab();
         this.shopId=product.getShop().getId();
-        this.shopName=tab.getShop().getName();
+        this.shopName=product.getShop().getName();
         if (product.getFileData() != null) {
             this.imgUrl = product.getFileData().getFileName();
             this.imgId = product.getFileData().getId();

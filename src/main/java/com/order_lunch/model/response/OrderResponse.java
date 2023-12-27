@@ -5,11 +5,12 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 
-import com.order_lunch.entity.Address;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.order_lunch.entity.Order;
 import com.order_lunch.entity.OrderDetail;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.enums.Status;
+import com.order_lunch.model.AddressResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,7 @@ import lombok.Setter;
 public class OrderResponse {
 
 
+    private Integer shopId;
     private Integer orderId;
     private String shopName;
     private String userName;
@@ -34,11 +36,13 @@ public class OrderResponse {
     private int status;
     private LocalDateTime orderTime;
     private LocalDateTime takeTime;
-    private Address address;
+    @JsonProperty("address")
+    private AddressResponse address;
 
     public OrderResponse(Order order) {
         BeanUtils.copyProperties(order,this);
         Shop shop = order.getShop();
+        this.shopId=shop.getId();
         this.userName=order.getUser().getName();
         this.orderId=order.getId();
         this.shopName =shop.getName();
@@ -48,7 +52,7 @@ public class OrderResponse {
         this.orderTime=order.getCreateTime();
         this.status=  order.getStatus();
         this.statusChinese=  Status.getStatus(order.getStatus()).getChinese();
-        
+        this.address = new AddressResponse(order.getAddress());
         if(shop.getFileData()!=null){
             this.imgUrl=shop.getFileData().getFileName();
         }

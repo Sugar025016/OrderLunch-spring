@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.BeanUtils;
 
-import com.order_lunch.model.request.AddressRequest;
+import com.order_lunch.model.request.AddressResponse;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -51,11 +51,11 @@ public class Address extends BaseEntity {
     @Column(name = "lng")
     private int lng = 0;
 
-    public Address(AddressRequest addressRequest) {
+    public Address(AddressResponse addressRequest) {
         BeanUtils.copyProperties(addressRequest, this);
     }
 
-    public void setAddress(AddressRequest addressRequest) {
+    public void setAddress(AddressResponse addressRequest) {
         BeanUtils.copyProperties(addressRequest, this);
     }
 

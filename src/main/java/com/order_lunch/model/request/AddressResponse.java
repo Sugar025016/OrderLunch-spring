@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class AddressRequest {
+public class AddressResponse {
 
     private Integer id;
 

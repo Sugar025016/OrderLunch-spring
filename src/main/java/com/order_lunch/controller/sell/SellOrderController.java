@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.order_lunch.config.CustomUserDetails;
 import com.order_lunch.enums.Status;
 import com.order_lunch.model.response.OrderFinishResponse;
+import com.order_lunch.model.response.OrderResponse;
 import com.order_lunch.service.Impl.OrderService;
 
 @RestController
@@ -33,10 +34,10 @@ public class SellOrderController {
     @Autowired
     OrderService orderService;
 
-    @RequestMapping(path = "/{shop}", method = RequestMethod.GET)
+    @RequestMapping(path = "/{shopId}", method = RequestMethod.GET)
     public ResponseEntity<Page<OrderFinishResponse>> getOrderByShop(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @PathVariable int shop, @PageableDefault(page = 0, size = 5) Pageable pageable,
+            @PathVariable int shopId, @PageableDefault(page = 0, size = 5) Pageable pageable,
             @RequestParam int classify) {
         Sort sort = Sort.by(Sort.Direction.ASC, "takeTime"); // 使用 "takeTime" 欄位進行升序排序
 
@@ -45,7 +46,7 @@ public class SellOrderController {
         List<Integer> keyByClassify = Status.getKeyByClassify(classify);
 
         return ResponseEntity.ok()
-                .body(orderService.getOrderByShop(customUserDetails.getId(), shop, keyByClassify, pageRequest));
+                .body(orderService.getOrderByShop(customUserDetails.getId(), shopId, keyByClassify, pageRequest));
     }
 
     @RequestMapping(path = "/{shop}/{status}", method = RequestMethod.PUT)
@@ -59,4 +60,19 @@ public class SellOrderController {
                 .body(orderService.putOrderByShop(customUserDetails.getId(), shop, status, orderIds));
     }
 
+    @RequestMapping(path = "/new", method = RequestMethod.GET)
+    public ResponseEntity<List<OrderResponse>> getNewOrderByUser(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        return ResponseEntity.ok()
+                .body(orderService.getNewOrderByUser(customUserDetails.getId()));
+    }
+
+    @RequestMapping(path = "/{status}", method = RequestMethod.PUT)
+    public ResponseEntity<Boolean> putOrderStatus(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable @Valid @Min(12) int status, @RequestBody List<Integer> orderIds) {
+        return ResponseEntity.ok()
+                .body(orderService.putOrderStatus(customUserDetails.getId(), status, orderIds));
+    }
 }

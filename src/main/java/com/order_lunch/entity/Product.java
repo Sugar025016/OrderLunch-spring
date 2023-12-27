@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -18,10 +19,10 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.beans.BeanUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.order_lunch.model.request.BackstageProductAddRequest;
 import com.order_lunch.model.request.BackstageProductPutRequest;
 import com.order_lunch.model.request.SellProductRequest;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -64,10 +65,15 @@ public class Product extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Shop shop;
 
-    @JsonIgnore
-    @JoinColumn(name = "tab_id")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Tab tab;
+    // @JsonIgnore
+    // @JoinColumn(name = "tab_id")
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // private Tab tab;
+
+    //     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+    // // @JoinTable(name = "tab_product", joinColumns = @JoinColumn(name = "tab_id"), inverseJoinColumns = @JoinColumn(name = "product_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+    // //     "tab_id", "product_id" }))
+    // private List<Tab> tabs;
 
     @JoinColumn(name = "file_data")
     @OneToOne(cascade = CascadeType.ALL)

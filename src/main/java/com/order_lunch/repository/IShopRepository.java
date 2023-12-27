@@ -13,22 +13,38 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.order_lunch.entity.Shop;
-import com.order_lunch.model.response.BackstageShopResponse;
-
 
 @Repository
 public interface IShopRepository extends JpaRepository<Shop, Integer> {
 
 	Shop getShopById(Integer id);
 
+	// @Query("SELECT s FROM Shop s " +
+	// "LEFT JOIN s.category c " +
+	// "LEFT JOIN s.tabs t " +
+	// "LEFT JOIN t.products p " +
+	// "WHERE s.isDelete = false " +
+	// "AND s.isDisable = false " +
+	// "AND (:city IS NULL OR s.address.city = :city) " +
+	// "AND (:area IS NULL OR s.address.area = :area) " +
+	// "AND (:categoryId IS NULL OR c.id = :categoryId)" +
+	// "AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR
+	// s.name like %:other%)")
+	// Set<Shop> findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(
+	// @Param("city") String city,
+	// @Param("area") String area,
+	// @Param("categoryId") Integer categoryId,
+	// @Param("other") String other);
+
 	@Query("SELECT s FROM Shop s " +
 			"LEFT JOIN s.category c " +
+			"LEFT JOIN s.address a " +
 			"LEFT JOIN s.tabs t " +
 			"LEFT JOIN t.products p " +
 			"WHERE s.isDelete = false " +
 			"AND s.isDisable = false " +
-			"AND (:city IS NULL OR s.address.city = :city) " +
-			"AND (:area IS NULL OR s.address.area = :area) " +
+			"AND (:city IS NULL OR a.addressData.city = :city) " +
+			"AND (:area IS NULL OR a.addressData.area = :area) " +
 			"AND (:categoryId IS NULL OR c.id = :categoryId)" +
 			"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%)")
 	Set<Shop> findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(
@@ -37,39 +53,73 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 			@Param("categoryId") Integer categoryId,
 			@Param("other") String other);
 
-	@Query(value = "SELECT NEW com.order_lunch.model.response.BackstageShopResponse(s) FROM Shop s " +
+	// @Query(value = "SELECT NEW com.order_lunch.model.response.BackstageShopResponse(s) FROM Shop s " +
+	// 		"LEFT JOIN s.category c " +
+	// 		"LEFT JOIN s.address a " +
+	// 		"LEFT JOIN s.tabs t " +
+	// 		"LEFT JOIN t.products p " +
+	// 		"WHERE (:city IS NULL OR a.addressData.city = :city) " +
+	// 		"AND (:area IS NULL OR a.addressData.area = :area) " +
+	// 		"AND (:categoryId IS NULL OR c.id = :categoryId)" +
+	// 		"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%)" +
+	// 		"AND (s.isDelete = false)" +
+	// 		"group by s.id", countQuery = "SELECT count(s) FROM Shop s " +
+	// 				"LEFT JOIN s.category c " +
+	// 				"LEFT JOIN s.address a " +
+	// 				"LEFT JOIN s.tabs t " +
+	// 				"LEFT JOIN t.products p " +
+	// 				"WHERE (:city IS NULL OR a.addressData.city = :city) " +
+	// 				"AND (:area IS NULL OR a.addressData.area = :area) " +
+	// 				"AND (:categoryId IS NULL OR c.id = :categoryId)" +
+	// 				"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%)" +
+	// 				"AND (s.isDelete = false)" +
+	// 				"group by s.id")
+	// Page<BackstageShopResponse> findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(
+	// 		@Param("city") String city,
+	// 		@Param("area") String area,
+	// 		@Param("categoryId") Integer categoryId,
+	// 		@Param("other") String other,
+	// 		Pageable pageable);
+
+
+
+	@Query(value = "SELECT s FROM Shop s " +
 			"LEFT JOIN s.category c " +
+			"LEFT JOIN s.address a " +
 			"LEFT JOIN s.tabs t " +
 			"LEFT JOIN t.products p " +
-			"WHERE (:city IS NULL OR s.address.city = :city) " +
-			"AND (:area IS NULL OR s.address.area = :area) " +
+			"WHERE (:city IS NULL OR a.addressData.city = :city) " +
+			"AND (:area IS NULL OR a.addressData.area = :area) " +
 			"AND (:categoryId IS NULL OR c.id = :categoryId)" +
 			"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%)" +
 			"AND (s.isDelete = false)" +
 			"group by s.id", countQuery = "SELECT count(s) FROM Shop s " +
 					"LEFT JOIN s.category c " +
+					"LEFT JOIN s.address a " +
 					"LEFT JOIN s.tabs t " +
 					"LEFT JOIN t.products p " +
-					"WHERE (:city IS NULL OR s.address.city = :city) " +
-					"AND (:area IS NULL OR s.address.area = :area) " +
+					"WHERE (:city IS NULL OR a.addressData.city = :city) " +
+					"AND (:area IS NULL OR a.addressData.area = :area) " +
 					"AND (:categoryId IS NULL OR c.id = :categoryId)" +
 					"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%)" +
 					"AND (s.isDelete = false)" +
 					"group by s.id")
-	Page<BackstageShopResponse> findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(
+	Page<Shop> findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(
 			@Param("city") String city,
 			@Param("area") String area,
 			@Param("categoryId") Integer categoryId,
 			@Param("other") String other,
 			Pageable pageable);
 
+			
+
 	Optional<Shop> findByIdAndIsDeleteIsFalse(int id);
 
-    // Set<Shop> findAllByLove_Id(int userId);
+	// Set<Shop> findAllByLove_Id(int userId);
 
 	List<Shop> findFirst6ByNameLikeAndIsDeleteIsFalse(String name);
 
-    List<Shop> getShopsByUserId(int id);
+	List<Shop> getShopsByUserId(int id);
 
 	Optional<Shop> getShopsByIdAndUserId(int id, int userId);
 

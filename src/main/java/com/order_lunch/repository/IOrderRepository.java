@@ -1,6 +1,7 @@
 package com.order_lunch.repository;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,12 @@ public interface IOrderRepository extends JpaRepository<Order, Integer> {
     Page<Order> getOrderByShopAndStatusIn(Shop orElseThrow,List<Integer> status, Pageable pageable);
 
 
-    List<Order> getOrderByShopAndIdInAndStatusIn(Shop shop,List<Integer> orderIds ,List<Integer> status);
+    List<Order> getOrderByShopAndIdInAndStatusIn(Shop shop,List<Integer> orderIds ,Set<Integer> status);
 
+    List<Order> getOrderByShopUserAndStatus(User user,int status);
     // Page<Order> getOrderByShopPageAndStatusMin(Shop orElseThrow,int 10,Pageable pageable);
+
+    // List<Order> getOrderByOrderIdIn(List<Integer>  orderIds);
+
+    List<Order> getOrderByIdIn(List<Integer> orderIds);
 }

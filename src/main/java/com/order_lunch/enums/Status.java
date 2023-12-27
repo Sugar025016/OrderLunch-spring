@@ -1,24 +1,31 @@
 package com.order_lunch.enums;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public enum Status {
 
-    OK(0, 99, "ok", "訂單完成"),
     WAIT_STORE_ACCEPT(1, 11, "waitStoreAccept", "等待店家接收中"),
     STORE_RECEIPT(2, 12, "storeReceipt", "店家已接收"),
     TAKE_MEAL(2, 13, "takeMeal", "待取餐"),
-    CANCEL(0, 91, "cancel", "訂單取消"),
-    STORE_NOT_ACCEPT(0, 92, "storeNotAccept", "店家未接單"),
-    STORE_REFUSED(0, 93, "storeRefused", "店家拒接單");
 
+    ONGOING(2, 30, "ongoing", "進行中"),
+
+    CANCEL(9, 91, "cancel", "訂單取消"),
+    STORE_NOT_ACCEPT(9, 92, "storeNotAccept", "店家未接單"),
+    STORE_REFUSED(9, 93, "storeRefused", "店家拒接單"),
+    OK(9, 99, "ok", "訂單完成");
+
+    
     Status(int classify, int key, String name, String chinese) {
         this.classify = classify;
         this.key = key;
         this.chinese = chinese;
         this.name = name;
     }
+    
 
     private final int key;
     private final int classify;
@@ -57,6 +64,8 @@ public enum Status {
     public int getClassify() {
         return this.classify;
     }
+
+    
 
     // public static List<Integer> getKeyByClassify(int classify) {
     // List<Integer> arrayList = new ArrayList<Integer>();
@@ -99,8 +108,8 @@ public enum Status {
         return arrayList;
     }
 
-    public static List<Integer> getBeforeByStatus(int Status) {
-        List<Integer> arrayList = new ArrayList<Integer>();
+    public static Set<Integer> getBeforeByStatus(int Status) {
+        Set<Integer> arrayList = new HashSet<Integer>();
         switch (Status) {
             case 12:
                 arrayList.add(WAIT_STORE_ACCEPT.key);
@@ -118,7 +127,7 @@ public enum Status {
                 arrayList.add(TAKE_MEAL.key);
                 break;
             default:
-                return new ArrayList<Integer>();
+                return new HashSet<Integer>();
         }
 
         return arrayList;

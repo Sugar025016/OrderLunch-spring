@@ -21,6 +21,7 @@ import com.order_lunch.model.request.BackstageShopPutRequest;
 import com.order_lunch.model.request.ShopRequest;
 import com.order_lunch.model.request.ShopSearchRequest;
 import com.order_lunch.model.response.BackstageShopResponse;
+import com.order_lunch.model.response.ShopResponse;
 import com.order_lunch.repository.IAddressRepository;
 import com.order_lunch.repository.IFileDateRepository;
 import com.order_lunch.repository.IShopRepository;
@@ -40,10 +41,12 @@ public class ShopService implements IShopService {
     IUserRepository iUserRepository;
 
     @Override
-    public Set<Shop> findShops(ShopSearchRequest shopRequest) {
+    public Page<ShopResponse> findShops(ShopSearchRequest shopRequest, Pageable pageable) {
+        Page<Shop> shopPage = iShopRepository.findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(
+                shopRequest.getCity(),
+                shopRequest.getArea(), shopRequest.getCategoryId(), shopRequest.getOther(), pageable);
 
-        return iShopRepository.findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(shopRequest.getCity(),
-                shopRequest.getArea(), shopRequest.getCategoryId(), shopRequest.getOther());
+        return shopPage.map(v -> new ShopResponse(v));
 
     }
 
@@ -63,10 +66,13 @@ public class ShopService implements IShopService {
     }
 
     @Override
-    public Page<BackstageShopResponse> findShops(ShopSearchRequest shopRequest, Pageable pageable) {
+    public Page<BackstageShopResponse> findShopsForAdmin(ShopSearchRequest shopRequest, Pageable pageable) {
 
-        return iShopRepository.findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(shopRequest.getCity(),
+        Page<Shop> shopPage = iShopRepository.findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(
+                shopRequest.getCity(),
                 shopRequest.getArea(), shopRequest.getCategoryId(), shopRequest.getOther(), pageable);
+
+        return shopPage.map(v -> new BackstageShopResponse(v));
 
     }
 

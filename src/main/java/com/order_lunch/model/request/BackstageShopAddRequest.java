@@ -33,7 +33,7 @@ public class BackstageShopAddRequest {
     @Size(min=8,max=255)
     private String description;
 
-    private AddressRequest address;
+    private AddressResponse address;
 
     @NotNull
     private Integer imgId;

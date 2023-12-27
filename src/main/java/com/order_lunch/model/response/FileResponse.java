@@ -13,4 +13,7 @@ import lombok.Setter;
 public class FileResponse {
     int id;
     String url;
+
+
+    
 }

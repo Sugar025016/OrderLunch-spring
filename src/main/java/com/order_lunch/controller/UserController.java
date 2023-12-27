@@ -22,6 +22,7 @@ import com.order_lunch.config.CustomUserDetails;
 import com.order_lunch.entity.Address;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.entity.User;
+import com.order_lunch.model.AddressResponse;
 import com.order_lunch.model.request.PasswordRequest;
 import com.order_lunch.model.request.UserPutRequest;
 import com.order_lunch.model.response.ShopResponse;
@@ -89,15 +90,22 @@ public class UserController {
     }
 
     @RequestMapping(path = "/address", method = RequestMethod.GET)
-    public ResponseEntity<List<Address>> getAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public ResponseEntity<List<AddressResponse>> getAddress(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         User findByAccount = userService.findById(customUserDetails.getId());
-        return ResponseEntity.ok().body(findByAccount.getAddresses());
+        List<AddressResponse> collect = findByAccount.getAddresses().stream().map(v -> new AddressResponse(v))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(collect);
     }
 
     @RequestMapping(path = "/address", method = RequestMethod.PUT)
-    public ResponseEntity<List<Address>> putAddress(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+    public ResponseEntity<List<AddressResponse>> putAddress(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestBody List<Address> addresses) {
-        return ResponseEntity.ok().body(userService.putUserAddress(customUserDetails.getId(), addresses));
+        List<Address> putUserAddress = userService.putUserAddress(customUserDetails.getId(), addresses);
+        List<AddressResponse> collect = putUserAddress.stream().map(v -> new AddressResponse(v))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok().body(collect);
     }
 
     // 新增database 的 addressData
@@ -123,7 +131,7 @@ public class UserController {
     @RequestMapping(path = "/google", method = RequestMethod.GET)
     public ResponseEntity<String> getGoogle(@AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestBody String address) {
-                addressData.geocodeAddress(address);
+        addressData.geocodeAddress(address);
         return ResponseEntity.ok().body("address2");
     }
 }

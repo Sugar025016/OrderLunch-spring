@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 
-import com.order_lunch.entity.Address;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.entity.Tab;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.order_lunch.model.AddressResponse;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +29,7 @@ public class BackstageShopResponse {
     private String phone;
     private String description;
     private String tabs;
-    private Address address;
+    private AddressResponse address;
     private String imgUrl;
     private Integer imgId;
     private boolean isOrderable;
@@ -41,6 +41,7 @@ public class BackstageShopResponse {
 
     public BackstageShopResponse(Shop shop) {
         BeanUtils.copyProperties(shop, this);
+        this.address=new AddressResponse(shop.getAddress());
         
         if (shop.getUser() != null) {
             this.userName = shop.getUser().getName();

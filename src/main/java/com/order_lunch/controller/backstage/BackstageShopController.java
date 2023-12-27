@@ -28,7 +28,7 @@ public class BackstageShopController {
     @RequestMapping(path = "", method = RequestMethod.GET)
     public ResponseEntity<Page<BackstageShopResponse>> getShops(ShopSearchRequest shopRequest,
             @PageableDefault(page = 0, size = 5) Pageable pageable) {
-        Page<BackstageShopResponse> findShops = shopService.findShops(shopRequest, pageable);
+        Page<BackstageShopResponse> findShops = shopService.findShopsForAdmin(shopRequest, pageable);
         findShops.stream().forEach(v -> {
             v.setImgUrl( v.getImgUrl());
         });

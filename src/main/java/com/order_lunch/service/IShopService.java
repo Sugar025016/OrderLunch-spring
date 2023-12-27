@@ -12,12 +12,14 @@ import com.order_lunch.model.request.BackstageShopPutRequest;
 import com.order_lunch.model.request.ShopRequest;
 import com.order_lunch.model.request.ShopSearchRequest;
 import com.order_lunch.model.response.BackstageShopResponse;
+import com.order_lunch.model.response.ShopResponse;
 
 public interface IShopService {
     // List<Shop> getShops();
-    Set<Shop> findShops(ShopSearchRequest shopRequest);
+    // Set<Shop> findShops(ShopSearchRequest shopRequest);
+    Page<ShopResponse> findShops(ShopSearchRequest shopRequest , Pageable pageable);
     Shop getShopById(int id);
-    Page<BackstageShopResponse> findShops(ShopSearchRequest shopRequest, Pageable pageable);
+    Page<BackstageShopResponse> findShopsForAdmin(ShopSearchRequest shopRequest, Pageable pageable);
     boolean addShop(ShopRequest shopRequest);
     // boolean existsById(int id);
     boolean putShop(BackstageShopPutRequest shopPutRequest);

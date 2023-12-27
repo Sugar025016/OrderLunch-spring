@@ -27,7 +27,7 @@ public class BackstageShopPutRequest {
     @Size(min=8,max=255)
     private String description;
 
-    private AddressRequest address;
+    private AddressResponse address;
 
     @Size(min=10,max=11)
     private String phone;

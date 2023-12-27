@@ -32,7 +32,7 @@ public class ShopRequest {
     @Size(min=8,max=255)
     private String description;
 
-    private AddressRequest address;
+    private AddressResponse address;
 
     private Integer imgId;
     

@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 
-import com.order_lunch.entity.Address;
-import com.order_lunch.entity.Shop;
-import com.order_lunch.model.TimePeriod;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.order_lunch.entity.Shop;
+import com.order_lunch.model.AddressResponse;
+import com.order_lunch.model.TimePeriod;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class SellShopResponse {
 
     private String name;
     // private String phone;
-    private Address address;
+    private AddressResponse address;
     private String description;
     private int imgId;
     private String imgUrl;
@@ -37,7 +37,6 @@ public class SellShopResponse {
 
     @JsonProperty("tabProducts")
     private List<TabProductResponse> tabProductResponses;
-
     
     @JsonProperty("products")
     private List<ProductResponse> productResponses;
@@ -49,12 +48,12 @@ public class SellShopResponse {
     // private int totalOriginPrice;
     public SellShopResponse(Shop shop) {
         BeanUtils.copyProperties(shop, this);
-
+        address=new AddressResponse(shop.getAddress());
         if (shop.getFileData() != null) {
             this.imgId = shop.getFileData().getId();
             this.imgUrl = shop.getFileData().getFileName();
         }
-        this.address = shop.getAddress();
+        // this.address = shop.getAddress();
         List<Schedule> arrayList = new ArrayList<Schedule>();
         for (int i = 0; i < 7; i++) {
             arrayList.add(new Schedule(i));

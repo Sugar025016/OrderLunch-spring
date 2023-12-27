@@ -39,6 +39,4 @@ public class SellShopController {
         return ResponseEntity.ok().body(sellShopResponse);
     }
 
-
-
 }

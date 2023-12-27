@@ -74,7 +74,7 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getProductsByShopId(int shopId) {
-        return iProductRepository.getAllByTab_shop_id(shopId);
+        return iProductRepository.getAllByShop_id(shopId);
     }
 
     @Transactional
@@ -125,7 +125,7 @@ public class ProductService implements IProductService {
             throw new NullPointerException();
         }
 
-        product.setTab(tab.get());
+        // product.setTab(tab.get());
 
         if (productAddRequest.getImgId() != null) {
             FileData fileById = fileService.getFileById(productAddRequest.getImgId());

@@ -51,9 +51,12 @@ public class Tab {
     @Column(name = "is_shelve", length = 255, nullable = false)
     private boolean isShelve;
 
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    // @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    // @JoinTable(name = "tab_product", joinColumns = @JoinColumn(name = "tab_id"), inverseJoinColumns = @JoinColumn(name = "product_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+    //         "tab_id", "product_id" }))
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "tab_product", joinColumns = @JoinColumn(name = "tab_id"), inverseJoinColumns = @JoinColumn(name = "product_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-            "tab_id", "product_id" }))
+        "tab_id", "product_id" }))
     private List<Product> products;
 
     public Tab(String name, Shop shop, boolean isShelve, List<Product> products) {

@@ -2,11 +2,13 @@ package com.order_lunch.service.Impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -90,8 +92,8 @@ public class OrderService implements IOrderService {
         System.out.println("------------" + status);
         User user = iUserService.findById(userId);
         Optional<Shop> findAny = user.getShops().stream().filter(v -> v.getId() == shopId).findAny();
-        Shop orElseThrow = findAny.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shop is null"));
-        Page<Order> orderPage = iOrderRepository.getOrderByShopAndStatusIn(orElseThrow, status, pageable);
+        Shop shop = findAny.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shop is null"));
+        Page<Order> orderPage = iOrderRepository.getOrderByShopAndStatusIn(shop, status, pageable);
         return orderPage.map(OrderFinishResponse::new);
     }
 
@@ -101,11 +103,53 @@ public class OrderService implements IOrderService {
         User user = iUserService.findById(userId);
         Optional<Shop> findAny = user.getShops().stream().filter(v -> v.getId() == shopId).findAny();
         Shop orElseThrow = findAny.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shop is null"));
-        List<Integer> beforeByStatus = Status.getBeforeByStatus(status);
+        Set<Integer> beforeByStatus = Status.getBeforeByStatus(status);
         List<Order> orders = iOrderRepository.getOrderByShopAndIdInAndStatusIn(orElseThrow, orderIds,
                 beforeByStatus);
         orders.forEach(v -> v.setStatus(Status.getStatus(status).getKey()));
         List<Order> orderList = iOrderRepository.saveAll(orders);
         return orders.size() == orderList.size();
+    }
+
+    @Override
+    public List<OrderResponse> getNewOrderByUser(int userId) {
+
+        User user = iUserService.findById(userId);
+        List<Order> orderByShopUserAndStatus = iOrderRepository.getOrderByShopUserAndStatus(user,
+                Status.WAIT_STORE_ACCEPT.getKey());
+        List<OrderResponse> collect = orderByShopUserAndStatus.stream().map(v -> new OrderResponse(v))
+                .collect(Collectors.toList());
+
+        return collect;
+    }
+
+    @Override
+    @Transactional
+    public boolean putOrderStatus(int userId, int statusKey, List<Integer> orderIds) {
+        List<Order> orders = iOrderRepository.getOrderByIdIn(orderIds);
+        Status status = Status.getStatus(statusKey);
+        checkOrderForUser(userId, orders);
+        checkOrderStatus(orders, status);
+        orders.forEach(v -> v.setStatus(status.getKey()));
+        List<Order> orderList = iOrderRepository.saveAll(orders);
+        return orders.size() == orderList.size();
+    }
+
+    public void checkOrderForUser(int userId, List<Order> orders) {
+        orders.stream().forEach(v -> {
+            if (v.getShop().getUser().getId() != userId) {
+                throw new DataIntegrityViolationException("Shop user ID does not match");
+            }
+        });
+    }
+
+    public void checkOrderStatus(List<Order> orders, Status becomeStatus) {
+        Set<Integer> beforeByStatus = Status.getBeforeByStatus(becomeStatus.getKey());
+        orders.stream().forEach(v -> {
+            boolean anyMatch = beforeByStatus.stream().anyMatch(s -> s == v.getStatus());
+            if (!anyMatch) {
+                throw new DataIntegrityViolationException("order status does not match");
+            }
+        });
     }
 }
