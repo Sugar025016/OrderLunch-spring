@@ -8,7 +8,7 @@ import org.springframework.beans.BeanUtils;
 import com.order_lunch.entity.Address;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.entity.User;
-import com.order_lunch.enums.Status;
+import com.order_lunch.enums.OrderStatus;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,11 +38,11 @@ public class UserResponse {
         // this.nickname = user.getNickname();
         this.cartCount = user.getCarts().stream().mapToInt(v -> v.getQty()).sum();
 
-        this.orderCount = user.getOrders().stream().filter(v -> v.getStatus() < Status.ONGOING.getKey())
+        this.orderCount = user.getOrders().stream().filter(v -> v.getStatus() < OrderStatus.ONGOING.getKey())
                 .collect(Collectors.toList()).size();
 
         // this.shopOrderCount = user.getShops().stream().filter(v -> v.getOrders().size() > 0).mapToInt(v -> v.getOrders().size()).sum();
-        this.shopOrderCount = user.getShops().stream().mapToInt(v -> (int)v.getOrders().stream().filter(f->f.getStatus()==Status.WAIT_STORE_ACCEPT.getKey()).count()).sum();
+        this.shopOrderCount = user.getShops().stream().mapToInt(v -> (int)v.getOrders().stream().filter(f->f.getStatus()==OrderStatus.WAIT_STORE_ACCEPT.getKey()).count()).sum();
 
         // this.shopOrderCount = user.getCarts().stream().mapToInt(v ->
         // v.getQty()).mapToInt(v->v.size()).sum();

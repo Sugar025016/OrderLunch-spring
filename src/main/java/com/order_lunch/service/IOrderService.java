@@ -13,7 +13,9 @@ public interface IOrderService {
 
     boolean addOrder(int userId, OrderRequest orderRequest);
 
-    Page<OrderResponse> getOrder(int userId, Pageable pageable);
+    Page<OrderResponse> getOrder(int userId, int OrderCategory, Pageable pageable);
+
+    List<OrderResponse> getOrder(int userId, int OrderCategory);
 
     Page<OrderFinishResponse> getOrderByShop(int userId, int shopId, List<Integer> keyByClassify, Pageable pageable);
 

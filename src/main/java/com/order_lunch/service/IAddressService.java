@@ -9,5 +9,7 @@ public interface IAddressService {
     List<Address> putUserAddress( int userId  ,List<Address> addresses); 
     Address address( AddressData addresses); 
     public void geocodeAddress(String address);
+    Address addAddress( AddressData addresses , String  detail); 
+
 }
 

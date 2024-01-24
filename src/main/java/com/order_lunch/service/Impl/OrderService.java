@@ -21,6 +21,7 @@ import com.order_lunch.entity.Order;
 import com.order_lunch.entity.OrderDetail;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.entity.User;
+import com.order_lunch.enums.OrderStatus;
 import com.order_lunch.enums.Status;
 import com.order_lunch.model.request.OrderRequest;
 import com.order_lunch.model.response.OrderFinishResponse;
@@ -80,19 +81,43 @@ public class OrderService implements IOrderService {
 
     @Override
     @Transactional
-    public Page<OrderResponse> getOrder(int userId, Pageable pageable) {
+    public Page<OrderResponse> getOrder(int userId, int OrderCategory, Pageable pageable) {
 
         User user = iUserService.findById(userId);
-        Page<Order> orderPage = iOrderRepository.getOrderByUserPage(user, pageable);
+
+        // Page<Order> orderPage = iOrderRepository.getOrderByUserPage(user, pageable);
+        List<Integer> keyByClassify = OrderStatus.getKeyByClassify(OrderCategory);
+        Page<Order> orderPage = iOrderRepository.getOrderByUser(user, keyByClassify, pageable);
         return orderPage.map(OrderResponse::new);
     }
+
+    @Override
+    @Transactional
+    public List<OrderResponse> getOrder(int userId, int OrderCategory) {
+
+        User user = iUserService.findById(userId);
+        List<Integer> keyByClassify = OrderStatus.getKeyByClassify(OrderCategory);
+        List<Order> orderList = iOrderRepository.getOrderByUserStates(user, keyByClassify);
+        List<OrderResponse> orderResponses = orderList.stream().map(OrderResponse::new).collect(Collectors.toList());
+        return orderResponses;
+    }
+
+    // @Override
+    // @Transactional
+    // public Page<OrderResponse> getOrder(int userId, Pageable pageable) {
+
+    // User user = iUserService.findById(userId);
+
+    // Page<Order> orderPage = iOrderRepository.getOrderByUserPage(user, pageable);
+    // return orderPage.map(OrderResponse::new);
+    // }
 
     @Override
     public Page<OrderFinishResponse> getOrderByShop(int userId, int shopId, List<Integer> status, Pageable pageable) {
         System.out.println("------------" + status);
         User user = iUserService.findById(userId);
         Optional<Shop> findAny = user.getShops().stream().filter(v -> v.getId() == shopId).findAny();
-        Shop shop = findAny.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shop is null"));
+        Shop shop = findAny.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Shop.class.getName()));
         Page<Order> orderPage = iOrderRepository.getOrderByShopAndStatusIn(shop, status, pageable);
         return orderPage.map(OrderFinishResponse::new);
     }
@@ -106,7 +131,7 @@ public class OrderService implements IOrderService {
         Set<Integer> beforeByStatus = Status.getBeforeByStatus(status);
         List<Order> orders = iOrderRepository.getOrderByShopAndIdInAndStatusIn(orElseThrow, orderIds,
                 beforeByStatus);
-        orders.forEach(v -> v.setStatus(Status.getStatus(status).getKey()));
+        orders.forEach(v -> v.setStatus(OrderStatus.getStatus(status).getKey()));
         List<Order> orderList = iOrderRepository.saveAll(orders);
         return orders.size() == orderList.size();
     }
@@ -116,7 +141,7 @@ public class OrderService implements IOrderService {
 
         User user = iUserService.findById(userId);
         List<Order> orderByShopUserAndStatus = iOrderRepository.getOrderByShopUserAndStatus(user,
-                Status.WAIT_STORE_ACCEPT.getKey());
+                OrderStatus.WAIT_STORE_ACCEPT.getKey());
         List<OrderResponse> collect = orderByShopUserAndStatus.stream().map(v -> new OrderResponse(v))
                 .collect(Collectors.toList());
 
@@ -127,7 +152,7 @@ public class OrderService implements IOrderService {
     @Transactional
     public boolean putOrderStatus(int userId, int statusKey, List<Integer> orderIds) {
         List<Order> orders = iOrderRepository.getOrderByIdIn(orderIds);
-        Status status = Status.getStatus(statusKey);
+        OrderStatus status = OrderStatus.getStatus(statusKey);
         checkOrderForUser(userId, orders);
         checkOrderStatus(orders, status);
         orders.forEach(v -> v.setStatus(status.getKey()));
@@ -143,7 +168,7 @@ public class OrderService implements IOrderService {
         });
     }
 
-    public void checkOrderStatus(List<Order> orders, Status becomeStatus) {
+    public void checkOrderStatus(List<Order> orders, OrderStatus becomeStatus) {
         Set<Integer> beforeByStatus = Status.getBeforeByStatus(becomeStatus.getKey());
         orders.stream().forEach(v -> {
             boolean anyMatch = beforeByStatus.stream().anyMatch(s -> s == v.getStatus());
@@ -152,4 +177,5 @@ public class OrderService implements IOrderService {
             }
         });
     }
+
 }

@@ -26,6 +26,9 @@ public class OrderDetailResponse {
     private int prise;
     private String remark;
     private int status;
+
+    private String imgUrl;
+
     // private int total;
 
     // private int totalOriginPrice;
@@ -35,6 +38,9 @@ public class OrderDetailResponse {
         this.orderDetailId=orderDetail.getId();
         this.productId=orderDetail.getProduct().getId();
         this.productName = orderDetail.getProduct().getName();
+        if(orderDetail.getProduct().getFileData()!=null){
+            this.imgUrl=orderDetail.getProduct().getFileData().getFileName();
+        }
     }
 
 }

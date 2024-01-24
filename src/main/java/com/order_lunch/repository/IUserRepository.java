@@ -34,6 +34,8 @@ public interface IUserRepository extends JpaRepository<User, Integer> {
 
     List<User> findFirst6ByAccountLike(String username);
     List<User> findFirst6ByAccountContaining(String username);
+
+    boolean existsByAccount(String account);
     
 
 

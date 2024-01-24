@@ -17,23 +17,31 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ShopRequest {
 
-    @NotNull(message = "account 不能為空")
-    @Size(min=3,max=16)
-    private String account;
+    // @NotNull(message = "account 不能為空")
+    // @Size(min=3,max=16)
+    // private String account;
 
     @JsonProperty("shopName")
-    @NotNull(message = "name 不能為空")
+    // @NotNull(message = "name 不能為空")
     @Size(min=3,max=16)
     private String name;
 
     @Size(min=10,max=11)
     private String phone;
 
-    @Size(min=8,max=255)
+    // @Size(min=8,max=255)
     private String description;
 
-    private AddressResponse address;
+    @NotNull
+    private int addressId;
+    
+    // @NotBlank
+    private String addressDetail;
 
-    private Integer imgId;
+    // @NotBlank
+    @Size(min=4,max=4)
+    private String captcha;
+    // private Integer imgId;
+
     
 }

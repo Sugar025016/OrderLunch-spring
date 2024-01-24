@@ -66,7 +66,7 @@ public class GeocodingService {
         }
     }
 
-    private static class Coordinates {
+    public static class Coordinates {
         private double lat;
         private double lng;
 

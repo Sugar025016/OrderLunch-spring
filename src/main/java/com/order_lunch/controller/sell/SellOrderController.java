@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.order_lunch.config.CustomUserDetails;
-import com.order_lunch.enums.Status;
+import com.order_lunch.enums.OrderStatus;
 import com.order_lunch.model.response.OrderFinishResponse;
 import com.order_lunch.model.response.OrderResponse;
 import com.order_lunch.service.Impl.OrderService;
@@ -43,7 +43,7 @@ public class SellOrderController {
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), sort);
 
-        List<Integer> keyByClassify = Status.getKeyByClassify(classify);
+        List<Integer> keyByClassify = OrderStatus.getKeyByClassify(classify);
 
         return ResponseEntity.ok()
                 .body(orderService.getOrderByShop(customUserDetails.getId(), shopId, keyByClassify, pageRequest));

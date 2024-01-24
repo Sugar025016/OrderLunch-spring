@@ -23,10 +23,10 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 import org.springframework.beans.BeanUtils;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.order_lunch.model.request.BackstageShopAddRequest;
 import com.order_lunch.model.request.BackstageShopPutRequest;
 import com.order_lunch.model.request.ShopRequest;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -45,7 +45,7 @@ public class Shop extends BaseEntity {
     @GenericGenerator(name = "auto_increment", strategy = "native")
     @Column(name = "id")
     private Integer id;
-    @Column(name = "name", length = 255, nullable = false)
+    @Column(name = "name", length = 255, nullable = false, unique = true)
     private String name;
     @Column(name = "phone", length = 11, nullable = false)
     private String phone;
@@ -67,7 +67,7 @@ public class Shop extends BaseEntity {
     private Address address;
 
     @JsonIgnore
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne()
     private User user;
 

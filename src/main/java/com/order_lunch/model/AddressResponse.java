@@ -13,6 +13,7 @@ public class AddressResponse {
     private String city;
 
     private String area;
+    private String street;
 
     private String detail;
 
@@ -25,5 +26,6 @@ public class AddressResponse {
         BeanUtils.copyProperties(address, this);
         this.city = addressData.getCity();
         this.area = addressData.getArea();
+        this.street = addressData.getStreet();
     }
 }

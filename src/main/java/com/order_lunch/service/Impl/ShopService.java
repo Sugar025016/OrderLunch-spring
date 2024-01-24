@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.order_lunch.entity.Address;
+import com.order_lunch.entity.AddressData;
 import com.order_lunch.entity.FileData;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.entity.User;
@@ -26,6 +27,7 @@ import com.order_lunch.repository.IAddressRepository;
 import com.order_lunch.repository.IFileDateRepository;
 import com.order_lunch.repository.IShopRepository;
 import com.order_lunch.repository.IUserRepository;
+import com.order_lunch.service.IAddressDataService;
 import com.order_lunch.service.IShopService;
 
 @Service
@@ -38,7 +40,13 @@ public class ShopService implements IShopService {
     @Autowired
     IAddressRepository iAddressRepository;
     @Autowired
+    IAddressDataService iAddressDataService;
+    @Autowired
+    AddressService addressService;
+    @Autowired
     IUserRepository iUserRepository;
+    @Autowired
+    UserService userService;
 
     @Override
     public Page<ShopResponse> findShops(ShopSearchRequest shopRequest, Pageable pageable) {
@@ -78,10 +86,19 @@ public class ShopService implements IShopService {
 
     @Override
     @Transactional
-    public boolean addShop(ShopRequest shopRequest) {
+    public Shop addShop(ShopRequest shopRequest , int userId) {
+        User user = userService.findById(userId);
+
         Shop shop = new Shop(shopRequest);
-        iShopRepository.save(shop);
-        return true;
+        shop.setUser(user);
+        AddressData addressData = iAddressDataService.getAddressData(shopRequest.getAddressId());
+        Address address = addressService.addAddress(addressData, shopRequest.getAddressDetail());
+        // if(address.getId()==null){
+        //     throw 
+        // }
+        shop.setAddress(address);
+        Shop save = iShopRepository.save(shop);
+        return save;
     }
 
     @Transactional
@@ -148,7 +165,7 @@ public class ShopService implements IShopService {
 
     @Override
     public Shop getShopByUserId(int UserId, int ShopId) {
-        Optional<Shop> shopsByIdAndUserId = iShopRepository.getShopsByIdAndUserId(ShopId, UserId);
+        Optional<Shop> shopsByIdAndUserId = iShopRepository.getShopsByIdAndUserIdAndIsDeleteIsFalse(ShopId, UserId);
         Shop orElseThrow = shopsByIdAndUserId
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shop not found"));
         return orElseThrow;

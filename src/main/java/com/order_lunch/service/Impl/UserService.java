@@ -4,10 +4,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.persistence.LockModeType;
+import javax.validation.ConstraintViolationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
@@ -26,10 +30,36 @@ import com.order_lunch.service.IUserService;
 public class UserService implements IUserService {
 
     @Autowired
-    IUserRepository iUserRepository;
+    private IUserRepository iUserRepository;
 
     @Autowired
-    IShopRepository iShopRepository;
+    private IShopRepository iShopRepository;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Override
+    @Transient
+    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
+    public User addMember(UserRequest userRequest) throws ConstraintViolationException {
+
+        User user = new User(userRequest);
+        // if (iUserRepository.existsByAccount(user.getAccount())) {
+        //     throw new DuplicateAccountException("帳號已存在");
+        // }
+        // User saveUser = iUserRepository.save(user);
+        emailService.sendSimpleMessage(user.getAccount(),"123","http://localhost:8080/api/emailCheck/123");
+
+        return user;
+    }
+
+    public class DuplicateAccountException extends RuntimeException {
+
+        public DuplicateAccountException(String message) {
+            super(message);
+        }
+    }
+
 
     @Override
     public User findById(int id) {
@@ -184,7 +214,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<Address> putUserAddress( int userId  ,List<Address> addresses) {
+    public List<Address> putUserAddress(int userId, List<Address> addresses) {
 
         User user = findById(userId);
         user.setAddresses(addresses);
@@ -192,7 +222,5 @@ public class UserService implements IUserService {
 
         return save.getAddresses();
     }
-
-    
 
 }

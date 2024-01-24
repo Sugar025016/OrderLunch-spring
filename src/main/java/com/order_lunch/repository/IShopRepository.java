@@ -121,7 +121,7 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 
 	List<Shop> getShopsByUserId(int id);
 
-	Optional<Shop> getShopsByIdAndUserId(int id, int userId);
+	Optional<Shop> getShopsByIdAndUserIdAndIsDeleteIsFalse(int id, int userId);
 
 	Optional<Shop> findByIdAndLovesId(int shopId, int userId);
 }

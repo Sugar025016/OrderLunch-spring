@@ -20,10 +20,10 @@ public interface IShopService {
     Page<ShopResponse> findShops(ShopSearchRequest shopRequest , Pageable pageable);
     Shop getShopById(int id);
     Page<BackstageShopResponse> findShopsForAdmin(ShopSearchRequest shopRequest, Pageable pageable);
-    boolean addShop(ShopRequest shopRequest);
+    Shop addShop(ShopRequest shopRequest, int userId);
     // boolean existsById(int id);
     boolean putShop(BackstageShopPutRequest shopPutRequest);
-    boolean addShop(BackstageShopAddRequest ShopAddRequest);
+    boolean addShop(BackstageShopAddRequest ShopAddRequest );
     Set<Shop> findShopsLim();
     List<Shop> findShopsByName(String name);
     List<Shop> getShopsByUserId(int id);

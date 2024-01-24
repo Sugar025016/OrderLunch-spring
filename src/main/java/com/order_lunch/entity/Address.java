@@ -46,10 +46,10 @@ public class Address extends BaseEntity {
     private String detail;
 
     @Column(name = "lat")
-    private int lat = 0;
+    private double lat = 0;
 
     @Column(name = "lng")
-    private int lng = 0;
+    private double lng = 0;
 
     public Address(AddressResponse addressRequest) {
         BeanUtils.copyProperties(addressRequest, this);
@@ -58,5 +58,14 @@ public class Address extends BaseEntity {
     public void setAddress(AddressResponse addressRequest) {
         BeanUtils.copyProperties(addressRequest, this);
     }
+
+    public Address(AddressData addressData, String addressDetail , double lat,double lng) {
+        this.addressData=addressData;
+        this.detail=addressDetail;
+        this.lat=lat;
+        this.lng=lng;
+
+    }
+
 
 }

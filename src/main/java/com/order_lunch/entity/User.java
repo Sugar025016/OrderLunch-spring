@@ -24,9 +24,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.order_lunch.model.request.UserPutRequest;
 import com.order_lunch.model.request.UserRequest;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -47,15 +47,16 @@ public class User extends BaseEntity {
     private String name;
     @Column(name = "phone", length = 11)
     private String phone;
-    @Column(name = "account", length = 11, nullable = false, unique = true)
+    @Email
+    @Column(name = "account", length = 64, nullable = false, unique = true)
     private String account;
-    @Column(name = "password", length = 11, nullable = false)
+    @Column(name = "password", length = 32, nullable = false)
     private String password;
     @Column(name = "role", length = 11, columnDefinition = "VARCHAR(11) DEFAULT 'user'")
     private String role;
-    @Email
-    @Column(name = "email", length = 255)
-    private String email;
+    // @Email
+    // @Column(name = "email", length = 255)
+    // private String email;
 
     @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)

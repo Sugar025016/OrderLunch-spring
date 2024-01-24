@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.order_lunch.entity.Order;
 import com.order_lunch.entity.OrderDetail;
 import com.order_lunch.entity.Shop;
-import com.order_lunch.enums.Status;
+import com.order_lunch.enums.OrderStatus;
 import com.order_lunch.model.AddressResponse;
 
 import lombok.AllArgsConstructor;
@@ -53,7 +53,7 @@ public class OrderFinishResponse {
         this.totalPrise = orderDetail.stream().mapToInt(v -> v.getQty() * v.getPrise()).sum();
         this.orderTime = order.getCreateTime();
         this.status = order.getStatus();
-        this.statusChinese = Status.getStatus(order.getStatus()).getChinese();
+        this.statusChinese = OrderStatus.getStatus(order.getStatus()).getChinese();
         this.orderDetailResponses = orderDetail.stream().map(v -> new OrderDetailResponse(v))
                 .collect(Collectors.toList());
         if (shop.getFileData() != null) {

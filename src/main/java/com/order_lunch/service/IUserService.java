@@ -32,4 +32,5 @@ public interface IUserService {
     List<String> findByAccounts(String account);
 
     List<Address> putUserAddress(int userId,List<Address> addresses);
+    User addMember(UserRequest userRequest);
 }

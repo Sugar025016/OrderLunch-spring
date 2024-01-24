@@ -5,7 +5,6 @@ import javax.management.relation.RelationNotFoundException;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -16,7 +15,36 @@ import org.springframework.web.server.ResponseStatusException;
 import com.order_lunch.model.ValidationError;
 
 @RestControllerAdvice
-public class RestResponseEntityExceptionHandler {
+public class GlobalExceptionHandler extends Exception {
+ 
+    // 註記將返回(return)的資料放入HTTP Response Body中
+    // @ResponseBody
+    // // 註記這個例外處理的範圍是所有的Exception.class，所有例外都會歸在Exception類，代表全域的意思
+    // @ExceptionHandler(Exception.class)
+    // // 將外部的Exception內容透過參數傳進來
+    // public ResponseEntity<Object> GlobalExceotion(Exception exception) {
+    //     Logger myLogger = LoggerFactory.getLogger(exception.getClass().getName());
+    //     myLogger.error("Global Exception Handler. Message: {}", exception.getMessage());
+ 
+    //     // 組裝Response Body
+    //     String jsonRspBody = new FormatConverter()
+    //             .Object2JsonString(new RspBody("9999", "Global Exception Handler", exception.getMessage()));
+ 
+    //     // 設定Response的Header資訊
+    //     HttpHeaders headers = new HttpHeaders();
+    //     headers.add("Content-Type", "application/json; charset=utf-8");
+ 
+    //     // 回覆一個Response實體
+    //     return new ResponseEntity<>(jsonRspBody, headers, HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
+
+     @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException ex) {
+        // 校驗失敗，統一處理
+        String errorMessage = ex.getBindingResult().getFieldError().getDefaultMessage();
+        return ResponseEntity.badRequest().body(errorMessage);
+    }
+
     // public class RestResponseEntityExceptionHandler implements WebMvcConfigurer{
 
     // @ResponseBody
@@ -37,19 +65,19 @@ public class RestResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ValidationError> handleValidationException(MethodArgumentNotValidException ex) {
-        BindingResult bindingResult = ex.getBindingResult();
-        ValidationError validationError = new ValidationError();
+    // @ExceptionHandler(MethodArgumentNotValidException.class)
+    // @ResponseStatus(HttpStatus.BAD_REQUEST)
+    // public ResponseEntity<ValidationError> handleValidationException(MethodArgumentNotValidException ex) {
+    //     BindingResult bindingResult = ex.getBindingResult();
+    //     ValidationError validationError = new ValidationError();
 
-        // 获取所有验证错误并添加到ValidationError对象中
-        bindingResult.getFieldErrors().forEach(fieldError -> {
-            validationError.addFieldError(fieldError.getField(), fieldError.getDefaultMessage());
-        });
+    //     // 获取所有验证错误并添加到ValidationError对象中
+    //     bindingResult.getFieldErrors().forEach(fieldError -> {
+    //         validationError.addFieldError(fieldError.getField(), fieldError.getDefaultMessage());
+    //     });
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(validationError);
-    }
+    //     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(validationError);
+    // }
 
     @ExceptionHandler(ResponseStatusException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -94,5 +122,4 @@ public class RestResponseEntityExceptionHandler {
             return "UnknownClass";
         }
     }
-
 }

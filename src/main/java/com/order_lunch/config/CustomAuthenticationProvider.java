@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -26,11 +28,29 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 	@Autowired
 	IUserRepository iUserRepository;
 	private User user;
+	@Autowired
+	private HttpServletRequest request;
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 		String username = authentication.getName();
 		String password = authentication.getCredentials().toString();
+		HttpSession session = request.getSession(false);
+
+		String storedCaptcha = (String) session.getAttribute("captchaText");
+
+		Object details = authentication.getDetails();
+		System.out.println("details:" + details);
+		if (details instanceof MyWebAuthenticationDetails) {
+			MyWebAuthenticationDetails myDetails = (MyWebAuthenticationDetails) details;
+			String imageCode = myDetails.getImageCode();
+
+			//暫時註解驗證
+			// if (storedCaptcha == null || !storedCaptcha.equals(imageCode)) {
+			// 	throw new BadCredentialsException("圖形驗證碼錯誤");
+			// }
+		}
+		session.removeAttribute("captchaText");
 
 		// 如果驗證成功，返回一個包含用戶角色的Authentication對象
 		Optional<User> findByAccount = iUserRepository.findByAccount(username);
@@ -39,7 +59,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			if (!password.equals(user.getPassword()))
 				throw new AuthenticationServiceException(String.format("please check account or password"));
 		} else {
-			throw new BadCredentialsException("please check account or password");
+			throw new AuthenticationServiceException("please check account or password");
 		}
 
 		List<GrantedAuthority> authorities = new ArrayList<>();
@@ -48,8 +68,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		if (user.getRole().equals("admin")) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 		}
-        UserDetails userDetails = new CustomUserDetails(user.getId(), authentication.getName(), authentication.getCredentials().toString(), authorities);
-		return new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
+		UserDetails userDetails = new CustomUserDetails(user.getId(), authentication.getName(),
+				authentication.getCredentials().toString(), authorities);
+		return new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(),
+				userDetails.getAuthorities());
+
 	}
 
 	@Override
@@ -57,4 +80,5 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		// 返回true表示支持對該類型的Authentication進行驗證
 		return authentication.equals(UsernamePasswordAuthenticationToken.class);
 	}
+
 }

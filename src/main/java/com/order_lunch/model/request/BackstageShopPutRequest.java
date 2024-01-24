@@ -39,7 +39,9 @@ public class BackstageShopPutRequest {
     
 
 
+    @JsonProperty("orderable")
     private boolean isOrderable;
+    @JsonProperty("disable")
     private boolean isDisable;
     private boolean isDelete;
 }

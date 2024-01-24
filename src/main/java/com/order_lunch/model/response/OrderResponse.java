@@ -2,6 +2,7 @@ package com.order_lunch.model.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 
@@ -9,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.order_lunch.entity.Order;
 import com.order_lunch.entity.OrderDetail;
 import com.order_lunch.entity.Shop;
-import com.order_lunch.enums.Status;
+import com.order_lunch.enums.OrderStatus;
 import com.order_lunch.model.AddressResponse;
 
 import lombok.AllArgsConstructor;
@@ -38,6 +39,7 @@ public class OrderResponse {
     private LocalDateTime takeTime;
     @JsonProperty("address")
     private AddressResponse address;
+    private List<OrderDetailResponse> orderDetails;
 
     public OrderResponse(Order order) {
         BeanUtils.copyProperties(order,this);
@@ -51,11 +53,12 @@ public class OrderResponse {
         this.totalPrise = orderDetail.stream().mapToInt(v->v.getQty()*v.getPrise()).sum();
         this.orderTime=order.getCreateTime();
         this.status=  order.getStatus();
-        this.statusChinese=  Status.getStatus(order.getStatus()).getChinese();
+        this.statusChinese=  OrderStatus.getStatus(order.getStatus()).getChinese();
         this.address = new AddressResponse(order.getAddress());
         if(shop.getFileData()!=null){
             this.imgUrl=shop.getFileData().getFileName();
         }
+        this.orderDetails = order.getOrderDetail().stream().map(OrderDetailResponse::new).collect(Collectors.toList());
     }
 
 }

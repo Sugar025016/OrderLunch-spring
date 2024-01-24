@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.order_lunch.config.CustomUserDetails;
+import com.order_lunch.enums.OrderCategory;
 import com.order_lunch.model.request.OrderRequest;
 import com.order_lunch.model.response.OrderResponse;
 import com.order_lunch.service.Impl.OrderService;
@@ -37,13 +38,32 @@ public class OrderController {
 
 
     @RequestMapping(path = "/{page}", method = RequestMethod.GET)
-    public ResponseEntity<Page<OrderResponse>> getOrderByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+    public ResponseEntity<Page<OrderResponse>> getOrderByUserPage(@AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable int page) {
 
         Pageable pageable = PageRequest.of(page-1, 10);
         
-        return ResponseEntity.ok().body(orderService.getOrder(customUserDetails.getId(), pageable));
+        return ResponseEntity.ok().body(orderService.getOrder(customUserDetails.getId(),OrderCategory.END.getValue(), pageable));
     }
+
+
+    // @RequestMapping(path = "/", method = RequestMethod.GET)
+    // public ResponseEntity<List<OrderResponse>> getOrderByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        
+    //     return ResponseEntity.ok().body(orderService.getOrder(customUserDetails.getId(),OrderCategory.ONGOING.getValue()));
+    // }
+
+    
+
+    // @RequestMapping(path = "/{page}", method = RequestMethod.GET)
+    // public ResponseEntity<Page<OrderResponse>> getOrderByUser(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+    //         @PathVariable int page) {
+
+    //     Pageable pageable = PageRequest.of(page-1, 10);
+        
+    //     return ResponseEntity.ok().body(orderService.getOrder(customUserDetails.getId(), pageable));
+    // }
 
 
     // @RequestMapping(path = "/shop/{shopId}", method = RequestMethod.GET)
