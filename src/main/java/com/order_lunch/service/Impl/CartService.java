@@ -30,6 +30,14 @@ public class CartService implements ICartService {
     IProductRepository iProductRepository;
 
     @Override
+    public Cart getCartByUserId(int id) {
+        Cart cart = iCartRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found"));
+
+        return cart;
+    }
+
+    @Override
     public ShopCartResponse getAllByUserId(int id) {
         List<Cart> allByUser_id = iCartRepository.getAllByUser_id(id);
         ShopCartResponse shopCartResponse = new ShopCartResponse(allByUser_id);
@@ -48,7 +56,7 @@ public class CartService implements ICartService {
                         this.getClass().getName() + "Product not found"));
 
         List<Cart> carts = iCartRepository.getAllByUser_id(id);
-        
+
         boolean anyMatch = carts.stream().anyMatch(v -> v.getProduct().getShop().getId() != product.getShop().getId());
         if (anyMatch) {
             iCartRepository.deleteAll(carts);
@@ -59,8 +67,7 @@ public class CartService implements ICartService {
 
         iCartRepository.save(cart);
 
-
-        return iCartRepository.getAllByUser_id(id).stream().mapToInt(v->v.getQty()).sum();
+        return iCartRepository.getAllByUser_id(id).stream().mapToInt(v -> v.getQty()).sum();
 
     }
 
@@ -80,12 +87,27 @@ public class CartService implements ICartService {
 
     @Override
     public ShopCartResponse deleteCart(int cartId, int userId) {
-        Optional<Cart> cart = iCartRepository.getByIdAndUser_id(cartId, userId);
+        Optional<Cart> cartOptional = iCartRepository.getByIdAndUser_id(cartId, userId);
 
-        Cart orElseThrow = cart.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Cart cart = cartOptional.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        iCartRepository.delete(orElseThrow);
+        iCartRepository.delete(cart);
+
         return getAllByUserId(userId);
+
+    }
+
+    @Override
+    public User deleteAllCart( User user) {
+
+        int deletedCount =iCartRepository.deleteAllByUserId(user.getId());
+        if(deletedCount>0){
+            return user;
+        }else{
+            throw new RuntimeException("Failed to delete carts for user: " + user.getId());
+        }
+
+        
 
     }
 

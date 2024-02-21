@@ -3,8 +3,8 @@ package com.order_lunch.model.response;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.order_lunch.entity.Tab;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.order_lunch.entity.Tab;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,13 +27,15 @@ public class TabProductResponse {
 
     private List<ProductResponse> products;
 
-    public TabProductResponse(Tab tab) {
+    public TabProductResponse(Tab tab ,int shopId) {
 
         this.id = tab.getId();
         this.name = tab.getName();
         this.isShelve = tab.isShelve();
 
-        this.products = tab.getProductsForNotDelete().stream().map(v -> new ProductResponse(v))
+
+
+        this.products = tab.getProductsForNotDelete().stream().map(v -> new ProductResponse(v,shopId))
         .collect(Collectors.toList());
     }
 

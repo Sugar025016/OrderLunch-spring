@@ -41,7 +41,7 @@ public class BackstageShopResponse {
 
     public BackstageShopResponse(Shop shop) {
         BeanUtils.copyProperties(shop, this);
-        this.address=new AddressResponse(shop.getAddress());
+        this.address=new AddressResponse(shop.getShopAddress());
         
         if (shop.getUser() != null) {
             this.userName = shop.getUser().getName();

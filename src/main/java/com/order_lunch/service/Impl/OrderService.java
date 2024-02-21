@@ -21,8 +21,8 @@ import com.order_lunch.entity.Order;
 import com.order_lunch.entity.OrderDetail;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.entity.User;
+import com.order_lunch.enums.NewErrorStatus;
 import com.order_lunch.enums.OrderStatus;
-import com.order_lunch.enums.Status;
 import com.order_lunch.model.request.OrderRequest;
 import com.order_lunch.model.response.OrderFinishResponse;
 import com.order_lunch.model.response.OrderResponse;
@@ -32,13 +32,12 @@ import com.order_lunch.repository.IOrderRepository;
 import com.order_lunch.service.ICartService;
 import com.order_lunch.service.IOrderService;
 import com.order_lunch.service.IShopService;
-import com.order_lunch.service.IUserService;
 
 @Service
 public class OrderService implements IOrderService {
 
     @Autowired
-    IUserService iUserService;
+    UserService userService;
     @Autowired
     IShopService iShopService;
     @Autowired
@@ -55,7 +54,7 @@ public class OrderService implements IOrderService {
     @Transactional
     public boolean addOrder(int userId, OrderRequest orderRequest) {
 
-        User user = iUserService.findById(userId);
+        User user = userService.findById(userId);
         Optional<Address> findFirst = user.getAddresses().stream().filter(a -> a.getId() == orderRequest.getAddressId())
                 .findFirst();
         Address address = findFirst
@@ -83,7 +82,7 @@ public class OrderService implements IOrderService {
     @Transactional
     public Page<OrderResponse> getOrder(int userId, int OrderCategory, Pageable pageable) {
 
-        User user = iUserService.findById(userId);
+        User user = userService.findById(userId);
 
         // Page<Order> orderPage = iOrderRepository.getOrderByUserPage(user, pageable);
         List<Integer> keyByClassify = OrderStatus.getKeyByClassify(OrderCategory);
@@ -95,7 +94,7 @@ public class OrderService implements IOrderService {
     @Transactional
     public List<OrderResponse> getOrder(int userId, int OrderCategory) {
 
-        User user = iUserService.findById(userId);
+        User user = userService.findById(userId);
         List<Integer> keyByClassify = OrderStatus.getKeyByClassify(OrderCategory);
         List<Order> orderList = iOrderRepository.getOrderByUserStates(user, keyByClassify);
         List<OrderResponse> orderResponses = orderList.stream().map(OrderResponse::new).collect(Collectors.toList());
@@ -115,7 +114,7 @@ public class OrderService implements IOrderService {
     @Override
     public Page<OrderFinishResponse> getOrderByShop(int userId, int shopId, List<Integer> status, Pageable pageable) {
         System.out.println("------------" + status);
-        User user = iUserService.findById(userId);
+        User user = userService.findById(userId);
         Optional<Shop> findAny = user.getShops().stream().filter(v -> v.getId() == shopId).findAny();
         Shop shop = findAny.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, Shop.class.getName()));
         Page<Order> orderPage = iOrderRepository.getOrderByShopAndStatusIn(shop, status, pageable);
@@ -125,10 +124,10 @@ public class OrderService implements IOrderService {
     @Override
     @Transactional
     public boolean putOrderByShop(int userId, int shopId, int status, List<Integer> orderIds) {
-        User user = iUserService.findById(userId);
+        User user = userService.findById(userId);
         Optional<Shop> findAny = user.getShops().stream().filter(v -> v.getId() == shopId).findAny();
         Shop orElseThrow = findAny.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shop is null"));
-        Set<Integer> beforeByStatus = Status.getBeforeByStatus(status);
+        Set<Integer> beforeByStatus = NewErrorStatus.getBeforeByStatus(status);
         List<Order> orders = iOrderRepository.getOrderByShopAndIdInAndStatusIn(orElseThrow, orderIds,
                 beforeByStatus);
         orders.forEach(v -> v.setStatus(OrderStatus.getStatus(status).getKey()));
@@ -139,7 +138,7 @@ public class OrderService implements IOrderService {
     @Override
     public List<OrderResponse> getNewOrderByUser(int userId) {
 
-        User user = iUserService.findById(userId);
+        User user = userService.findById(userId);
         List<Order> orderByShopUserAndStatus = iOrderRepository.getOrderByShopUserAndStatus(user,
                 OrderStatus.WAIT_STORE_ACCEPT.getKey());
         List<OrderResponse> collect = orderByShopUserAndStatus.stream().map(v -> new OrderResponse(v))
@@ -169,7 +168,7 @@ public class OrderService implements IOrderService {
     }
 
     public void checkOrderStatus(List<Order> orders, OrderStatus becomeStatus) {
-        Set<Integer> beforeByStatus = Status.getBeforeByStatus(becomeStatus.getKey());
+        Set<Integer> beforeByStatus = NewErrorStatus.getBeforeByStatus(becomeStatus.getKey());
         orders.stream().forEach(v -> {
             boolean anyMatch = beforeByStatus.stream().anyMatch(s -> s == v.getStatus());
             if (!anyMatch) {

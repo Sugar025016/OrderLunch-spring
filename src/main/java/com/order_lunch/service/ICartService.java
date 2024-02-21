@@ -1,5 +1,7 @@
 package com.order_lunch.service;
 
+import com.order_lunch.entity.Cart;
+import com.order_lunch.entity.User;
 import com.order_lunch.model.request.CartRequest;
 import com.order_lunch.model.response.ShopCartResponse;
 
@@ -15,5 +17,8 @@ public interface ICartService {
     ShopCartResponse putCart(int userId, int cartId,int qty);
 
     ShopCartResponse deleteCart(int userId,int cartId);
+
+    Cart getCartByUserId(int id);
     
+    User deleteAllCart( User user) ;
 }

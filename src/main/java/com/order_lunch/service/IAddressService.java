@@ -4,12 +4,17 @@ import java.util.List;
 
 import com.order_lunch.entity.Address;
 import com.order_lunch.entity.AddressData;
+import com.order_lunch.model.request.AddressRequest;
 
 public interface IAddressService {
-    List<Address> putUserAddress( int userId  ,List<Address> addresses); 
-    Address address( AddressData addresses); 
+    boolean deleteUserAddress( int userId  , int addressId); 
+    Address putUserAddress( int userId  ,AddressRequest addressRequest); 
     public void geocodeAddress(String address);
     Address addAddress( AddressData addresses , String  detail); 
 
+    List<Address> addAddresses( List<AddressRequest> addresses ); 
+    Address getUserAddress( int userId  , int addressId); 
+    boolean isUserAddress( int userId  , int addressId); 
+    List<Address> prioritizeAddress(List<Address> addressList, int idToPrioritize);
 }
 

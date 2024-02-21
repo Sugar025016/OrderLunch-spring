@@ -26,4 +26,8 @@ public interface ICartRepository extends JpaRepository<Cart,Integer>{
     @Query(value = "DELETE FROM Cart c WHERE c.id in ?1")
     int deleteAll(List<Integer> ids);
 
+    @Modifying
+    @Query(value = "DELETE FROM Cart c WHERE c.user.id = ?1")
+    int deleteAllByUserId(Integer id);
+
 }

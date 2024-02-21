@@ -5,9 +5,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.persistence.LockModeType;
+import javax.transaction.Transactional;
 import javax.validation.ConstraintViolationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,12 +18,15 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import com.order_lunch.entity.Address;
+import com.order_lunch.entity.Cart;
 import com.order_lunch.entity.Shop;
+import com.order_lunch.entity.ShopAddress;
 import com.order_lunch.entity.User;
 import com.order_lunch.model.request.PasswordRequest;
 import com.order_lunch.model.request.UserPutRequest;
 import com.order_lunch.model.request.UserRequest;
 import com.order_lunch.model.response.BackstageUserResponse;
+import com.order_lunch.repository.ICartRepository;
 import com.order_lunch.repository.IShopRepository;
 import com.order_lunch.repository.IUserRepository;
 import com.order_lunch.service.IUserService;
@@ -38,6 +43,19 @@ public class UserService implements IUserService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    @Lazy
+    private AddressService addressService;
+
+    @Autowired
+    private CartService cartService;
+
+    @Autowired
+    private ICartRepository iCartRepository;
+
+    @Autowired
+    private ShopService shopService;
+
     @Override
     @Transient
     @Lock(value = LockModeType.PESSIMISTIC_WRITE)
@@ -45,21 +63,20 @@ public class UserService implements IUserService {
 
         User user = new User(userRequest);
         // if (iUserRepository.existsByAccount(user.getAccount())) {
-        //     throw new DuplicateAccountException("帳號已存在");
+        // throw new DuplicateAccountException("帳號已存在");
         // }
         // User saveUser = iUserRepository.save(user);
-        emailService.sendSimpleMessage(user.getAccount(),"123","http://localhost:8080/api/emailCheck/123");
+        emailService.sendSimpleMessage(user.getAccount(), "123", "http://localhost:8080/api/emailCheck/123");
 
         return user;
     }
 
-    public class DuplicateAccountException extends RuntimeException {
+    // public class DuplicateAccountException extends RuntimeException {
 
-        public DuplicateAccountException(String message) {
-            super(message);
-        }
-    }
-
+    //     public DuplicateAccountException(String message) {
+    //         super(message);
+    //     }
+    // }
 
     @Override
     public User findById(int id) {
@@ -124,17 +141,31 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean putUser(UserRequest userRequest, int id) {
-        Optional<User> findById = iUserRepository.findById(id);
-        if (!findById.isPresent()) {
-            throw new NullPointerException();
-        }
-        User user = findById.get();
+    @Transactional
+    public User putUserAddressDelivery(int userId, int addressId) {
 
-        user.setUser(userRequest);
+        User user = findById(userId);
+
+        Address userAddress = addressService.getUserAddress(userId, addressId);
+
+        Optional<Cart> cartOptional = user.getCarts().stream().findAny();
+
+        if (cartOptional.isPresent()) {
+            Double deliveryKm = cartOptional.get().getProduct().getShop().getDeliveryKm();
+            ShopAddress shopAddress = cartOptional.get().getProduct().getShop().getShopAddress();
+
+            double distance = shopService.calculateDistance(userAddress.getLat(), userAddress.getLng(),
+                    shopAddress.getLat(), shopAddress.getLng());
+            if (distance > deliveryKm) {
+                cartService.deleteAllCart(user);
+
+            }
+        }
+
+        user.setAddressDelivery(userAddress);
         iUserRepository.save(user);
 
-        return true;
+        return user;
     }
 
     @Override
@@ -221,6 +252,30 @@ public class UserService implements IUserService {
         User save = iUserRepository.save(user);
 
         return save.getAddresses();
+    }
+
+    @Override
+    public Address addUserAddress(int userId, Address address) {
+        // TODO Auto-generated method stub
+        User user = findById(userId);
+
+        user.getAddresses().add(address);
+
+        User save = iUserRepository.save(user);
+
+        return address;
+    }
+
+    @Override
+    public boolean deleteAddressDelivery(int userId, int addressId) {
+
+        User user = findById(userId);
+
+        user.setAddressDelivery(null);
+
+        User saveUser = iUserRepository.save(user);
+
+        return saveUser.getAddressDelivery() == null;
     }
 
 }

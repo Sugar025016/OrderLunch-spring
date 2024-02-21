@@ -21,7 +21,7 @@ public interface IUserService {
     boolean addUser(UserRequest userRequest);
     boolean existByAccount(String account);
     boolean putUser(UserPutRequest userPutRequest, int id);
-    boolean putUser(UserRequest userRequest, int id);
+    User putUserAddressDelivery(int userId , int addressId);
 
     boolean putUserPassword(PasswordRequest passwordRequest,int id);
 
@@ -33,4 +33,8 @@ public interface IUserService {
 
     List<Address> putUserAddress(int userId,List<Address> addresses);
     User addMember(UserRequest userRequest);
+
+    Address addUserAddress(int userId,Address address);
+
+    boolean deleteAddressDelivery(int id, int addressId);
 }

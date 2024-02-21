@@ -66,6 +66,16 @@ public class Tab {
         this.products = products;
     }
 
+    @Override
+    public String toString() {
+        return "Tab{" +
+                "id=" + id +
+                ", name=" + name +
+                ", isShelve=" + isShelve +
+                ", products=" + products +
+                '}';
+    }
+
     // @JsonIgnore
     // @ManyToMany(cascade = CascadeType.ALL)
     // @JoinTable(name = "love", joinColumns = @JoinColumn(name = "user_id"),

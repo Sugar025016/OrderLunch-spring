@@ -15,8 +15,6 @@ import lombok.Setter;
 @Setter
 public class ProductResponse {
 
-
-    
     private Integer id;
 
     private String name;
@@ -24,20 +22,20 @@ public class ProductResponse {
     private String imgUrl;
     private boolean isOrderable;
     private int prise;
+    private int shopId;
 
     // private int total;
 
     // private int totalOriginPrice;
 
-    public ProductResponse(Product product) {
-        BeanUtils.copyProperties(product,this);
+    public ProductResponse(Product product, int shopId) {
+        BeanUtils.copyProperties(product, this);
+        this.shopId = shopId;
 
-        if(product.getFileData()!=null){
-            this.imgUrl=product.getFileData().getFileName();
+        if (product.getFileData() != null) {
+            this.imgUrl = product.getFileData().getFileName();
         }
 
     }
-
-
 
 }

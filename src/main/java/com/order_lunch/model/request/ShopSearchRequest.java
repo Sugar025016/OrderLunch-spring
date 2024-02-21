@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 
 public class ShopSearchRequest {
+    Integer userAddressId;
 
     String city;
 
@@ -16,7 +17,8 @@ public class ShopSearchRequest {
 
     String other;
 
-    public ShopSearchRequest(String city, String area, Integer categoryId, String other) {
+    public ShopSearchRequest(Integer userAddressId, String city, String area, Integer categoryId, String other) {
+        this.userAddressId = userAddressId;
         this.city = city;
         this.area = area;
         this.categoryId = categoryId;

@@ -57,18 +57,22 @@ public class Shop extends BaseEntity {
     private boolean isDisable;
     @Column(name = "is_delete", length = 512, nullable = false, columnDefinition = "VARCHAR(11) DEFAULT false")
     private boolean isDelete;
+    @Column(name = "delivery_km")
+    private Double deliveryKm = 0.0;
+    @Column(name = "delivery_price")
+    private Integer deliveryPrice=0;
 
     @JoinColumn(name = "file_data")
     @OneToOne(cascade = CascadeType.ALL)
     private FileData fileData;
 
-    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @JoinColumn(name = "shop_address_id", referencedColumnName = "id")
     @OneToOne(cascade = CascadeType.ALL)
-    private Address address;
+    private ShopAddress shopAddress;
 
     @JsonIgnore
-    @JoinColumn(name = "user_id", nullable = false)
-    @ManyToOne()
+    @JoinColumn(name = "user_id", nullable = false )
+    @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @JsonIgnore
@@ -105,7 +109,7 @@ public class Shop extends BaseEntity {
                 "id=" + id +
                 ", name=" + name +
                 ", phone=" + phone +
-                ", address=" + address +
+                ", shopAddress=" + shopAddress +
                 ", description=" + description +
                 '}';
     }
@@ -115,9 +119,9 @@ public class Shop extends BaseEntity {
 
     }
 
-    public Shop(BackstageShopAddRequest shopAddRequest, Address address, FileData fileData, User user) {
+    public Shop(BackstageShopAddRequest shopAddRequest, ShopAddress shopAddress, FileData fileData, User user) {
         BeanUtils.copyProperties(shopAddRequest, this);
-        this.address = address;
+        this.shopAddress = shopAddress;
         this.fileData = fileData;
         this.user = user;
     }
@@ -151,29 +155,33 @@ public class Shop extends BaseEntity {
         }
     }
 
-    public void setShop(BackstageShopPutRequest shopPutRequest, Address address, FileData fileData) {
+    public void setShop(BackstageShopPutRequest shopPutRequest, ShopAddress shopAddress, FileData fileData) {
 
         this.name = shopPutRequest.getShopName();
         this.description = shopPutRequest.getDescription();
         this.phone = shopPutRequest.getPhone();
         this.description = shopPutRequest.getDescription();
+        this.deliveryKm = shopPutRequest.getDeliveryKm();
+        this.deliveryPrice= shopPutRequest.getDeliveryPrice();
 
         setIsDelete(shopPutRequest.isDelete(), shopPutRequest.isDisable(), shopPutRequest.isOrderable());
 
         this.fileData = fileData;
-        this.address = address;
+        this.shopAddress = shopAddress;
 
     }
 
-    public void setShop(BackstageShopPutRequest shopPutRequest, Address address) {
+    public void setShop(BackstageShopPutRequest shopPutRequest, ShopAddress shopAddress) {
         this.name = shopPutRequest.getShopName();
         this.description = shopPutRequest.getDescription();
         this.phone = shopPutRequest.getPhone();
         this.description = shopPutRequest.getDescription();
+        this.deliveryKm = shopPutRequest.getDeliveryKm();
+        this.deliveryPrice= shopPutRequest.getDeliveryPrice();
 
         setIsDelete(shopPutRequest.isDelete(), shopPutRequest.isDisable(), shopPutRequest.isOrderable());
 
-        this.address = address;
+        this.shopAddress = shopAddress;
         this.fileData=null;
     }
 

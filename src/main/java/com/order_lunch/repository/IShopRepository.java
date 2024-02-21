@@ -38,7 +38,7 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 
 	@Query("SELECT s FROM Shop s " +
 			"LEFT JOIN s.category c " +
-			"LEFT JOIN s.address a " +
+			"LEFT JOIN s.shopAddress a " +
 			"LEFT JOIN s.tabs t " +
 			"LEFT JOIN t.products p " +
 			"WHERE s.isDelete = false " +
@@ -47,45 +47,47 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 			"AND (:area IS NULL OR a.addressData.area = :area) " +
 			"AND (:categoryId IS NULL OR c.id = :categoryId)" +
 			"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%)")
-	Set<Shop> findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(
+	Set<Shop> findByShopAddress_CityAndShopAddress_AreaAndCategory_IdAndCategory_name(
 			@Param("city") String city,
 			@Param("area") String area,
 			@Param("categoryId") Integer categoryId,
 			@Param("other") String other);
 
-	// @Query(value = "SELECT NEW com.order_lunch.model.response.BackstageShopResponse(s) FROM Shop s " +
-	// 		"LEFT JOIN s.category c " +
-	// 		"LEFT JOIN s.address a " +
-	// 		"LEFT JOIN s.tabs t " +
-	// 		"LEFT JOIN t.products p " +
-	// 		"WHERE (:city IS NULL OR a.addressData.city = :city) " +
-	// 		"AND (:area IS NULL OR a.addressData.area = :area) " +
-	// 		"AND (:categoryId IS NULL OR c.id = :categoryId)" +
-	// 		"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%)" +
-	// 		"AND (s.isDelete = false)" +
-	// 		"group by s.id", countQuery = "SELECT count(s) FROM Shop s " +
-	// 				"LEFT JOIN s.category c " +
-	// 				"LEFT JOIN s.address a " +
-	// 				"LEFT JOIN s.tabs t " +
-	// 				"LEFT JOIN t.products p " +
-	// 				"WHERE (:city IS NULL OR a.addressData.city = :city) " +
-	// 				"AND (:area IS NULL OR a.addressData.area = :area) " +
-	// 				"AND (:categoryId IS NULL OR c.id = :categoryId)" +
-	// 				"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%)" +
-	// 				"AND (s.isDelete = false)" +
-	// 				"group by s.id")
-	// Page<BackstageShopResponse> findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(
-	// 		@Param("city") String city,
-	// 		@Param("area") String area,
-	// 		@Param("categoryId") Integer categoryId,
-	// 		@Param("other") String other,
-	// 		Pageable pageable);
-
-
+	// @Query(value = "SELECT NEW
+	// com.order_lunch.model.response.BackstageShopResponse(s) FROM Shop s " +
+	// "LEFT JOIN s.category c " +
+	// "LEFT JOIN s.address a " +
+	// "LEFT JOIN s.tabs t " +
+	// "LEFT JOIN t.products p " +
+	// "WHERE (:city IS NULL OR a.addressData.city = :city) " +
+	// "AND (:area IS NULL OR a.addressData.area = :area) " +
+	// "AND (:categoryId IS NULL OR c.id = :categoryId)" +
+	// "AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR
+	// s.name like %:other%)" +
+	// "AND (s.isDelete = false)" +
+	// "group by s.id", countQuery = "SELECT count(s) FROM Shop s " +
+	// "LEFT JOIN s.category c " +
+	// "LEFT JOIN s.address a " +
+	// "LEFT JOIN s.tabs t " +
+	// "LEFT JOIN t.products p " +
+	// "WHERE (:city IS NULL OR a.addressData.city = :city) " +
+	// "AND (:area IS NULL OR a.addressData.area = :area) " +
+	// "AND (:categoryId IS NULL OR c.id = :categoryId)" +
+	// "AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR
+	// s.name like %:other%)" +
+	// "AND (s.isDelete = false)" +
+	// "group by s.id")
+	// Page<BackstageShopResponse>
+	// findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(
+	// @Param("city") String city,
+	// @Param("area") String area,
+	// @Param("categoryId") Integer categoryId,
+	// @Param("other") String other,
+	// Pageable pageable);
 
 	@Query(value = "SELECT s FROM Shop s " +
 			"LEFT JOIN s.category c " +
-			"LEFT JOIN s.address a " +
+			"LEFT JOIN s.shopAddress a " +
 			"LEFT JOIN s.tabs t " +
 			"LEFT JOIN t.products p " +
 			"WHERE (:city IS NULL OR a.addressData.city = :city) " +
@@ -95,7 +97,7 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 			"AND (s.isDelete = false)" +
 			"group by s.id", countQuery = "SELECT count(s) FROM Shop s " +
 					"LEFT JOIN s.category c " +
-					"LEFT JOIN s.address a " +
+					"LEFT JOIN s.shopAddress a " +
 					"LEFT JOIN s.tabs t " +
 					"LEFT JOIN t.products p " +
 					"WHERE (:city IS NULL OR a.addressData.city = :city) " +
@@ -104,14 +106,40 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 					"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%)" +
 					"AND (s.isDelete = false)" +
 					"group by s.id")
-	Page<Shop> findByAddress_CityAndAddress_AreaAndCategory_IdAndCategory_name(
+	Page<Shop> findByShopAddress_CityAndShopAddress_AreaAndCategory_IdAndCategory_name(
 			@Param("city") String city,
 			@Param("area") String area,
 			@Param("categoryId") Integer categoryId,
 			@Param("other") String other,
 			Pageable pageable);
 
-			
+
+
+	@Query(value = "SELECT s FROM Shop s " +
+	"LEFT JOIN s.category c " +
+	"LEFT JOIN s.shopAddress a " +
+	"LEFT JOIN s.tabs t " +
+	"LEFT JOIN t.products p " +
+	"WHERE ST_Distance_Sphere(point(:lng, :lat), point(a.lng, a.lat)) < s.deliveryKm * 1000 " +
+	"AND (:categoryId IS NULL OR c.id = :categoryId) " +
+	"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%) " +
+	"AND (s.isDelete = false) " +
+	"group by s.id", countQuery = "SELECT count(s) FROM Shop s " +
+			"LEFT JOIN s.category c " +
+			"LEFT JOIN s.shopAddress a " +
+			"LEFT JOIN s.tabs t " +
+			"LEFT JOIN t.products p " +
+			"WHERE ST_Distance_Sphere(point(:lng, :lat), point(a.lng, a.lat)) < s.deliveryKm * 1000 " +
+			"AND (:categoryId IS NULL OR c.id = :categoryId) " +
+			"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%) " +
+			"AND (s.isDelete = false)" +
+			"group by s.id")
+Page<Shop> findBy(
+	@Param("lat") Double lat,
+	@Param("lng") Double lng,
+	@Param("categoryId") Integer categoryId,
+	@Param("other") String other,
+	Pageable pageable);
 
 	Optional<Shop> findByIdAndIsDeleteIsFalse(int id);
 
@@ -119,9 +147,11 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 
 	List<Shop> findFirst6ByNameLikeAndIsDeleteIsFalse(String name);
 
-	List<Shop> getShopsByUserId(int id);
+	List<Shop> getShopsByUserIdAndIsDeleteIsFalse(int id);
 
 	Optional<Shop> getShopsByIdAndUserIdAndIsDeleteIsFalse(int id, int userId);
 
 	Optional<Shop> findByIdAndLovesId(int shopId, int userId);
+
+    boolean existsByName(String name);
 }

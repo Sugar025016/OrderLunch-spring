@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.order_lunch.model.ValidationError;
+import com.order_lunch.model.ErrorResponse;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends Exception {
@@ -81,9 +81,9 @@ public class GlobalExceptionHandler extends Exception {
 
     @ExceptionHandler(ResponseStatusException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity<ValidationError> handleValidationException(ResponseStatusException ex) {
+    public ResponseEntity<ErrorResponse> handleValidationException(ResponseStatusException ex) {
         // String exceptionClassName = ex.getClass().getName();
-        ValidationError validationError = new ValidationError();
+        ErrorResponse errorResponse = new ErrorResponse();
 
         // validationError.addFieldError(exceptionClassName,ex.getReason());
 
@@ -93,9 +93,11 @@ public class GlobalExceptionHandler extends Exception {
         // 从异常消息中提取类名
         String className = extractClassNameFromErrorMessage(errorMessage);
 
-        validationError.addFieldError(className, ex.getReason());
+        // validationError.addFieldError(className, ex.getReason());
+        errorResponse.setCode(402);
+        errorResponse.setMessage(className);
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(validationError);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(RelationNotFoundException.class)

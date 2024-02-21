@@ -2,12 +2,14 @@ package com.order_lunch.model.response;
 
 import org.springframework.beans.BeanUtils;
 
+import com.order_lunch.entity.AddressData;
 import com.order_lunch.entity.Shop;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -28,6 +30,8 @@ public class ShopResponse {
         if (shop.getFileData() != null) {
             this.imgUrl = shop.getFileData().getFileName();
         }
-        this.address = shop.getAddress().getAddressData().getCity() + shop.getAddress().getAddressData().getArea() + shop.getAddress().getDetail();
+        AddressData addressData = shop.getShopAddress().getAddressData();
+        this.address = addressData.getCity() + addressData.getArea() + addressData.getStreet()
+                + shop.getShopAddress().getDetail();
     }
 }

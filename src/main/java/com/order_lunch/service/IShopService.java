@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.order_lunch.entity.Shop;
+import com.order_lunch.entity.User;
 import com.order_lunch.model.request.BackstageShopAddRequest;
 import com.order_lunch.model.request.BackstageShopPutRequest;
 import com.order_lunch.model.request.ShopRequest;
@@ -18,9 +19,10 @@ public interface IShopService {
     // List<Shop> getShops();
     // Set<Shop> findShops(ShopSearchRequest shopRequest);
     Page<ShopResponse> findShops(ShopSearchRequest shopRequest , Pageable pageable);
+    Page<ShopResponse> findShops( User user,ShopSearchRequest shopRequest , Pageable pageable);
     Shop getShopById(int id);
     Page<BackstageShopResponse> findShopsForAdmin(ShopSearchRequest shopRequest, Pageable pageable);
-    Shop addShop(ShopRequest shopRequest, int userId);
+    Shop addShop(ShopRequest shopRequest, User user);
     // boolean existsById(int id);
     boolean putShop(BackstageShopPutRequest shopPutRequest);
     boolean addShop(BackstageShopAddRequest ShopAddRequest );
@@ -29,5 +31,6 @@ public interface IShopService {
     List<Shop> getShopsByUserId(int id);
     Shop getShopByUserId(int shopId,int userId);
     boolean deleteShop(int id);
+    boolean existsByName(String name);
     
 }

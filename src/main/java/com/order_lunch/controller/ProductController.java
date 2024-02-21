@@ -21,13 +21,11 @@ public class ProductController {
     @Autowired
     ProductService productService;
 
-
-
     @RequestMapping(path = "/{shopId}", method = RequestMethod.GET)
     public ResponseEntity<List<ProductResponse>> getProducts(@PathVariable int shopId) {
 
         List<Product> productsByShopId = productService.getProductsByShopId(shopId);
-        List<ProductResponse> collect = productsByShopId.stream().map(v -> new ProductResponse(v))
+        List<ProductResponse> collect = productsByShopId.stream().map(v -> new ProductResponse(v, shopId))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok().body(collect);
@@ -35,7 +33,8 @@ public class ProductController {
 
     // @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
     // public ResponseEntity<String> deleteProduct(@PathVariable int id) {
-    //     return productService.deleteProductById(id) != null ? ResponseEntity.ok().build()
-    //             : ResponseEntity.notFound().build();
+    // return productService.deleteProductById(id) != null ?
+    // ResponseEntity.ok().build()
+    // : ResponseEntity.notFound().build();
     // }
 }

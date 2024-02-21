@@ -1,11 +1,12 @@
 package com.order_lunch.entity;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,8 +22,6 @@ import javax.validation.constraints.Email;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 import org.springframework.beans.BeanUtils;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.order_lunch.model.request.UserPutRequest;
@@ -58,16 +57,20 @@ public class User extends BaseEntity {
     // @Column(name = "email", length = 255)
     // private String email;
 
-    @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_address", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "address_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-            "user_id", "address_id" }))
-    private List<Address> addresses;
+    // @JsonIgnore
+    // @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    // @JoinTable(name = "user_address", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "address_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
+    //         "user_id", "address_id" }))
+    // private List<Address> addresses;
 
     @JsonIgnore
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id")
-    private Address deliveryAddress;
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY, mappedBy = "user")
+    private List<Address> addresses;
+
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "address_delivery",referencedColumnName="id")
+    private Address addressDelivery;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "love", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "shop_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
@@ -99,6 +102,20 @@ public class User extends BaseEntity {
                 '}';
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     public User(UserRequest userRequest) {
         BeanUtils.copyProperties(userRequest, this);
 
@@ -112,10 +129,14 @@ public class User extends BaseEntity {
         BeanUtils.copyProperties(userRequest, this);
     }
 
-    public void setDeliveryAddress(Address address) {
-        Optional<Address> findAny = addresses.stream().filter(v -> v.getId() == address.getId()).findAny();
-        Address orElseThrow = findAny.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-            this.deliveryAddress = orElseThrow;
+    // public void setAddressDelivery(Address address) {
+    //     Optional<Address> findAny = addresses.stream().filter(v -> v.getId() == address.getId()).findAny();
+    //     Address orElseThrow = findAny.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    //         this.AddressDelivery = orElseThrow;
+    // }
+
+    public void setAddressDelivery(Address address) {
+        this.addressDelivery = address;
     }
 
 

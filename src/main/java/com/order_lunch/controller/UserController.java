@@ -1,11 +1,14 @@
 package com.order_lunch.controller;
 
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,16 +25,21 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.order_lunch.config.CustomUserDetails;
 import com.order_lunch.entity.Address;
+import com.order_lunch.entity.AddressData;
+import com.order_lunch.entity.Cart;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.entity.User;
 import com.order_lunch.model.AddressResponse;
+import com.order_lunch.model.request.AddressRequest;
 import com.order_lunch.model.request.PasswordRequest;
 import com.order_lunch.model.request.UserPutRequest;
 import com.order_lunch.model.request.UserRequest;
 import com.order_lunch.model.response.ShopResponse;
 import com.order_lunch.model.response.UserResponse;
 import com.order_lunch.repository.IAddressDataRepository;
+import com.order_lunch.service.Impl.AddressDataService;
 import com.order_lunch.service.Impl.AddressService;
+import com.order_lunch.service.Impl.CartService;
 import com.order_lunch.service.Impl.UserService;
 
 @RestController
@@ -42,7 +50,16 @@ public class UserController {
     UserService userService;
 
     @Autowired
+    CartService cartService;
+
+    @Autowired
     IAddressDataRepository addressDataRepository;
+
+    @Autowired
+    AddressService addressService;
+
+    @Autowired
+    AddressDataService addressDataService;
 
     @ResponseBody
     @RequestMapping(value = "/add", method = RequestMethod.POST)
@@ -105,20 +122,47 @@ public class UserController {
     public ResponseEntity<List<AddressResponse>> getAddress(
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         User findByAccount = userService.findById(customUserDetails.getId());
-        List<AddressResponse> collect = findByAccount.getAddresses().stream().map(v -> new AddressResponse(v))
+        List<Address> prioritizeAddress = new ArrayList<Address>();
+        if (findByAccount.getAddressDelivery() != null) {
+
+            prioritizeAddress = addressService.prioritizeAddress(findByAccount.getAddresses(),
+                    findByAccount.getAddressDelivery().getId());
+        } else {
+            prioritizeAddress = findByAccount.getAddresses();
+        }
+        List<AddressResponse> collect = prioritizeAddress.stream().map(v -> new AddressResponse(v))
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok().body(collect);
     }
 
-    @RequestMapping(path = "/address", method = RequestMethod.PUT)
-    public ResponseEntity<List<AddressResponse>> putAddress(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestBody List<Address> addresses) {
-        List<Address> putUserAddress = userService.putUserAddress(customUserDetails.getId(), addresses);
-        List<AddressResponse> collect = putUserAddress.stream().map(v -> new AddressResponse(v))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok().body(collect);
-    }
+    // @RequestMapping(path = "/address", method = RequestMethod.PUT)
+    // public ResponseEntity<List<AddressResponse>> putAddress(
+    // @AuthenticationPrincipal CustomUserDetails customUserDetails,
+    // @RequestBody List<Address> addresses) {
+    // List<Address> putUserAddress =
+    // userService.putUserAddress(customUserDetails.getId(), addresses);
+    // List<AddressResponse> collect = putUserAddress.stream().map(v -> new
+    // AddressResponse(v))
+    // .collect(Collectors.toList());
+    // return ResponseEntity.ok().body(collect);
+    // }
+
+    // @RequestMapping(path = "/address", method = RequestMethod.PUT)
+    // public ResponseEntity<List<AddressResponse>> putAddress(
+    // @AuthenticationPrincipal CustomUserDetails customUserDetails,
+    // @RequestBody List<AddressRequest> addresses) {
+
+    // List<Address> addressList = addresses.stream().map(v -> new Address(v))
+    // .collect(Collectors.toList());
+
+    // List<Address> putUserAddress =
+    // userService.putUserAddress(customUserDetails.getId(), addressList);
+    // List<AddressResponse> collect = putUserAddress.stream().map(v -> new
+    // AddressResponse(v))
+    // .collect(Collectors.toList());
+    // return ResponseEntity.ok().body(collect);
+    // }
 
     // 新增database 的 addressData
     // @RequestMapping(path = "/address", method = RequestMethod.POST)
@@ -137,13 +181,91 @@ public class UserController {
     // return ResponseEntity.ok().body(saveAll);
     // }
 
-    @Autowired
-    AddressService addressData;
+    // @Autowired
+    // AddressService addressData;
 
     @RequestMapping(path = "/google", method = RequestMethod.GET)
     public ResponseEntity<String> getGoogle(@AuthenticationPrincipal CustomUserDetails customUserDetails,
             @RequestBody String address) {
-        addressData.geocodeAddress(address);
+        addressService.geocodeAddress(address);
         return ResponseEntity.ok().body("address2");
     }
+
+    @RequestMapping(path = "/address", method = RequestMethod.POST)
+    public ResponseEntity<AddressResponse> addAddress(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestBody AddressRequest addresses) {
+
+        AddressData addressData = addressDataService.getAddressData(addresses);
+
+        Address address = addressService.addAddress(addressData, addresses.getDetail());
+
+        userService.addUserAddress(customUserDetails.getId(), address);
+
+        return ResponseEntity.ok().body(new AddressResponse(address));
+    }
+
+    @Transactional
+    @RequestMapping(path = "/address", method = RequestMethod.PUT)
+    public ResponseEntity<Boolean> putAddress(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @RequestBody AddressRequest addressRequest) {
+
+        User user = userService.findById(customUserDetails.getId());
+        if (user.getAddressDelivery().getId() == addressRequest.getId()) {
+            List<Cart> carts = user.getCarts();
+            if (carts.size() > 0) {
+                cartService.deleteAllCart(user);
+            }
+        }
+        Address putUserAddress = addressService.putUserAddress(customUserDetails.getId(), addressRequest);
+        if (putUserAddress.getId() == null) {
+            throw new ConcurrentModificationException("Encountered a serious system error");
+        }
+
+        return ResponseEntity.ok().body(true);
+    }
+
+    @Transactional
+    @RequestMapping(path = "/address/{addressId}", method = RequestMethod.DELETE)
+    public ResponseEntity<Boolean> deleteAddress(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable int addressId) {
+
+        User user = userService.findById(customUserDetails.getId());
+        boolean deleteAddressDelivery = false;
+        if (user.getAddressDelivery().getId() == addressId) {
+            List<Cart> carts = user.getCarts();
+            if (carts.size() > 0) {
+                cartService.deleteAllCart(user);
+            }
+            deleteAddressDelivery = userService.deleteAddressDelivery(customUserDetails.getId(), addressId);
+        }
+
+        boolean deleteUserAddress = addressService.deleteUserAddress(customUserDetails.getId(), addressId);
+        if (deleteAddressDelivery && deleteUserAddress) {
+            // throw new ConcurrentModificationException("Encountered a serious system
+            // error");
+            return ResponseEntity.ok().build();
+        }
+
+        return ResponseEntity.badRequest().build();
+    }
+
+    @RequestMapping(path = "/address/delivery/{addressId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> putDeliveryAddress(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable int addressId) {
+
+        // try {
+        userService.putUserAddressDelivery(customUserDetails.getId(), addressId);
+        // } catch (Exception ex) {
+        // // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body();
+        // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        // .body("Failed to save entity: " + ex.getMessage());
+        // }
+        return ResponseEntity.ok().build();
+
+    }
+
 }

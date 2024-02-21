@@ -16,6 +16,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.order_lunch.enums.NewErrorStatus;
+import com.order_lunch.model.ErrorResponse;
 
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
@@ -24,34 +26,54 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             AuthenticationException exception) throws IOException, ServletException {
 
         Map<String, Object> responseData = new HashMap<>();
-        responseData.put("ok", false);
+
+        ErrorResponse errorResponse = new ErrorResponse();
+
+        // responseData.put("ok", false);
         if (exception instanceof BadCredentialsException) {
             // 用戶名或密碼錯誤
-            responseData.put("message", "驗證碼錯誤");
-            responseData.put("code", 401);
+            // responseData.put("message", "驗證碼錯誤");
+            // responseData.put("code", 401);
+            // responseData.put("message", "用戶名或密碼錯誤");
+            // responseData.put("code", 401);
+            errorResponse.setCode(NewErrorStatus.CAPTCHA_MISTAKE.getKey());
+            errorResponse.setMessage(exception.getMessage());
         } else if (exception instanceof AuthenticationServiceException) {
             // 用戶名或密碼錯誤
-            responseData.put("message", "用戶名或密碼錯誤");
-            responseData.put("code", 401);
+
+            errorResponse.setCode(NewErrorStatus.ACCOUNT_OR_PASSWORD_MISTAKE.getKey());
+            errorResponse.setMessage(exception.getMessage());
+            // responseData.put("message", "用戶名或密碼錯誤");
+            // responseData.put("code", 401);
+            // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); 
+            
         } else if (exception instanceof LockedException) {
             // 帳戶被鎖定
-            responseData.put("message", "帳戶被鎖定");
-            responseData.put("code", 401);
+
+            errorResponse.setCode(NewErrorStatus.CAPTCHA_MISTAKE.getKey());
+            errorResponse.setMessage(exception.getMessage());
+            // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); 
         } else if (exception instanceof DisabledException) {
             // 帳戶被禁用
-            responseData.put("message", "帳戶被禁用");
-            responseData.put("code", 401);
+
+            errorResponse.setCode(NewErrorStatus.CAPTCHA_MISTAKE.getKey());
+            errorResponse.setMessage(exception.getMessage());
+            // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); 
         } else {
             // 其他驗證失敗
-            responseData.put("message", "登錄失敗");
-            responseData.put("code", 401);
+
+            errorResponse.setCode(NewErrorStatus.CAPTCHA_MISTAKE.getKey());
+            errorResponse.setMessage(exception.getMessage());
+            // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); 
         }
         // responseData.put("message", "登錄失敗");
-        responseData.put("code", 401);
+        // responseData.put("code", 401);
         // 將 JSON 寫入 response 中
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(new ObjectMapper().writeValueAsString(responseData));
+        response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
     }
 
 }
+
+

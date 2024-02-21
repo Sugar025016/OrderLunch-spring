@@ -34,12 +34,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.order_lunch.config.CustomUserDetails;
 import com.order_lunch.entity.Shop;
-import com.order_lunch.model.ValidationError;
+import com.order_lunch.entity.User;
+import com.order_lunch.enums.NewErrorStatus;
+import com.order_lunch.model.ErrorResponse;
 import com.order_lunch.model.request.ShopRequest;
 import com.order_lunch.model.request.UserRequest;
-import com.order_lunch.repository.IAddressDataRepository;
 import com.order_lunch.service.Impl.ShopService;
 import com.order_lunch.service.Impl.UserService;
+
 
 @Validated
 @RestController
@@ -48,9 +50,6 @@ public class RegisterController {
 
     @Autowired
     UserService userService;
-
-    @Autowired
-    IAddressDataRepository addressDataRepository;
 
     @Autowired
     ShopService shopService;
@@ -77,14 +76,15 @@ public class RegisterController {
         // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
 
-            ValidationError validationError = new ValidationError();
+            ErrorResponse errorResponse = new ErrorResponse();
         if (customUserDetails == null ) {
             // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(validationError);
             // throw new IllegalArgumentException("customUserDetails cannot be null");
             // return ResponseEntity.badRequest().build();
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
             // return ResponseEntity.of();
         }
+
         String storedCaptcha = (String) session.getAttribute("captchaText");
         
 
@@ -96,8 +96,15 @@ public class RegisterController {
         //     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationError);
         // }
         session.removeAttribute("captchaText"); // 驗證成功後從Session中移除
-        Shop shop = shopService.addShop(shopRequest,customUserDetails.getId());
 
+        if (shopService.existsByName(shopRequest.getName())){
+            errorResponse.setCode(NewErrorStatus.SHOP_DUPLICATE_NAME.getKey());
+            errorResponse.setMessage(NewErrorStatus.SHOP_DUPLICATE_NAME.getChinese());
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(errorResponse);
+        }
+        User user = userService.findById(customUserDetails.getId());
+        Shop shop = shopService.addShop(shopRequest,user);
+        
         return ResponseEntity.ok().body(shop.getId());
     }
 

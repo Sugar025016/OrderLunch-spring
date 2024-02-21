@@ -36,7 +36,7 @@ public class TabController {
     public ResponseEntity<List<TabProductResponse>> getTabProducts(@PathVariable int shopId) {
         Set<Tab> findTabByShopId = tabService.findTabByShopId(shopId);
 
-        List<TabProductResponse> collect = findTabByShopId.stream().map(v -> new TabProductResponse(v))
+        List<TabProductResponse> collect = findTabByShopId.stream().map(v -> new TabProductResponse(v,shopId))
                 .collect(Collectors.toList());
         return ResponseEntity.ok().body(collect);
     }

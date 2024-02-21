@@ -43,4 +43,15 @@ public class AddressData{
         this.street = street;
     }
 
+    @Override
+    public String toString() {
+        return "AddressData{" +
+                "id=" + id +
+                ", city=" + city +
+                ", area=" + area +
+                ", street=" + street +
+                '}';
+    }
+
+
 }

@@ -26,7 +26,10 @@ public class SellShopResponse {
 
     private String name;
     // private String phone;
-    private AddressResponse address;
+    @JsonProperty("address")
+    private AddressResponse shopAddress;
+    private Double deliveryKm;
+    private Integer deliveryPrice;
     private String description;
     private int imgId;
     private String imgUrl;
@@ -48,7 +51,7 @@ public class SellShopResponse {
     // private int totalOriginPrice;
     public SellShopResponse(Shop shop) {
         BeanUtils.copyProperties(shop, this);
-        address=new AddressResponse(shop.getAddress());
+        shopAddress=new AddressResponse(shop.getShopAddress());
         if (shop.getFileData() != null) {
             this.imgId = shop.getFileData().getId();
             this.imgUrl = shop.getFileData().getFileName();
@@ -68,8 +71,8 @@ public class SellShopResponse {
             v.setTimePeriods(collect);
         });
         this.schedules = arrayList;
-        tabProductResponses = shop.getTabs().stream().map(v -> new TabProductResponse(v)).collect(Collectors.toList());
-        productResponses = shop.getProductsForNotDelete().stream().map(v -> new ProductResponse(v)).collect(Collectors.toList());
+        tabProductResponses = shop.getTabs().stream().map(v -> new TabProductResponse(v,shop.getId())).collect(Collectors.toList());
+        productResponses = shop.getProductsForNotDelete().stream().map(v -> new ProductResponse(v , shop.getId())).collect(Collectors.toList());
         
     }
 

@@ -45,8 +45,6 @@
 INSERT
     IGNORE INTO address (
         id,
-        city,
-        area,
         detail,
         create_time,
         update_time
@@ -54,44 +52,39 @@ INSERT
 VALUES
     (
         1,
-        '台南市',
-        '東區',
         "detail",
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP
     ),
     (
         2,
-        '台北市',
-        '信義區',
         "detail",
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP
     ),
     (
         3,
-        '台南市',
-        '永康區',
         "中華路一段36巷5號",
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP
     ),
     (
         4,
-        '台南市',
-        '永康區',
         "中山南路123巷9號",
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP
     ),
     (
         5,
-        '台南市',
-        '永康區',
         "中山南路123巷111號",
         CURRENT_TIMESTAMP,
         CURRENT_TIMESTAMP
     );
+
+
+
+
+
 
 -- INSERT
 --     IGNORE INTO file_data (

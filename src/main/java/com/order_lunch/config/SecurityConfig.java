@@ -48,7 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 								"/api/shop/**", "/api/tab/**", "/logout*", "/login*")
 						.permitAll()
 						.antMatchers(HttpMethod.POST, "/api/register/**").permitAll()
-						.antMatchers("/api/upload*", "/sell/**").hasRole("USER")
+						// .antMatchers("/api/upload*", "/sell/**").hasRole("USER")
+						.antMatchers( "/api/upload**", "/sell/**", "/api/user/**").hasRole("USER")
 						.antMatchers("/backstage/**", "/api/upload**", "/sell/**", "/api/**/**").hasRole("ADMIN")
 						.anyRequest().authenticated())
 				.formLogin(login -> login

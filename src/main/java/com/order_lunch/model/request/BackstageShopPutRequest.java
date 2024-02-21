@@ -27,7 +27,7 @@ public class BackstageShopPutRequest {
     @Size(min=8,max=255)
     private String description;
 
-    private AddressResponse address;
+    private AddressRequest address;
 
     @Size(min=10,max=11)
     private String phone;
@@ -38,6 +38,11 @@ public class BackstageShopPutRequest {
     private String imgUrl;
     
 
+    @NotNull
+    private double deliveryKm;
+
+    @NotNull
+    private int deliveryPrice;
 
     @JsonProperty("orderable")
     private boolean isOrderable;

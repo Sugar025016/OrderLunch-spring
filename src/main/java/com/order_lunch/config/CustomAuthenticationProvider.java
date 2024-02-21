@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -37,7 +38,15 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String password = authentication.getCredentials().toString();
 		HttpSession session = request.getSession(false);
 
-		String storedCaptcha = (String) session.getAttribute("captchaText");
+		String storedCaptcha ="";
+		if (session != null) {
+			 storedCaptcha = (String) session.getAttribute("captchaText");
+			// 这里继续处理 storedCaptcha
+		} else {
+			// 处理会话为null的情况
+			throw new BadCredentialsException("圖形驗證碼錯誤");
+		}
+		// String storedCaptcha = (String) session.getAttribute("captchaText");
 
 		Object details = authentication.getDetails();
 		System.out.println("details:" + details);
@@ -57,17 +66,17 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		if (findByAccount.isPresent()) {
 			user = findByAccount.get();
 			if (!password.equals(user.getPassword()))
-				throw new AuthenticationServiceException(String.format("please check account or password"));
+				throw new AuthenticationServiceException(String.format("帳號或密碼錯誤"));
 		} else {
-			throw new AuthenticationServiceException("please check account or password");
+			throw new AuthenticationServiceException("帳號或密碼錯誤");
 		}
 
 		List<GrantedAuthority> authorities = new ArrayList<>();
 
 		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-		if (user.getRole().equals("admin")) {
+		// if (user.getRole().equals("admin")) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-		}
+		// }
 		UserDetails userDetails = new CustomUserDetails(user.getId(), authentication.getName(),
 				authentication.getCredentials().toString(), authorities);
 		return new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(),

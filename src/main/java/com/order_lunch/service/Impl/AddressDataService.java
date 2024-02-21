@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.order_lunch.entity.AddressData;
+import com.order_lunch.model.request.AddressRequest;
 import com.order_lunch.repository.IAddressDataRepository;
 import com.order_lunch.service.IAddressDataService;
 
@@ -26,4 +27,11 @@ public class AddressDataService implements IAddressDataService {
         return orElseThrow;
     }
 
+    @Override
+    public AddressData getAddressData(AddressRequest addressRequest) {
+        Optional<AddressData> byId = iAddressDataRepository.findByCityAndAreaAndStreet(addressRequest.getCity(),addressRequest.getArea(),addressRequest.getStreet());
+        AddressData orElseThrow = byId.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, AddressData.class.getName()));
+
+        return orElseThrow;
+    }
 }

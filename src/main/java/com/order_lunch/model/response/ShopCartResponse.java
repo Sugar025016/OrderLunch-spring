@@ -5,12 +5,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.order_lunch.entity.Cart;
 import com.order_lunch.entity.Product;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.model.ScheduleWeek;
 import com.order_lunch.model.ScheduleWeeks;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,6 +27,10 @@ public class ShopCartResponse {
 
     private boolean isOrderable;
 
+    private Double deliveryKm;
+
+    private int deliveryPrice;
+
     private List<ScheduleWeek> schedules;
 
     private List<CartResponse> CartResponses;
@@ -37,6 +41,8 @@ public class ShopCartResponse {
             this.shopId = shop.getId();
             this.shopName = shop.getName();
             this.isOrderable = shop.isOrderable();
+            this.deliveryKm = shop.getDeliveryKm();
+            this.deliveryPrice = shop.getDeliveryPrice();
             this.CartResponses = carts.stream().map(v -> new CartResponse(v)).collect(Collectors.toList());
             this.schedules = new ScheduleWeeks(shop.getSchedulesForOpen()).getScheduleWeeks();
         }
