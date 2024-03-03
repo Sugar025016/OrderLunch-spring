@@ -38,8 +38,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private DataSource dataSource;
 	@Autowired
 	private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> myWebAuthenticationDetailsSource;
-    @Autowired
-    private AuthenticationProvider authenticationProvider;
+	@Autowired
+	private AuthenticationProvider authenticationProvider;
+
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
@@ -49,8 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 						.permitAll()
 						.antMatchers(HttpMethod.POST, "/api/register/**").permitAll()
 						// .antMatchers("/api/upload*", "/sell/**").hasRole("USER")
-						.antMatchers( "/api/upload**", "/sell/**", "/api/user/**").hasRole("USER")
-						.antMatchers("/backstage/**", "/api/upload**", "/sell/**", "/api/**/**").hasRole("ADMIN")
+						.antMatchers("/api/upload**", "/sell/**", "/api/user/**", "/api/addMeals/**").hasRole("USER")
+						.antMatchers("/backstage/**", "/api/upload**", "/sell/**", "/api/**/**", "/api/addMeals/**")
+						.hasRole("ADMIN")
 						.anyRequest().authenticated())
 				.formLogin(login -> login
 						.authenticationDetailsSource(myWebAuthenticationDetailsSource)
@@ -80,7 +82,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	}
 
-	
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(customAuthenticationProvider);
@@ -101,9 +102,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return tokenRepository;
 	}
 
-	    @Bean
-    public PasswordEncoder passwordEncoder() {
+	@Bean
+	public PasswordEncoder passwordEncoder() {
 
-        return NoOpPasswordEncoder.getInstance();
-    }
+		return NoOpPasswordEncoder.getInstance();
+	}
 }

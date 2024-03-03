@@ -33,7 +33,7 @@ public class ScheduleService implements ISchedulesService {
     @Override
     public boolean putSchedule(int userId, int shopId, SchedulesRequest schedulesRequest) {
 
-        Shop shop = shopService.getShopByUserId(userId, shopId);
+        Shop shop = shopService.getShop(userId, shopId);
 
         // List<Schedule> schedules = shop.getSchedules();
 

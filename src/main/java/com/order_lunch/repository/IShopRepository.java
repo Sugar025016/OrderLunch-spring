@@ -154,4 +154,5 @@ Page<Shop> findBy(
 	Optional<Shop> findByIdAndLovesId(int shopId, int userId);
 
     boolean existsByName(String name);
+ 
 }

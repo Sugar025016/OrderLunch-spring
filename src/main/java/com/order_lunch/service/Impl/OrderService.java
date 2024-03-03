@@ -127,7 +127,7 @@ public class OrderService implements IOrderService {
         User user = userService.findById(userId);
         Optional<Shop> findAny = user.getShops().stream().filter(v -> v.getId() == shopId).findAny();
         Shop orElseThrow = findAny.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shop is null"));
-        Set<Integer> beforeByStatus = NewErrorStatus.getBeforeByStatus(status);
+        Set<Integer> beforeByStatus = OrderStatus.getBeforeByStatus(status);
         List<Order> orders = iOrderRepository.getOrderByShopAndIdInAndStatusIn(orElseThrow, orderIds,
                 beforeByStatus);
         orders.forEach(v -> v.setStatus(OrderStatus.getStatus(status).getKey()));

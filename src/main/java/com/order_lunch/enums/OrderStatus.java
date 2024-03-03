@@ -18,14 +18,12 @@ public enum OrderStatus {
     STORE_REFUSED(9, 93, "storeRefused", "店家拒接單"),
     OK(9, 99, "ok", "訂單完成");
 
-    
     OrderStatus(int classify, int key, String name, String chinese) {
         this.classify = classify;
         this.key = key;
         this.chinese = chinese;
         this.name = name;
     }
-    
 
     private final int key;
     private final int classify;
@@ -64,8 +62,6 @@ public enum OrderStatus {
     public int getClassify() {
         return this.classify;
     }
-
-    
 
     // public static List<Integer> getKeyByClassify(int classify) {
     // List<Integer> arrayList = new ArrayList<Integer>();
@@ -124,6 +120,7 @@ public enum OrderStatus {
                 arrayList.add(WAIT_STORE_ACCEPT.key);
                 break;
             case 99:
+                arrayList.add(STORE_RECEIPT.key);
                 arrayList.add(TAKE_MEAL.key);
                 break;
             default:

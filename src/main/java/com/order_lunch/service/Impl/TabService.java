@@ -40,7 +40,7 @@ public class TabService implements ITabService {
 
     @Override
     public boolean addTabByShopId(TabProductRequest tabProductRequest, int userId) {
-        Shop shopByUserId = iShopService.getShopByUserId( userId,tabProductRequest.getShopId());
+        Shop shopByUserId = iShopService.getShop( userId,tabProductRequest.getShopId());
         List<Product> products = tabProductRequest.getProductIds().stream().map(pId -> {
             Optional<Product> optional = shopByUserId.getProducts().stream().filter(p -> p.getId() == pId).findFirst();
             Product orElseThrow = optional.orElseThrow(() -> new IllegalArgumentException("Value not found"));
@@ -55,7 +55,7 @@ public class TabService implements ITabService {
     @Override
     public boolean setTabByShopId(int tabId, TabProductRequest tabProductRequest, int userId) {
 
-        Shop shopByUserId = iShopService.getShopByUserId(tabProductRequest.getShopId(), userId);
+        Shop shopByUserId = iShopService.getShop(tabProductRequest.getShopId(), userId);
         Optional<Tab> findFirst = shopByUserId.getTabs().stream().filter(v -> v.getId() == tabId).findFirst();
         Tab tab = findFirst.orElseThrow(() -> new IllegalArgumentException("Value not found"));
 

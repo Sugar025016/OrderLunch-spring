@@ -38,7 +38,7 @@ public class SellShopController {
 
     @RequestMapping(path = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<SellShopResponse> getShop(@PathVariable() int id,@AuthenticationPrincipal CustomUserDetails customUserDetails ) {
-        SellShopResponse sellShopResponse = new SellShopResponse(shopService.getShopByUserId(customUserDetails.getId(), id));
+        SellShopResponse sellShopResponse = new SellShopResponse(shopService.getShop(customUserDetails.getId(), id));
         return ResponseEntity.ok().body(sellShopResponse);
     }
 

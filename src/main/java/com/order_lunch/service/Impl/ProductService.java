@@ -181,7 +181,7 @@ public class ProductService implements IProductService {
     @Override
     public boolean addSellProduct(SellProductRequest sellProductRequest,int shopId,int userId) {
         
-        Shop shopByUserId = iShopService.getShopByUserId(userId, shopId);
+        Shop shopByUserId = iShopService.getShop(userId, shopId);
 
         Product product = new Product(sellProductRequest);
 

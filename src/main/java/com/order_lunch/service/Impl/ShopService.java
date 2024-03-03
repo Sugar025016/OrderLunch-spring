@@ -203,7 +203,7 @@ public class ShopService implements IShopService {
     }
 
     @Override
-    public Shop getShopByUserId(int UserId, int ShopId) {
+    public Shop getShop(int UserId, int ShopId) {
         Optional<Shop> shopsByIdAndUserId = iShopRepository.getShopsByIdAndUserIdAndIsDeleteIsFalse(ShopId, UserId);
         Shop orElseThrow = shopsByIdAndUserId
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Shop not found"));
@@ -240,6 +240,10 @@ public class ShopService implements IShopService {
     public boolean existsByName(String name) {
         return iShopRepository.existsByName(name);
     }
+
+
+
+
 
 
 }
