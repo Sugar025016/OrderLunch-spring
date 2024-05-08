@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,8 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	private DataSource dataSource;
 	@Autowired
 	private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> myWebAuthenticationDetailsSource;
-	@Autowired
-	private AuthenticationProvider authenticationProvider;
+
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -71,16 +69,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 						.authenticationEntryPoint(new JsonAuthenticationEntryPoint()))// 定義判定未登入時回傳JSON
 				.rememberMe(me -> me
 						.rememberMeCookieName("remember-me")
-						.rememberMeParameter("remember-me")
+						.rememberMeParameter("rememberMe")
 						.tokenRepository(persistentTokenRepository())
 						.tokenValiditySeconds(6000)
 						.userDetailsService(userDetailsService));// 定義remember-me等於true 和 token 過期時
 
 		http.csrf(csrf -> csrf
-				.ignoringAntMatchers("/login*", "/logout*", "/api/upload*", "/api/register/**")
+				.ignoringAntMatchers("/login*", "/logout*", "/api/upload*", "/api/register/**", "/api/shop*")
 				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 
 	}
+
+
 
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {

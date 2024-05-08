@@ -34,7 +34,7 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
                 Map<String, Object> responseData = new HashMap<>();
         responseData.put("status", "success");
         responseData.put("message", "登出成功");
-        responseData.put("code", 200);
+        responseData.put("status", 200);
         // 將 JSON 寫入 response 中
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

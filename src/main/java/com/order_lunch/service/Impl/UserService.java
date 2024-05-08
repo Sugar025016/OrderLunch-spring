@@ -62,21 +62,21 @@ public class UserService implements IUserService {
     public User addMember(UserRequest userRequest) throws ConstraintViolationException {
 
         User user = new User(userRequest);
-        // if (iUserRepository.existsByAccount(user.getAccount())) {
-        // throw new DuplicateAccountException("帳號已存在");
-        // }
-        // User saveUser = iUserRepository.save(user);
+        if (iUserRepository.existsByAccount(user.getAccount())) {
+        throw new DuplicateAccountException("帳號已存在");
+        }
+        User saveUser = iUserRepository.save(user);
         emailService.sendSimpleMessage(user.getAccount(), "123", "http://localhost:8080/api/emailCheck/123");
 
         return user;
     }
 
-    // public class DuplicateAccountException extends RuntimeException {
+    public class DuplicateAccountException extends RuntimeException {
 
-    //     public DuplicateAccountException(String message) {
-    //         super(message);
-    //     }
-    // }
+        public DuplicateAccountException(String message) {
+            super(message);
+        }
+    }
 
     @Override
     public User findById(int id) {

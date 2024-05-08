@@ -16,7 +16,7 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<spring-security.version>5.4.5</spring-security.version>
-		<java.version>11</java.version>
+		<java.version>8</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -62,6 +62,12 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 			<version>2.3.4.RELEASE</version>
 		</dependency>
+		<!-- <dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version>			
+			<scope>provided</scope>
+		</dependency> -->
 	</dependencies>
 
 	<build>

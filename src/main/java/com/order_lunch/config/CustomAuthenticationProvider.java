@@ -44,7 +44,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			// 这里继续处理 storedCaptcha
 		} else {
 			// 处理会话为null的情况
-			throw new BadCredentialsException("圖形驗證碼錯誤");
+			throw new BadCredentialsException("圖形驗證碼過期");
 		}
 		// String storedCaptcha = (String) session.getAttribute("captchaText");
 
@@ -55,9 +55,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			String imageCode = myDetails.getImageCode();
 
 			//暫時註解驗證
-			// if (storedCaptcha == null || !storedCaptcha.equals(imageCode)) {
-			// 	throw new BadCredentialsException("圖形驗證碼錯誤");
-			// }
+			if (storedCaptcha == null || !storedCaptcha.equals(imageCode)) {
+				throw new BadCredentialsException("圖形驗證碼錯誤");
+			}
 		}
 		session.removeAttribute("captchaText");
 
@@ -74,9 +74,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		List<GrantedAuthority> authorities = new ArrayList<>();
 
 		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-		// if (user.getRole().equals("admin")) {
+		if (user.getRole().equals("admin")) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-		// }
+		}
 		UserDetails userDetails = new CustomUserDetails(user.getId(), authentication.getName(),
 				authentication.getCredentials().toString(), authorities);
 		return new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(),

@@ -42,7 +42,6 @@ import com.order_lunch.model.request.UserRequest;
 import com.order_lunch.service.Impl.ShopService;
 import com.order_lunch.service.Impl.UserService;
 
-
 @Validated
 @RestController
 @RequestMapping("/api/register")
@@ -55,13 +54,24 @@ public class RegisterController {
     ShopService shopService;
 
     @RequestMapping(value = "/member", method = RequestMethod.POST)
-    public ResponseEntity<Boolean> addUser(HttpSession session,
+    public ResponseEntity<?> addUser(HttpSession session,
             @RequestBody() @Valid UserRequest userRequest) {
         String storedCaptcha = (String) session.getAttribute("captchaText");
 
-        if (storedCaptcha == null && !storedCaptcha.equals(userRequest.getVerifyCode())) {
+        if (storedCaptcha == null ) {
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setCode(NewErrorStatus.CAPTCHA_ERROR.getKey());
+            errorResponse.setMessage(NewErrorStatus.CAPTCHA_ERROR.getChinese());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        }
+        if ( !storedCaptcha.equals(userRequest.getVerifyCode())) {
+
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setCode(NewErrorStatus.CAPTCHA_ERROR.getKey());
+            errorResponse.setMessage(NewErrorStatus.CAPTCHA_ERROR.getChinese());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 
         }
         session.removeAttribute("captchaText"); // 驗證成功後從Session中移除
@@ -72,12 +82,13 @@ public class RegisterController {
 
     @RequestMapping(value = "/shop", method = RequestMethod.POST)
     public ResponseEntity<?> addShop(HttpSession session,
-            @RequestBody() @Valid ShopRequest shopRequest,@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
+            @RequestBody() @Valid ShopRequest shopRequest,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+        // Authentication authentication =
+        // SecurityContextHolder.getContext().getAuthentication();
 
-            ErrorResponse errorResponse = new ErrorResponse();
-        if (customUserDetails == null ) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        if (customUserDetails == null) {
             // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(validationError);
             // throw new IllegalArgumentException("customUserDetails cannot be null");
             // return ResponseEntity.badRequest().build();
@@ -86,48 +97,50 @@ public class RegisterController {
         }
 
         String storedCaptcha = (String) session.getAttribute("captchaText");
-        
 
-        //圖片驗證 暫時關閉
-        // if (storedCaptcha == null || !storedCaptcha.equals(shopRequest.getCaptcha())) {
-
-        //     // validationError.addFieldError("captcha", Status.CAPTCHA_MISTAKE.getKey());
-        //     validationError.addFieldError("captcha", "captcha 錯誤");
-        //     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(validationError);
-        // }
+        // 圖片驗證 暫時關閉
+        if (storedCaptcha == null || !storedCaptcha.equals(shopRequest.getCaptcha())) {
+            // validationError.addFieldError("captcha", Status.CAPTCHA_MISTAKE.getKey());
+            // Response res = new Response();
+            // res.setMessage(storedCaptcha);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("圖形驗證碼錯誤");
+        }
         session.removeAttribute("captchaText"); // 驗證成功後從Session中移除
 
-        if (shopService.existsByName(shopRequest.getName())){
+        if (shopService.existsByName(shopRequest.getName())) {
             errorResponse.setCode(NewErrorStatus.SHOP_DUPLICATE_NAME.getKey());
             errorResponse.setMessage(NewErrorStatus.SHOP_DUPLICATE_NAME.getChinese());
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(errorResponse);
         }
         User user = userService.findById(customUserDetails.getId());
-        Shop shop = shopService.addShop(shopRequest,user);
-        
+        Shop shop = shopService.addShop(shopRequest, user);
+
         return ResponseEntity.ok().body(shop.getId());
     }
 
-    //     @RequestMapping(value = "/shop", method = RequestMethod.POST)
+    // @RequestMapping(value = "/shop", method = RequestMethod.POST)
     // public ResponseEntity<Response> addShop(HttpSession session,
-    //         @RequestBody() @Valid ShopRequest shopRequest,@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-    //     // Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-    //     Response response = new Response();
-    //     if (customUserDetails == null ) {
-    //         response.setCode(Status.OK);
-    //         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
-    //     }
-    //     String storedCaptcha = (String) session.getAttribute("captchaText");
-        
-    //     if (storedCaptcha == null || !storedCaptcha.equals(shopRequest.getCaptcha())) {
+    // @RequestBody() @Valid ShopRequest shopRequest,@AuthenticationPrincipal
+    // CustomUserDetails customUserDetails) {
+    // // Authentication authentication =
+    // SecurityContextHolder.getContext().getAuthentication();
 
-    //         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
-    //     }
-    //     session.removeAttribute("captchaText"); // 驗證成功後從Session中移除
-    //     shopService.addShop(shopRequest);
+    // Response response = new Response();
+    // if (customUserDetails == null ) {
+    // response.setCode(Status.OK);
+    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+    // }
+    // String storedCaptcha = (String) session.getAttribute("captchaText");
 
-    //     return ResponseEntity.ok().build();
+    // if (storedCaptcha == null || !storedCaptcha.equals(shopRequest.getCaptcha()))
+    // {
+
+    // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+    // }
+    // session.removeAttribute("captchaText"); // 驗證成功後從Session中移除
+    // shopService.addShop(shopRequest);
+
+    // return ResponseEntity.ok().build();
     // }
 
     @GetMapping("/captcha")

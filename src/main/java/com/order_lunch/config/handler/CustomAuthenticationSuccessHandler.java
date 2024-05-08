@@ -24,7 +24,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         Map<String, Object> responseData = new HashMap<>();
         responseData.put("status", "success");
         responseData.put("message", "登錄成功");
-        responseData.put("code", 200);
+        responseData.put("status", 200);
         // responseData.put("token", 200);
         // 將 JSON 寫入 response 中
         response.setContentType("application/json");
