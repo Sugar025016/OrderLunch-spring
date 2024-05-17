@@ -19,10 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.order_lunch.config.CustomUserDetails;
 import com.order_lunch.entity.Address;
 import com.order_lunch.entity.AddressData;
@@ -33,7 +31,6 @@ import com.order_lunch.model.AddressResponse;
 import com.order_lunch.model.request.AddressRequest;
 import com.order_lunch.model.request.PasswordRequest;
 import com.order_lunch.model.request.UserPutRequest;
-import com.order_lunch.model.request.UserRequest;
 import com.order_lunch.model.response.ShopResponse;
 import com.order_lunch.model.response.UserResponse;
 import com.order_lunch.repository.IAddressDataRepository;
@@ -61,14 +58,14 @@ public class UserController {
     @Autowired
     AddressDataService addressDataService;
 
-    @ResponseBody
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<UserResponse> addUser(@RequestBody() @JsonProperty("user") UserRequest userRequest) {
+    // @ResponseBody
+    // @RequestMapping(value = "/add", method = RequestMethod.POST)
+    // public ResponseEntity<UserResponse> addUser(@RequestBody() @JsonProperty("user") UserRequest userRequest) {
 
-        userService.addMember(userRequest);
+    //     userService.addMember(userRequest);
 
-        return ResponseEntity.ok().build();
-    }
+    //     return ResponseEntity.ok().build();
+    // }
 
     // CustomUserDetails
     @RequestMapping(path = "", method = RequestMethod.GET)

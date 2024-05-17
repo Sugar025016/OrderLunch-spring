@@ -46,7 +46,6 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			// 处理会话为null的情况
 			throw new BadCredentialsException("圖形驗證碼過期");
 		}
-		// String storedCaptcha = (String) session.getAttribute("captchaText");
 
 		Object details = authentication.getDetails();
 		System.out.println("details:" + details);

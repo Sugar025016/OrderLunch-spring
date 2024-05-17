@@ -63,10 +63,11 @@ public class UserService implements IUserService {
 
         User user = new User(userRequest);
         if (iUserRepository.existsByAccount(user.getAccount())) {
-        throw new DuplicateAccountException("帳號已存在");
+            throw new DuplicateAccountException("帳號已存在");
         }
         User saveUser = iUserRepository.save(user);
         emailService.sendSimpleMessage(user.getAccount(), "123", "http://localhost:8080/api/emailCheck/123");
+        
 
         return user;
     }
@@ -276,6 +277,12 @@ public class UserService implements IUserService {
         User saveUser = iUserRepository.save(user);
 
         return saveUser.getAddressDelivery() == null;
+    }
+
+    @Override
+    public boolean accountExists(String user) {
+
+        return iUserRepository.existsByAccount(user);
     }
 
 }

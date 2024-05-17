@@ -46,14 +46,9 @@ public class Tab {
     @ManyToOne(fetch = FetchType.LAZY)
     private Shop shop;
 
-    // @OneToMany(cascade = CascadeType.ALL, mappedBy = "tab")
-    // private List<Product> products;
     @Column(name = "is_shelve", length = 255, nullable = false)
     private boolean isShelve;
 
-    // @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // @JoinTable(name = "tab_product", joinColumns = @JoinColumn(name = "tab_id"), inverseJoinColumns = @JoinColumn(name = "product_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-    //         "tab_id", "product_id" }))
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JoinTable(name = "tab_product", joinColumns = @JoinColumn(name = "tab_id"), inverseJoinColumns = @JoinColumn(name = "product_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
         "tab_id", "product_id" }))
@@ -76,14 +71,7 @@ public class Tab {
                 '}';
     }
 
-    // @JsonIgnore
-    // @ManyToMany(cascade = CascadeType.ALL)
-    // @JoinTable(name = "love", joinColumns = @JoinColumn(name = "user_id"),
-    // inverseJoinColumns = @JoinColumn(name = "shop_id"), uniqueConstraints =
-    // @UniqueConstraint(columnNames = {
-    // "user_id", "shop_id" }))
-    // @Where(clause = "is_delete = false")
-    // private List<Shop> loves;
+
 
     public List<Product> getProductsForNotDelete() {
         return this.products.stream().filter(v -> !v.isDelete()).collect(Collectors.toList());

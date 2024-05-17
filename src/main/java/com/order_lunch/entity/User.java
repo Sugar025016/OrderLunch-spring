@@ -51,25 +51,29 @@ public class User extends BaseEntity {
     private String account;
     @Column(name = "password", length = 32, nullable = false)
     private String password;
-    @Column(name = "role", length = 11, columnDefinition = "VARCHAR(11) DEFAULT 'user'")
-    private String role;
+    @Column(name = "role", length = 11, nullable = false)
+    private String role = "user";
+    @Column(name = "register")
+    private boolean register = false;
+
     // @Email
     // @Column(name = "email", length = 255)
     // private String email;
 
     // @JsonIgnore
     // @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    // @JoinTable(name = "user_address", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "address_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-    //         "user_id", "address_id" }))
+    // @JoinTable(name = "user_address", joinColumns = @JoinColumn(name =
+    // "user_id"), inverseJoinColumns = @JoinColumn(name = "address_id"),
+    // uniqueConstraints = @UniqueConstraint(columnNames = {
+    // "user_id", "address_id" }))
     // private List<Address> addresses;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
     private List<Address> addresses;
 
-
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_delivery",referencedColumnName="id")
+    @JoinColumn(name = "address_delivery", referencedColumnName = "id")
     private Address addressDelivery;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -102,11 +106,12 @@ public class User extends BaseEntity {
                 '}';
     }
 
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         User user = (User) o;
         return Objects.equals(id, user.id);
     }
@@ -130,15 +135,16 @@ public class User extends BaseEntity {
     }
 
     // public void setAddressDelivery(Address address) {
-    //     Optional<Address> findAny = addresses.stream().filter(v -> v.getId() == address.getId()).findAny();
-    //     Address orElseThrow = findAny.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-    //         this.AddressDelivery = orElseThrow;
+    // Optional<Address> findAny = addresses.stream().filter(v -> v.getId() ==
+    // address.getId()).findAny();
+    // Address orElseThrow = findAny.orElseThrow(() -> new
+    // ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    // this.AddressDelivery = orElseThrow;
     // }
 
     public void setAddressDelivery(Address address) {
         this.addressDelivery = address;
     }
-
 
     // public Set<ShopResponse> getShopLoveList() {
     // Set<ShopResponse> collect = shopLoveList.stream().map(v->new

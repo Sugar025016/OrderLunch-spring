@@ -78,6 +78,7 @@ com/order_lunch/entity/User.class
 com/order_lunch/model/request/PasswordRequest.class
 com/order_lunch/model/response/BackstageShopResponse.class
 com/order_lunch/model/response/SellProductResponse.class
+com/order_lunch/service/Impl/UserService$DuplicateAccountException.class
 com/order_lunch/controller/sell/SellOrderController.class
 com/order_lunch/model/request/AddressDataRequest$Area.class
 com/order_lunch/service/IAddressDataService.class

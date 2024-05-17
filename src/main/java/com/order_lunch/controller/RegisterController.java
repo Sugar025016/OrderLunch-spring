@@ -58,7 +58,7 @@ public class RegisterController {
             @RequestBody() @Valid UserRequest userRequest) {
         String storedCaptcha = (String) session.getAttribute("captchaText");
 
-        if (storedCaptcha == null ) {
+        if (storedCaptcha == null) {
 
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.setCode(NewErrorStatus.CAPTCHA_ERROR.getKey());
@@ -66,7 +66,8 @@ public class RegisterController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 
         }
-        if ( !storedCaptcha.equals(userRequest.getVerifyCode())) {
+
+        if (!storedCaptcha.equals(userRequest.getVerifyCode())) {
 
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.setCode(NewErrorStatus.CAPTCHA_ERROR.getKey());
@@ -74,8 +75,16 @@ public class RegisterController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 
         }
+
+        if (userService.accountExists(userRequest.getAccount())) {
+            ErrorResponse errorResponse = new ErrorResponse(NewErrorStatus.ACCOUNT_EXISTS.getKey(),NewErrorStatus.ACCOUNT_EXISTS.getChinese());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+
         session.removeAttribute("captchaText"); // 驗證成功後從Session中移除
         userService.addMember(userRequest);
+        
 
         return ResponseEntity.ok().build();
     }
@@ -257,5 +266,8 @@ public class RegisterController {
         graphics.drawImage(blurredImage, 0, 0, null);
         graphics.dispose();
     }
+
+
+
 
 }
