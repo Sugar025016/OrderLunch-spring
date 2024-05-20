@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.order_lunch.OrderLunchApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.116 s - in com.order_lunch.OrderLunchApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.489 s - in com.order_lunch.OrderLunchApplicationTests

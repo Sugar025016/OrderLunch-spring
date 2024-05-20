@@ -240,7 +240,8 @@ public class RegisterController {
         // 生成包含字母和數字的隨機字串
         // String characters =
         // "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        // String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        String characters = "0123456789";
         // String characters = "abcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder captchaText = new StringBuilder();
         Random random = new Random();

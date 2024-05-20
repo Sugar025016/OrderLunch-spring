@@ -262,6 +262,8 @@ public class UserService implements IUserService {
 
         user.getAddresses().add(address);
 
+        user.setAddressDelivery(address);
+
         User save = iUserRepository.save(user);
 
         return address;

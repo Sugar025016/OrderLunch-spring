@@ -60,11 +60,12 @@ public class UserController {
 
     // @ResponseBody
     // @RequestMapping(value = "/add", method = RequestMethod.POST)
-    // public ResponseEntity<UserResponse> addUser(@RequestBody() @JsonProperty("user") UserRequest userRequest) {
+    // public ResponseEntity<UserResponse> addUser(@RequestBody()
+    // @JsonProperty("user") UserRequest userRequest) {
 
-    //     userService.addMember(userRequest);
+    // userService.addMember(userRequest);
 
-    //     return ResponseEntity.ok().build();
+    // return ResponseEntity.ok().build();
     // }
 
     // CustomUserDetails
@@ -194,8 +195,9 @@ public class UserController {
             @RequestBody AddressRequest addresses) {
 
         AddressData addressData = addressDataService.getAddressData(addresses);
+        User user=userService.findById(customUserDetails.getId());
 
-        Address address = addressService.addAddress(addressData, addresses.getDetail());
+        Address address = addressService.addAddress(addressData, addresses.getDetail(),user);
 
         userService.addUserAddress(customUserDetails.getId(), address);
 
