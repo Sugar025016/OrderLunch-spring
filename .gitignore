@@ -1,0 +1,69 @@
+# 编译输出目录
+/target/
+build/
+
+# IDEA
+.idea/
+*.iml
+*.iws
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+
+# 日志文件
+*.log
+
+# 打包文件
+*.jar
+*.war
+*.ear
+
+# Maven 和 Gradle
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# VS Code
+.vscode/
+.history/
+
+# 临时文件
+*.swp
+*~
+.project
+.classpath
+*.tmp
+*.bak
+*.orig
+*.old
+*.idea/
+*.vscode/
+
+# Spring Boot 特有的文件
+*.h2.db
+*.mv.db
+
+# 本地环境变量文件
+.env
+.env.local
+.env.*.local

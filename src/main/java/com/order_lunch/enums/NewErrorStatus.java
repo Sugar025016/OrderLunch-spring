@@ -13,6 +13,7 @@ public enum NewErrorStatus {
     ACCOUNT_EXISTS( 411, "account exists", "帳號已存在"),
     SHOP_DUPLICATE_NAME( 411, "shop duplicate name", "商店名稱重複"),
     ACCOUNT_OR_PASSWORD_MISTAKE( 401, "captcha error", "照號或密碼錯誤"),
+    ORDER_TIME_ERROR( 501, "order time error", "訂單時間錯誤"),
     OK( 200, "ok", "登入成功");
 
     
