@@ -14,7 +14,7 @@ import com.order_lunch.model.response.FileResponse;
 import com.order_lunch.service.IFileService;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("")
 public class Demo {
 
     @Autowired

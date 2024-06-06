@@ -43,12 +43,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.authorizeRequests(requests -> requests
-						.antMatchers(HttpMethod.GET, "/api/register/**", "/api/category/**", "/api/product/**",
-								"/api/shop/**", "/api/tab/**", "/logout*", "/login*")
+						.antMatchers(HttpMethod.GET, "/register/**", "/category/**", "/product/**",
+								"/shop/**", "/tab/**")
 						.permitAll()
-						.antMatchers(HttpMethod.POST, "/api/register/**", "/login*").permitAll()
-						// .antMatchers("/api/upload*", "/sell/**").hasRole("USER")
-						.antMatchers("/api/upload**", "/sell/shop/**", "/api/user/**", "/api/addMeals/**", "/api/**").hasRole("USER")
+						.antMatchers(HttpMethod.POST, "/user/register*").permitAll()
+						// .antMatchers("/upload*", "/sell/**").hasRole("USER")
+						.antMatchers("/upload**", "/sell/shop/**", "/user/**", "/addMeals/**", "/order/**").hasRole("USER")
 						.antMatchers("/backstage/**")
 						.hasRole("ADMIN")
 						.anyRequest().authenticated())
@@ -75,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 						.userDetailsService(userDetailsService));// 定義remember-me等於true 和 token 過期時
 
 		http.csrf(csrf -> csrf
-				.ignoringAntMatchers("/login*", "/logout*", "/api/upload*", "/api/register/**", "/api/shop*")
+				.ignoringAntMatchers("/login*", "/logout*", "/upload*", "/register/**", "/shop*")
 				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 
 	}

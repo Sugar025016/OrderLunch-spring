@@ -20,7 +20,7 @@ import com.order_lunch.model.response.ShopCartResponse;
 import com.order_lunch.service.Impl.CartService;
 
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/cart")
 
 public class CartController {
 

@@ -24,7 +24,7 @@ import com.order_lunch.model.response.OrderResponse;
 import com.order_lunch.service.Impl.OrderService;
 
 @RestController
-@RequestMapping("/api/order")
+@RequestMapping("/order")
 public class OrderController {
 
     // @Value("${imageGetUrl}")

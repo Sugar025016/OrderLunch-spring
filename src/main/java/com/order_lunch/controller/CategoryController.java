@@ -15,7 +15,7 @@ import com.order_lunch.model.response.CategoryResponse;
 import com.order_lunch.service.Impl.CategoryService;
 
 @RestController
-@RequestMapping("/api/category")
+@RequestMapping("/category")
 public class CategoryController {
 
     @Autowired

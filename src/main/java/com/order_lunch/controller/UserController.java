@@ -8,9 +8,12 @@ import java.util.stream.Collectors;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,10 +30,13 @@ import com.order_lunch.entity.AddressData;
 import com.order_lunch.entity.Cart;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.entity.User;
+import com.order_lunch.enums.NewErrorStatus;
 import com.order_lunch.model.AddressResponse;
+import com.order_lunch.model.ErrorResponse;
 import com.order_lunch.model.request.AddressRequest;
 import com.order_lunch.model.request.PasswordRequest;
 import com.order_lunch.model.request.UserPutRequest;
+import com.order_lunch.model.request.UserRequest;
 import com.order_lunch.model.response.ShopResponse;
 import com.order_lunch.model.response.UserResponse;
 import com.order_lunch.repository.IAddressDataRepository;
@@ -40,7 +46,7 @@ import com.order_lunch.service.Impl.CartService;
 import com.order_lunch.service.Impl.UserService;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
@@ -58,17 +64,42 @@ public class UserController {
     @Autowired
     AddressDataService addressDataService;
 
-    // @ResponseBody
-    // @RequestMapping(value = "/add", method = RequestMethod.POST)
-    // public ResponseEntity<UserResponse> addUser(@RequestBody()
-    // @JsonProperty("user") UserRequest userRequest) {
 
-    // userService.addMember(userRequest);
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public ResponseEntity<?> addUser(HttpSession session,
+            @RequestBody() @Valid UserRequest userRequest) {
+        String storedCaptcha = (String) session.getAttribute("captchaText");
 
-    // return ResponseEntity.ok().build();
-    // }
+        if (storedCaptcha == null) {
 
-    // CustomUserDetails
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setCode(NewErrorStatus.CAPTCHA_ERROR.getKey());
+            errorResponse.setMessage(NewErrorStatus.CAPTCHA_ERROR.getChinese());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        }
+
+        if (!storedCaptcha.equals(userRequest.getVerifyCode())) {
+
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setCode(NewErrorStatus.CAPTCHA_ERROR.getKey());
+            errorResponse.setMessage(NewErrorStatus.CAPTCHA_ERROR.getChinese());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        }
+
+        if (userService.accountExists(userRequest.getAccount())) {
+            ErrorResponse errorResponse = new ErrorResponse(NewErrorStatus.ACCOUNT_EXISTS.getKey(),NewErrorStatus.ACCOUNT_EXISTS.getChinese());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
+
+        session.removeAttribute("captchaText"); // 驗證成功後從Session中移除
+        userService.addMember(userRequest);
+        
+
+        return ResponseEntity.ok().build();
+    }
     @RequestMapping(path = "", method = RequestMethod.GET)
     public ResponseEntity<UserResponse> getUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         User findByAccount = userService.findById(customUserDetails.getId());

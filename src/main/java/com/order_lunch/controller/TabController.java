@@ -26,7 +26,7 @@ import lombok.NonNull;
 
 @Validated
 @RestController
-@RequestMapping("/api/tab")
+@RequestMapping("/tab")
 public class TabController {
 
     @Autowired
