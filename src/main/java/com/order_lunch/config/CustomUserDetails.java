@@ -40,7 +40,7 @@ public class CustomUserDetails implements UserDetails {
 
     public int getId() {
         // if(id == 0){
-        //     throw new ServletException("未登入");
+        // throw new ServletException("未登入");
         // }
         return id;
     }
@@ -48,7 +48,10 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isAccountNonExpired() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonExpired'");
+        if (id == 0) {
+            return false;
+        }
+        return true;
     }
 
     @Override

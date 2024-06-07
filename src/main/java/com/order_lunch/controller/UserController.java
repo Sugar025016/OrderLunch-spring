@@ -64,10 +64,10 @@ public class UserController {
     @Autowired
     AddressDataService addressDataService;
 
-
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> addUser(HttpSession session,
-            @RequestBody() @Valid UserRequest userRequest) {
+            @RequestBody() @Valid UserRequest userRequest,
+            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
         String storedCaptcha = (String) session.getAttribute("captchaText");
 
         if (storedCaptcha == null) {
@@ -88,18 +88,28 @@ public class UserController {
 
         }
 
+        if (customUserDetails.getId() != 0) {
+
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setCode(NewErrorStatus.HAVE_LOGIN.getKey());
+            errorResponse.setMessage(NewErrorStatus.HAVE_LOGIN.getChinese());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+
+        }
+
         if (userService.accountExists(userRequest.getAccount())) {
-            ErrorResponse errorResponse = new ErrorResponse(NewErrorStatus.ACCOUNT_EXISTS.getKey(),NewErrorStatus.ACCOUNT_EXISTS.getChinese());
+            ErrorResponse errorResponse = new ErrorResponse(NewErrorStatus.ACCOUNT_EXISTS.getKey(),
+                    NewErrorStatus.ACCOUNT_EXISTS.getChinese());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
 
         session.removeAttribute("captchaText"); // 驗證成功後從Session中移除
         userService.addMember(userRequest);
-        
 
         return ResponseEntity.ok().build();
     }
+
     @RequestMapping(path = "", method = RequestMethod.GET)
     public ResponseEntity<UserResponse> getUser(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
         User findByAccount = userService.findById(customUserDetails.getId());
@@ -226,9 +236,9 @@ public class UserController {
             @RequestBody AddressRequest addresses) {
 
         AddressData addressData = addressDataService.getAddressData(addresses);
-        User user=userService.findById(customUserDetails.getId());
+        User user = userService.findById(customUserDetails.getId());
 
-        Address address = addressService.addAddress(addressData, addresses.getDetail(),user);
+        Address address = addressService.addAddress(addressData, addresses.getDetail(), user);
 
         userService.addUserAddress(customUserDetails.getId(), address);
 

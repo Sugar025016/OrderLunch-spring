@@ -31,6 +31,8 @@ import com.order_lunch.repository.IShopRepository;
 import com.order_lunch.repository.IUserRepository;
 import com.order_lunch.service.IUserService;
 
+import lombok.NonNull;
+
 @Service
 public class UserService implements IUserService {
 
@@ -128,7 +130,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean putUser(UserPutRequest userPutRequest, int id) {
+    public boolean putUser(@NonNull UserPutRequest userPutRequest, int id) {
         Optional<User> findById = iUserRepository.findById(id);
         if (!findById.isPresent()) {
             throw new NullPointerException();

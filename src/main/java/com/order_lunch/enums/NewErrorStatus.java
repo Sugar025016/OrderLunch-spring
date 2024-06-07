@@ -8,6 +8,7 @@ import java.util.Set;
 public enum NewErrorStatus {
 
     NOT_LOGIN( 0, "not login", "未登入，請先登入"),
+    HAVE_LOGIN( 1, "not login", "已登入，請勿重複註冊"),
     CAPTCHA_MISTAKE( 411, "captcha error", "驗證碼錯誤"),
     CAPTCHA_ERROR( 411, "captcha error", "驗證碼錯誤"),
     ACCOUNT_EXISTS( 411, "account exists", "帳號已存在"),
