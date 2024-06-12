@@ -39,7 +39,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "shop")
 public class Shop extends BaseEntity {
 
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @GenericGenerator(name = "auto_increment", strategy = "native")
@@ -60,7 +59,7 @@ public class Shop extends BaseEntity {
     @Column(name = "delivery_km")
     private Double deliveryKm = 0.0;
     @Column(name = "delivery_price")
-    private Integer deliveryPrice=0;
+    private Integer deliveryPrice = 0;
 
     @JoinColumn(name = "file_data")
     @OneToOne(cascade = CascadeType.ALL)
@@ -71,29 +70,29 @@ public class Shop extends BaseEntity {
     private ShopAddress shopAddress;
 
     @JsonIgnore
-    @JoinColumn(name = "user_id", nullable = false )
+    @JoinColumn(name = "user_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "shop",fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "shop", fetch = FetchType.LAZY)
     private List<Tab> tabs;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "shop",fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "shop", fetch = FetchType.LAZY)
     @Where(clause = "is_delete = false")
     private List<Product> products;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "shop",fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "shop", fetch = FetchType.LAZY)
     private List<Schedule> schedules;
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.REMOVE,fetch = FetchType.LAZY, mappedBy="loves")
+    @ManyToMany(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, mappedBy = "loves")
     private List<User> loves;
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.REFRESH ,fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinTable(name = "shop_category", joinColumns = @JoinColumn(name = "shop_id"), inverseJoinColumns = @JoinColumn(name = "category_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
             "shop_id", "category_id" }))
     private List<Category> category;
@@ -131,10 +130,8 @@ public class Shop extends BaseEntity {
         this.isOrderable = isOrderable;
         setIsDisable(isDisable);
         setIsDelete(isDelete);
- 
+
     }
-
-
 
     public void setIsDelete(boolean is_delete) {
 
@@ -162,7 +159,7 @@ public class Shop extends BaseEntity {
         this.phone = shopPutRequest.getPhone();
         this.description = shopPutRequest.getDescription();
         this.deliveryKm = shopPutRequest.getDeliveryKm();
-        this.deliveryPrice= shopPutRequest.getDeliveryPrice();
+        this.deliveryPrice = shopPutRequest.getDeliveryPrice();
 
         setIsDelete(shopPutRequest.isDelete(), shopPutRequest.isDisable(), shopPutRequest.isOrderable());
 
@@ -177,21 +174,25 @@ public class Shop extends BaseEntity {
         this.phone = shopPutRequest.getPhone();
         this.description = shopPutRequest.getDescription();
         this.deliveryKm = shopPutRequest.getDeliveryKm();
-        this.deliveryPrice= shopPutRequest.getDeliveryPrice();
+        this.deliveryPrice = shopPutRequest.getDeliveryPrice();
 
         setIsDelete(shopPutRequest.isDelete(), shopPutRequest.isDisable(), shopPutRequest.isOrderable());
 
         this.shopAddress = shopAddress;
-        this.fileData=null;
+        this.fileData = null;
     }
 
-    public List<Schedule> getSchedulesForOpen(){
-        return this.schedules.stream().filter(v->v.getType() == 0).collect(Collectors.toList());
+    public List<Schedule> getSchedulesForOpen() {
+        return this.schedules.stream().filter(v -> v.getType() == 0).collect(Collectors.toList());
     }
 
+    public List<Schedule> getSchedulesForDayOfWeek(int week) {
+        return this.schedules.stream().filter(v -> v.getWeek() == week && v.getType() == 0)
+                .collect(Collectors.toList());
+    }
 
-    public List<Product> getProductsForNotDelete(){
-        return this.products.stream().filter(v->!v.isDelete()).collect(Collectors.toList());
+    public List<Product> getProductsForNotDelete() {
+        return this.products.stream().filter(v -> !v.isDelete()).collect(Collectors.toList());
     }
 
 }

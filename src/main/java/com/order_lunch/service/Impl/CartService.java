@@ -28,18 +28,24 @@ public class CartService implements ICartService {
     IUserRepository iUserRepository;
     @Autowired
     IProductRepository iProductRepository;
+    // private ShopCartResponse allByUserId;
 
     @Override
-    public Cart getCartByUserId(int id) {
-        Cart cart = iCartRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart not found"));
+    public List<Cart> getAllByUserId(int userId) {
+        List<Cart> carts = iCartRepository.getAllByUser_id(userId);
 
-        return cart;
+        return carts;
     }
 
     @Override
-    public ShopCartResponse getAllByUserId(int id) {
-        List<Cart> allByUser_id = iCartRepository.getAllByUser_id(id);
+    public boolean isCart(int userId) {
+        List<Cart> carts = iCartRepository.getAllByUser_id(userId);
+        return carts.size() > 0;
+    }
+
+    @Override
+    public ShopCartResponse getCartByUserId(int userId) {
+        List<Cart> allByUser_id = iCartRepository.getAllByUser_id(userId);
         ShopCartResponse shopCartResponse = new ShopCartResponse(allByUser_id);
         return shopCartResponse;
     }
@@ -82,7 +88,7 @@ public class CartService implements ICartService {
 
         iCartRepository.save(orElseThrow);
 
-        return getAllByUserId(userId);
+        return getCartByUserId(userId);
     }
 
     @Override
@@ -93,21 +99,19 @@ public class CartService implements ICartService {
 
         iCartRepository.delete(cart);
 
-        return getAllByUserId(userId);
+        return getCartByUserId(userId);
 
     }
 
     @Override
-    public User deleteAllCart( User user) {
+    public User deleteAllCart(User user) {
 
-        int deletedCount =iCartRepository.deleteAllByUserId(user.getId());
-        if(deletedCount>0){
+        int deletedCount = iCartRepository.deleteAllByUserId(user.getId());
+        if (deletedCount > 0) {
             return user;
-        }else{
+        } else {
             throw new RuntimeException("Failed to delete carts for user: " + user.getId());
         }
-
-        
 
     }
 
@@ -121,7 +125,7 @@ public class CartService implements ICartService {
         orElseThrow.setQty(qty);
         iCartRepository.save(orElseThrow);
 
-        return getAllByUserId(userId);
+        return getCartByUserId(userId);
 
     }
 

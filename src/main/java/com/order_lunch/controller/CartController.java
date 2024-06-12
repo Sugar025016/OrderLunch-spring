@@ -29,7 +29,7 @@ public class CartController {
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     public ResponseEntity<ShopCartResponse> get(@AuthenticationPrincipal CustomUserDetails customUserDetails) throws IOException, ServletException {
-        return ResponseEntity.ok().body(cartService.getAllByUserId(customUserDetails.getId()));
+        return ResponseEntity.ok().body(cartService.getCartByUserId(customUserDetails.getId()));
     }
 
     @ExceptionHandler(ServletException.class)

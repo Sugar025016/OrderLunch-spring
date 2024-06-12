@@ -14,7 +14,12 @@ public enum NewErrorStatus {
     ACCOUNT_EXISTS( 411, "account exists", "帳號已存在"),
     SHOP_DUPLICATE_NAME( 411, "shop duplicate name", "商店名稱重複"),
     ACCOUNT_OR_PASSWORD_MISTAKE( 401, "captcha error", "照號或密碼錯誤"),
-    ORDER_TIME_ERROR( 501, "order time error", "訂單時間錯誤"),
+    ORDER_ERROR( 501, "order error", "訂單時間錯誤"),
+
+    CART_NULL( 611, "cart null", "購物車空的"),
+    CART_PRICE_IS_INSUFFICIENT( 612, "Cart price is insufficient", "購物車裡的商平價格不足"),
+    GET_PRODUCT_TIME_ERROR( 613, "Get product time error", "取餐時間錯誤"),
+    
     OK( 200, "ok", "登入成功");
 
     

@@ -88,10 +88,9 @@ public class GlobalExceptionHandler extends Exception {
         // validationError.addFieldError(exceptionClassName,ex.getReason());
 
         // 获取异常消息
-        String errorMessage = ex.getLocalizedMessage();
 
         // 从异常消息中提取类名
-        String className = extractClassNameFromErrorMessage(errorMessage);
+        String className = ex.getReason();
 
         // validationError.addFieldError(className, ex.getReason());
         errorResponse.setCode(402);

@@ -1,5 +1,7 @@
 package com.order_lunch.service;
 
+import java.util.List;
+
 import com.order_lunch.entity.Cart;
 import com.order_lunch.entity.User;
 import com.order_lunch.model.request.CartRequest;
@@ -7,10 +9,11 @@ import com.order_lunch.model.response.ShopCartResponse;
 
 public interface ICartService {
 
-    ShopCartResponse getAllByUserId(int userId);
+    List<Cart> getAllByUserId(int userId);
 
     int addCart(int userId,CartRequest cartRequest);
-
+    
+    boolean isCart(int userId);
 
     ShopCartResponse putCart(int userId, int cartId,CartRequest cartRequest);
 
@@ -18,7 +21,8 @@ public interface ICartService {
 
     ShopCartResponse deleteCart(int userId,int cartId);
 
-    Cart getCartByUserId(int id);
+    ShopCartResponse getCartByUserId(int id);
     
     User deleteAllCart( User user) ;
+
 }
