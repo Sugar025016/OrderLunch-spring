@@ -19,14 +19,14 @@ public class Demo {
 
     @Autowired
     IFileService fileService;
-    @RequestMapping(path = "", method = RequestMethod.POST)
+    @RequestMapping(path = "/test", method = RequestMethod.POST)
     public String getLogin() {
         System.out.println("有鬼阿..........=.=+，1");
 
         return "login";
     }
 
-    @RequestMapping(path = "", method = RequestMethod.GET)
+    @RequestMapping(path = "/test", method = RequestMethod.GET)
     public String getLogin2() {
         System.out.println("有鬼阿..........=.=+， 2");
 

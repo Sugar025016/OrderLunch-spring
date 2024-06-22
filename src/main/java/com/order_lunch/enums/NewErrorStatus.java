@@ -13,7 +13,7 @@ public enum NewErrorStatus {
     CAPTCHA_ERROR( 411, "captcha error", "驗證碼錯誤"),
     ACCOUNT_EXISTS( 411, "account exists", "帳號已存在"),
     SHOP_DUPLICATE_NAME( 411, "shop duplicate name", "商店名稱重複"),
-    ACCOUNT_OR_PASSWORD_MISTAKE( 401, "captcha error", "照號或密碼錯誤"),
+    ACCOUNT_OR_PASSWORD_MISTAKE( 401, "captcha error", "帳號或密碼錯誤"),
     ORDER_ERROR( 501, "order error", "訂單時間錯誤"),
 
     CART_NULL( 611, "cart null", "購物車空的"),

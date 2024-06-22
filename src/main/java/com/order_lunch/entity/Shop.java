@@ -54,7 +54,7 @@ public class Shop extends BaseEntity {
     private boolean isOrderable;
     @Column(name = "is_disable", length = 512, nullable = false, columnDefinition = "VARCHAR(11) DEFAULT false")
     private boolean isDisable;
-    @Column(name = "is_delete", length = 512, nullable = false, columnDefinition = "VARCHAR(11) DEFAULT false")
+    @Column(name = "is_delete", length = 512, nullable = false)
     private boolean isDelete;
     @Column(name = "delivery_km")
     private Double deliveryKm = 0.0;

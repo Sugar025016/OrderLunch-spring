@@ -1,7 +1,5 @@
 package com.order_lunch.controller;
 
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,7 +7,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +22,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.order_lunch.config.CustomUserDetails;
-import com.order_lunch.entity.Address;
-import com.order_lunch.entity.AddressData;
-import com.order_lunch.entity.Cart;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.entity.User;
 import com.order_lunch.enums.NewErrorStatus;
-import com.order_lunch.model.AddressResponse;
 import com.order_lunch.model.ErrorResponse;
-import com.order_lunch.model.request.AddressRequest;
 import com.order_lunch.model.request.PasswordRequest;
 import com.order_lunch.model.request.UserPutRequest;
 import com.order_lunch.model.request.UserRequest;
@@ -88,7 +80,7 @@ public class UserController {
 
         }
 
-        if (customUserDetails.getId() != 0) {
+        if (customUserDetails != null && customUserDetails.getId() != 0) {
 
             ErrorResponse errorResponse = new ErrorResponse();
             errorResponse.setCode(NewErrorStatus.HAVE_LOGIN.getKey());
@@ -157,23 +149,6 @@ public class UserController {
         return ResponseEntity.ok().body(findLoveByAccount);
     }
 
-    @RequestMapping(path = "/address", method = RequestMethod.GET)
-    public ResponseEntity<List<AddressResponse>> getAddress(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        User findByAccount = userService.findById(customUserDetails.getId());
-        List<Address> prioritizeAddress = new ArrayList<Address>();
-        if (findByAccount.getAddressDelivery() != null) {
-
-            prioritizeAddress = addressService.prioritizeAddress(findByAccount.getAddresses(),
-                    findByAccount.getAddressDelivery().getId());
-        } else {
-            prioritizeAddress = findByAccount.getAddresses();
-        }
-        List<AddressResponse> collect = prioritizeAddress.stream().map(v -> new AddressResponse(v))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok().body(collect);
-    }
 
     // @RequestMapping(path = "/address", method = RequestMethod.PUT)
     // public ResponseEntity<List<AddressResponse>> putAddress(
@@ -223,89 +198,118 @@ public class UserController {
     // @Autowired
     // AddressService addressData;
 
-    @RequestMapping(path = "/google", method = RequestMethod.GET)
-    public ResponseEntity<String> getGoogle(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestBody String address) {
-        addressService.geocodeAddress(address);
-        return ResponseEntity.ok().body("address2");
-    }
 
-    @RequestMapping(path = "/address", method = RequestMethod.POST)
-    public ResponseEntity<AddressResponse> addAddress(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestBody AddressRequest addresses) {
 
-        AddressData addressData = addressDataService.getAddressData(addresses);
-        User user = userService.findById(customUserDetails.getId());
 
-        Address address = addressService.addAddress(addressData, addresses.getDetail(), user);
 
-        userService.addUserAddress(customUserDetails.getId(), address);
 
-        return ResponseEntity.ok().body(new AddressResponse(address));
-    }
 
-    @Transactional
-    @RequestMapping(path = "/address", method = RequestMethod.PUT)
-    public ResponseEntity<Boolean> putAddress(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @RequestBody AddressRequest addressRequest) {
 
-        User user = userService.findById(customUserDetails.getId());
-        if (user.getAddressDelivery().getId() == addressRequest.getId()) {
-            List<Cart> carts = user.getCarts();
-            if (carts.size() > 0) {
-                cartService.deleteAllCart(user);
-            }
-        }
-        Address putUserAddress = addressService.putUserAddress(customUserDetails.getId(), addressRequest);
-        if (putUserAddress.getId() == null) {
-            throw new ConcurrentModificationException("Encountered a serious system error");
-        }
 
-        return ResponseEntity.ok().body(true);
-    }
 
-    @Transactional
-    @RequestMapping(path = "/address/{addressId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Boolean> deleteAddress(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @PathVariable int addressId) {
+    
 
-        User user = userService.findById(customUserDetails.getId());
-        boolean deleteAddressDelivery = false;
-        if (user.getAddressDelivery().getId() == addressId) {
-            List<Cart> carts = user.getCarts();
-            if (carts.size() > 0) {
-                cartService.deleteAllCart(user);
-            }
-            deleteAddressDelivery = userService.deleteAddressDelivery(customUserDetails.getId(), addressId);
-        }
 
-        boolean deleteUserAddress = addressService.deleteUserAddress(customUserDetails.getId(), addressId);
-        if (deleteAddressDelivery && deleteUserAddress) {
-            // throw new ConcurrentModificationException("Encountered a serious system
-            // error");
-            return ResponseEntity.ok().build();
-        }
+    // @RequestMapping(path = "/address", method = RequestMethod.GET)
+    // public ResponseEntity<List<AddressResponse>> getAddress(
+    //         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    //     User findByAccount = userService.findById(customUserDetails.getId());
+    //     List<Address> prioritizeAddress = new ArrayList<Address>();
+    //     if (findByAccount.getAddressDelivery() != null) {
 
-        return ResponseEntity.badRequest().build();
-    }
+    //         prioritizeAddress = addressService.prioritizeAddress(findByAccount.getAddresses(),
+    //                 findByAccount.getAddressDelivery().getId());
+    //     } else {
+    //         prioritizeAddress = findByAccount.getAddresses();
+    //     }
+    //     List<AddressResponse> collect = prioritizeAddress.stream().map(v -> new AddressResponse(v))
+    //             .collect(Collectors.toList());
 
-    @RequestMapping(path = "/address/delivery/{addressId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> putDeliveryAddress(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @PathVariable int addressId) {
+    //     return ResponseEntity.ok().body(collect);
+    // }
+    // @RequestMapping(path = "/google", method = RequestMethod.GET)
+    // public ResponseEntity<String> getGoogle(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+    //         @RequestBody String address) {
+    //     addressService.geocodeAddress(address);
+    //     return ResponseEntity.ok().body("address2");
+    // }
 
-        // try {
-        userService.putUserAddressDelivery(customUserDetails.getId(), addressId);
-        // } catch (Exception ex) {
-        // // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body();
-        // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        // .body("Failed to save entity: " + ex.getMessage());
-        // }
-        return ResponseEntity.ok().build();
+    // @RequestMapping(path = "/address", method = RequestMethod.POST)
+    // public ResponseEntity<AddressResponse> addAddress(
+    //         @AuthenticationPrincipal CustomUserDetails customUserDetails,
+    //         @RequestBody AddressRequest addresses) {
 
-    }
+    //     AddressData addressData = addressDataService.getAddressData(addresses);
+    //     User user = userService.findById(customUserDetails.getId());
+
+    //     Address address = addressService.addAddress(addressData, addresses.getDetail(), user);
+
+    //     userService.addUserAddress(customUserDetails.getId(), address);
+
+    //     return ResponseEntity.ok().body(new AddressResponse(address));
+    // }
+
+    // @Transactional
+    // @RequestMapping(path = "/address", method = RequestMethod.PUT)
+    // public ResponseEntity<Boolean> putAddress(
+    //         @AuthenticationPrincipal CustomUserDetails customUserDetails,
+    //         @RequestBody AddressRequest addressRequest) {
+
+    //     User user = userService.findById(customUserDetails.getId());
+    //     if (user.getAddressDelivery().getId() == addressRequest.getId()) {
+    //         List<Cart> carts = user.getCarts();
+    //         if (carts.size() > 0) {
+    //             cartService.deleteAllCart(user);
+    //         }
+    //     }
+    //     Address putUserAddress = addressService.putUserAddress(customUserDetails.getId(), addressRequest);
+    //     if (putUserAddress.getId() == null) {
+    //         throw new ConcurrentModificationException("Encountered a serious system error");
+    //     }
+
+    //     return ResponseEntity.ok().body(true);
+    // }
+
+    // @Transactional
+    // @RequestMapping(path = "/address/{addressId}", method = RequestMethod.DELETE)
+    // public ResponseEntity<Boolean> deleteAddress(
+    //         @AuthenticationPrincipal CustomUserDetails customUserDetails,
+    //         @PathVariable int addressId) {
+
+    //     User user = userService.findById(customUserDetails.getId());
+    //     boolean deleteAddressDelivery = false;
+    //     if (user.getAddressDelivery().getId() == addressId) {
+    //         List<Cart> carts = user.getCarts();
+    //         if (carts.size() > 0) {
+    //             cartService.deleteAllCart(user);
+    //         }
+    //         deleteAddressDelivery = userService.deleteAddressDelivery(customUserDetails.getId(), addressId);
+    //     }
+
+    //     boolean deleteUserAddress = addressService.deleteUserAddress(customUserDetails.getId(), addressId);
+    //     if (deleteAddressDelivery && deleteUserAddress) {
+    //         // throw new ConcurrentModificationException("Encountered a serious system
+    //         // error");
+    //         return ResponseEntity.ok().build();
+    //     }
+
+    //     return ResponseEntity.badRequest().build();
+    // }
+
+    // @RequestMapping(path = "/address/delivery/{addressId}", method = RequestMethod.PUT)
+    // public ResponseEntity<?> putDeliveryAddress(
+    //         @AuthenticationPrincipal CustomUserDetails customUserDetails,
+    //         @PathVariable int addressId) {
+
+    //     // try {
+    //     userService.putUserAddressDelivery(customUserDetails.getId(), addressId);
+    //     // } catch (Exception ex) {
+    //     // // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body();
+    //     // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    //     // .body("Failed to save entity: " + ex.getMessage());
+    //     // }
+    //     return ResponseEntity.ok().build();
+
+    // }
 
 }

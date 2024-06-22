@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @Entity
-@Table(name = "address")
+@Table(name = "addr")
 public class Address extends BaseEntity {
 
     @Id
