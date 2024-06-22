@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.order_lunch.entity.Address;
 import com.order_lunch.entity.AddressData;
+import com.order_lunch.entity.User;
 import com.order_lunch.model.request.AddressRequest;
 import com.order_lunch.repository.IAddressRepository;
 import com.order_lunch.service.IAddressService;
@@ -38,7 +39,7 @@ public class AddressService implements IAddressService {
     @Transactional
     public Address putUserAddress(int userId, AddressRequest addressRequest) {
 
-        Address findAddress = getUserAddress(userId,addressRequest.getId());
+        Address findAddress = getUserAddress(userId, addressRequest.getId());
 
         AddressData addressData = addressDataService.getAddressData(addressRequest);
 
@@ -62,10 +63,11 @@ public class AddressService implements IAddressService {
     @Transactional
     public boolean deleteUserAddress(int userId, int addressId) {
 
-        Address findAddress = getUserAddress(userId,addressId);
+        Address findAddress = getUserAddress(userId, addressId);
 
-        // 不佳判斷式，會出現 >> 
-        // Null type mismatch: required '@NonNull Address' but the provided value is inferred as @Nullable
+        // 不佳判斷式，會出現 >>
+        // Null type mismatch: required '@NonNull Address' but the provided value is
+        // inferred as @Nullable
         if (findAddress != null) {
             iAddressRepository.delete(findAddress);
         }
@@ -82,13 +84,13 @@ public class AddressService implements IAddressService {
 
     @Override
     @Transactional
-    public Address addAddress(AddressData addressData, String detail) {
+    public Address addAddress(AddressData addressData, String detail, User user) {
 
         String addressStr = addressData.getCity() + addressData.getArea() + addressData.getStreet() + detail;
 
         Coordinates geocodeAddress = geocodingService.geocodeAddress(addressStr);
 
-        Address address = new Address(addressData, detail, geocodeAddress.getLat(), geocodeAddress.getLng());
+        Address address = new Address(user, addressData, detail, geocodeAddress.getLat(), geocodeAddress.getLng());
 
         Address save = iAddressRepository.save(address);
 
@@ -97,38 +99,33 @@ public class AddressService implements IAddressService {
     }
 
     @Override
-    public List<Address> addAddresses(List<AddressRequest> addresses) {
+    public List<Address> addAddresses(List<AddressRequest> addresses, User user) {
         List<Address> arrayList = new ArrayList<Address>();
         addresses.forEach(v -> {
             AddressData addressData = addressDataService.getAddressData(v.getId());
 
-            arrayList.add(this.addAddress(addressData, v.getDetail()));
+            arrayList.add(this.addAddress(addressData, v.getDetail(), user));
         });
 
         return arrayList;
-
     }
 
     @Override
     public Address getUserAddress(int userId, int addressId) {
-        Optional<Address> byUserIdAndAddressId =
-        iAddressRepository.findByUserIdAndId(userId, addressId);
+        Optional<Address> byUserIdAndAddressId = iAddressRepository.findByUserIdAndId(userId, addressId);
 
-        Address findAddress = byUserIdAndAddressId.orElseThrow(() -> new
-        ResponseStatusException(HttpStatus.NOT_FOUND, "Address"));
+        Address findAddress = byUserIdAndAddressId
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Address"));
         return findAddress;
     }
 
     @Override
     public boolean isUserAddress(int userId, int addressId) {
- 
-        iAddressRepository.existsByIdAndUser_id(addressId,userId);
 
-        return iAddressRepository.existsByIdAndUser_id(addressId,userId);
+        iAddressRepository.existsByIdAndUser_id(addressId, userId);
+
+        return iAddressRepository.existsByIdAndUser_id(addressId, userId);
     }
-
-
-
 
     @Override
     public List<Address> prioritizeAddress(List<Address> addressList, int idToPrioritize) {

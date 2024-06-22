@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @Entity
-@Table(name = "address")
+@Table(name = "addr")
 public class Address extends BaseEntity {
 
     @Id
@@ -60,7 +60,7 @@ public class Address extends BaseEntity {
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.DETACH,fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id" , nullable = false)
     private User user;
 
     // @JsonIgnore
@@ -106,7 +106,8 @@ public class Address extends BaseEntity {
         BeanUtils.copyProperties(addressRequest, this);
     }
 
-    public Address(AddressData addressData, String addressDetail , double lat,double lng) {
+    public Address(User user, AddressData addressData, String addressDetail , double lat,double lng) {
+        this.user=user;
         this.addressData=addressData;
         this.detail=addressDetail;
         this.lat=lat;

@@ -38,9 +38,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 		String password = authentication.getCredentials().toString();
 		HttpSession session = request.getSession(false);
 
-		String storedCaptcha ="";
+		String storedCaptcha = "";
 		if (session != null) {
-			 storedCaptcha = (String) session.getAttribute("captchaText");
+			storedCaptcha = (String) session.getAttribute("captchaText");
 			// 这里继续处理 storedCaptcha
 		} else {
 			// 处理会话为null的情况
@@ -53,7 +53,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 			MyWebAuthenticationDetails myDetails = (MyWebAuthenticationDetails) details;
 			String imageCode = myDetails.getImageCode();
 
-			//暫時註解驗證
+			// 暫時註解驗證
 			if (storedCaptcha == null || !storedCaptcha.equals(imageCode)) {
 				throw new BadCredentialsException("圖形驗證碼錯誤");
 			}

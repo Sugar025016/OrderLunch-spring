@@ -42,48 +42,44 @@
 -- --         CURRENT_TIMESTAMP,
 -- --         CURRENT_TIMESTAMP
 -- --     );
+-- INSERT
+--     IGNORE INTO addr (
+--         id,
+--         detail,
+--         create_time,
+--         update_time,
+--         address_data_id,
+--         user_id
+--     )
+-- VALUES
+--     (
+--         1,
+--         "detail",
+--         CURRENT_TIMESTAMP,
+--         CURRENT_TIMESTAMP,
+--         3,
+--         1
+--     );
+
+
+
+
 INSERT
-    IGNORE INTO address (
+    IGNORE INTO file_data (
         id,
-        detail,
-        create_time,
-        update_time
+        content_type,
+        file_name,
+        original_file_name,
+        suffix
     )
 VALUES
     (
         1,
-        "detail",
-        CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP
-    ),
-    (
-        2,
-        "detail",
-        CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP
-    ),
-    (
-        3,
-        "中華路一段36巷5號",
-        CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP
-    ),
-    (
-        4,
-        "中山南路123巷9號",
-        CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP
-    ),
-    (
-        5,
-        "中山南路123巷111號",
-        CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP
+        "image/jpeg",
+        "16923603086287289.jpg",
+        "images.jpeg",
+        ".jpg"
     );
-
-
-
-
 
 
 -- INSERT

@@ -1,0 +1,3 @@
+# 编译输出目录
+/target/
+target/classes/META-INF/additional-spring-configuration-metadata.json

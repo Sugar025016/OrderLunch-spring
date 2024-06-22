@@ -25,7 +25,7 @@ import com.order_lunch.service.Impl.ShopService;
 
 @Validated
 @RestController
-@RequestMapping("/api/addMeals")
+@RequestMapping("/addMeals")
 public class AddMealsController {
 
     @Autowired

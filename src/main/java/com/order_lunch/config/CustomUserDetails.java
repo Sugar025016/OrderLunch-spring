@@ -15,6 +15,7 @@ public class CustomUserDetails implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
+    
     public CustomUserDetails(int id, String username, String password,
             Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
@@ -22,6 +23,7 @@ public class CustomUserDetails implements UserDetails {
         this.password = password;
         this.authorities = authorities;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -40,7 +42,7 @@ public class CustomUserDetails implements UserDetails {
 
     public int getId() {
         // if(id == 0){
-        //     throw new ServletException("未登入");
+        // throw new ServletException("未登入");
         // }
         return id;
     }
@@ -48,25 +50,31 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isAccountNonExpired() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonExpired'");
+        if (id == 0) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isAccountNonLocked'");
+        // throw new UnsupportedOperationException("Unimplemented method 'isAccountNonLocked'");
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isCredentialsNonExpired'");
+        // throw new UnsupportedOperationException("Unimplemented method 'isCredentialsNonExpired'");
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
+        // throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
+        return true;
     }
 
 }

@@ -38,18 +38,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> myWebAuthenticationDetailsSource;
 
-
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.authorizeRequests(requests -> requests
-						.antMatchers(HttpMethod.GET, "/api/register/**", "/api/category/**", "/api/product/**",
-								"/api/shop/**", "/api/tab/**", "/logout*", "/login*")
+						.antMatchers(HttpMethod.GET, "/register/**", "/category/**", "/product/**",
+								"/shop/**", "/tab/**", "/test**")
 						.permitAll()
-						.antMatchers(HttpMethod.POST, "/api/register/**", "/login*").permitAll()
-						// .antMatchers("/api/upload*", "/sell/**").hasRole("USER")
-						.antMatchers("/api/upload**", "/sell/**", "/api/user/**", "/api/addMeals/**").hasRole("USER")
-						.antMatchers("/backstage/**", "/api/upload**", "/sell/**", "/api/**/**", "/api/addMeals/**")
+						.antMatchers(HttpMethod.POST, "/user/register**", "/test**").permitAll()
+						// .antMatchers("/upload*", "/sell/**").hasRole("USER")
+						.antMatchers("/upload**", "/sell/shop/**", "/user/**", "/addMeals/**", "/order/**")
+						.hasRole("USER")
+						.antMatchers("/backstage/**")
 						.hasRole("ADMIN")
 						.anyRequest().authenticated())
 				.formLogin(login -> login
@@ -75,12 +75,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 						.userDetailsService(userDetailsService));// 定義remember-me等於true 和 token 過期時
 
 		http.csrf(csrf -> csrf
-				.ignoringAntMatchers("/login*", "/logout*", "/api/upload*", "/api/register/**", "/api/shop*")
+				.ignoringAntMatchers("/login*", "/logout*", "/upload*", "/user/register**", "/shop*", "/test**")
 				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
 
 	}
-
-
 
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {

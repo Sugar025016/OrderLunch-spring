@@ -15,7 +15,7 @@ import com.order_lunch.model.response.ProductResponse;
 import com.order_lunch.service.Impl.ProductService;
 
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/product")
 public class ProductController {
 
     @Autowired

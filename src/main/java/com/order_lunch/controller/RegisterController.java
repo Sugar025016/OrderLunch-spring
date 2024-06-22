@@ -15,36 +15,24 @@ import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 // import org.apache.tomcat.jni.Status;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.order_lunch.config.CustomUserDetails;
-import com.order_lunch.entity.Shop;
-import com.order_lunch.entity.User;
-import com.order_lunch.enums.NewErrorStatus;
-import com.order_lunch.model.ErrorResponse;
-import com.order_lunch.model.request.ShopRequest;
-import com.order_lunch.model.request.UserRequest;
 import com.order_lunch.service.Impl.ShopService;
 import com.order_lunch.service.Impl.UserService;
 
 @Validated
 @RestController
-@RequestMapping("/api/register")
+@RequestMapping("/register")
 public class RegisterController {
 
     @Autowired
@@ -53,104 +41,7 @@ public class RegisterController {
     @Autowired
     ShopService shopService;
 
-    @RequestMapping(value = "/member", method = RequestMethod.POST)
-    public ResponseEntity<?> addUser(HttpSession session,
-            @RequestBody() @Valid UserRequest userRequest) {
-        String storedCaptcha = (String) session.getAttribute("captchaText");
 
-        if (storedCaptcha == null) {
-
-            ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setCode(NewErrorStatus.CAPTCHA_ERROR.getKey());
-            errorResponse.setMessage(NewErrorStatus.CAPTCHA_ERROR.getChinese());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-
-        }
-
-        if (!storedCaptcha.equals(userRequest.getVerifyCode())) {
-
-            ErrorResponse errorResponse = new ErrorResponse();
-            errorResponse.setCode(NewErrorStatus.CAPTCHA_ERROR.getKey());
-            errorResponse.setMessage(NewErrorStatus.CAPTCHA_ERROR.getChinese());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-
-        }
-
-        if (userService.accountExists(userRequest.getAccount())) {
-            ErrorResponse errorResponse = new ErrorResponse(NewErrorStatus.ACCOUNT_EXISTS.getKey(),NewErrorStatus.ACCOUNT_EXISTS.getChinese());
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        }
-
-        session.removeAttribute("captchaText"); // 驗證成功後從Session中移除
-        userService.addMember(userRequest);
-        
-
-        return ResponseEntity.ok().build();
-    }
-
-    @RequestMapping(value = "/shop", method = RequestMethod.POST)
-    public ResponseEntity<?> addShop(HttpSession session,
-            @RequestBody() @Valid ShopRequest shopRequest,
-            @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        // Authentication authentication =
-        // SecurityContextHolder.getContext().getAuthentication();
-
-        ErrorResponse errorResponse = new ErrorResponse();
-        if (customUserDetails == null) {
-            // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(validationError);
-            // throw new IllegalArgumentException("customUserDetails cannot be null");
-            // return ResponseEntity.badRequest().build();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            // return ResponseEntity.of();
-        }
-
-        String storedCaptcha = (String) session.getAttribute("captchaText");
-
-        // 圖片驗證 暫時關閉
-        if (storedCaptcha == null || !storedCaptcha.equals(shopRequest.getCaptcha())) {
-            // validationError.addFieldError("captcha", Status.CAPTCHA_MISTAKE.getKey());
-            // Response res = new Response();
-            // res.setMessage(storedCaptcha);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("圖形驗證碼錯誤");
-        }
-        session.removeAttribute("captchaText"); // 驗證成功後從Session中移除
-
-        if (shopService.existsByName(shopRequest.getName())) {
-            errorResponse.setCode(NewErrorStatus.SHOP_DUPLICATE_NAME.getKey());
-            errorResponse.setMessage(NewErrorStatus.SHOP_DUPLICATE_NAME.getChinese());
-            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(errorResponse);
-        }
-        User user = userService.findById(customUserDetails.getId());
-        Shop shop = shopService.addShop(shopRequest, user);
-
-        return ResponseEntity.ok().body(shop.getId());
-    }
-
-    // @RequestMapping(value = "/shop", method = RequestMethod.POST)
-    // public ResponseEntity<Response> addShop(HttpSession session,
-    // @RequestBody() @Valid ShopRequest shopRequest,@AuthenticationPrincipal
-    // CustomUserDetails customUserDetails) {
-    // // Authentication authentication =
-    // SecurityContextHolder.getContext().getAuthentication();
-
-    // Response response = new Response();
-    // if (customUserDetails == null ) {
-    // response.setCode(Status.OK);
-    // return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
-    // }
-    // String storedCaptcha = (String) session.getAttribute("captchaText");
-
-    // if (storedCaptcha == null || !storedCaptcha.equals(shopRequest.getCaptcha()))
-    // {
-
-    // return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
-    // }
-    // session.removeAttribute("captchaText"); // 驗證成功後從Session中移除
-    // shopService.addShop(shopRequest);
-
-    // return ResponseEntity.ok().build();
-    // }
 
     @GetMapping("/captcha")
     @ResponseBody
@@ -240,7 +131,8 @@ public class RegisterController {
         // 生成包含字母和數字的隨機字串
         // String characters =
         // "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        // String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        String characters = "0123456789";
         // String characters = "abcdefghijklmnopqrstuvwxyz0123456789";
         StringBuilder captchaText = new StringBuilder();
         Random random = new Random();

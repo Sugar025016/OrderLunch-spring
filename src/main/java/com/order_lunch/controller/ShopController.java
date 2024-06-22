@@ -20,7 +20,7 @@ import com.order_lunch.service.Impl.ShopService;
 import com.order_lunch.service.Impl.UserService;
 
 @RestController
-@RequestMapping("/api/shop")
+@RequestMapping("/shop")
 public class ShopController {
 
     @Autowired

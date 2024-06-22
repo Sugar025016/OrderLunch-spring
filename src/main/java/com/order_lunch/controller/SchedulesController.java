@@ -16,7 +16,7 @@ import com.order_lunch.model.request.SchedulesRequest;
 import com.order_lunch.service.Impl.ScheduleService;
 
 @RestController
-@RequestMapping("/api/schedule")
+@RequestMapping("/schedule")
 public class SchedulesController {
 
     @Autowired

@@ -18,7 +18,7 @@ public interface IAddMealsRepository extends JpaRepository<AddMeals, Integer> {
     void deleteAllById(int addMealsId);
 
 
-    @Query(value = "DELETE FROM add_meals_detail WHERE add_meals_id = :addMealsId", nativeQuery = true)
+    @Query(value = "DELETE FROM add_meals_detail WHERE add_meals_id = ?1", nativeQuery = true)
     Set<AddMeals> deleteByAddMealsId(int addMealsId);
 
     boolean existsByIdAndShopUserId(int addMealsId, int userId);
