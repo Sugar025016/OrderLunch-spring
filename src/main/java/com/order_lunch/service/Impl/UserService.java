@@ -14,7 +14,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Lock;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import com.order_lunch.entity.Address;
@@ -69,7 +68,6 @@ public class UserService implements IUserService {
         }
         User saveUser = iUserRepository.save(user);
         emailService.sendSimpleMessage(user.getAccount(), "123", "http://localhost:8080/api/emailCheck/123");
-        
 
         return user;
     }
@@ -172,19 +170,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean putUserPassword(PasswordRequest userPutRequest, int id) {
-        Optional<User> findById = iUserRepository.findById(id);
-        User user = findById.orElseThrow(
-                () -> new IllegalArgumentException("Value not found"));
-
-        if (!user.getPassword().equals(userPutRequest.getPassword())) {
-            throw new BadCredentialsException("密碼錯誤");
-        }
+    public void  putUserPassword(PasswordRequest userPutRequest, User user) {
 
         user.setPassword(userPutRequest.getNewPassword());
         iUserRepository.save(user);
 
-        return true;
     }
 
     @Override
@@ -287,6 +277,12 @@ public class UserService implements IUserService {
     public boolean accountExists(String user) {
 
         return iUserRepository.existsByAccount(user);
+    }
+
+    @Override
+    public boolean checkUserPassword(String password, int id) {
+
+        // iUserRepository.
     }
 
 }

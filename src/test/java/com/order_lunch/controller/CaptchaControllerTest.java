@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class RegisterControllerTest {
+public class CaptchaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

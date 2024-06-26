@@ -28,7 +28,9 @@ public interface IUserService {
 
     User putUserAddressDelivery(int userId, int addressId);
 
-    boolean putUserPassword(PasswordRequest passwordRequest, int id);
+    void putUserPassword(PasswordRequest passwordRequest, User user);
+
+    boolean checkUserPassword(String password, int id);
 
     List<Shop> findLoveByAccount(int id);
 

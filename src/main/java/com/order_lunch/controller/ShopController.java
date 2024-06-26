@@ -30,19 +30,8 @@ public class ShopController {
     UserService userService;
 
 
-    // @RequestMapping(path = "", method = RequestMethod.GET)
-    // public ResponseEntity<List<ShopResponse>> getShops(ShopSearchRequest
-    // shopRequest) {
 
-    // Set<Shop> findShops = shopService.findShops(shopRequest);
-    // List<ShopResponse> arrayList = new ArrayList<>();
-    // for (Shop findShop : findShops) {
-    // ShopResponse shopResponse = new ShopResponse(
-    // findShop);
-    // arrayList.add( shopResponse);
-    // }
-    // return ResponseEntity.ok().body(arrayList);
-    // }
+    
 
     @RequestMapping(path = "", method = RequestMethod.GET)
     public ResponseEntity<Page<ShopResponse>> getShops(@AuthenticationPrincipal CustomUserDetails customUserDetails,

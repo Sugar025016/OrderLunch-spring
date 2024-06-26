@@ -33,7 +33,7 @@ import com.order_lunch.service.Impl.UserService;
 @Validated
 @RestController
 @RequestMapping("/register")
-public class RegisterController {
+public class CaptchaController {
 
     @Autowired
     UserService userService;
