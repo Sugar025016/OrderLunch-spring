@@ -191,37 +191,6 @@ public class UserService implements IUserService {
     @Override
     public Boolean addOrDeleteUserLove(int id, int shopId) {
 
-        // Optional<User> findById = iUserRepository.findById(id);
-        // User user = findById.orElseThrow(
-        // () -> new IllegalArgumentException("Value not found"));
-        // Shop findByShopIdAndLovesUserId = iShopRepository.findByIdAndLovesId(shopId,
-        // id).orElse(null);
-
-        // if (findByShopIdAndLovesUserId == null) {
-        // Shop shop = iShopRepository.findByIdAndIsDeleteIsFalse(shopId).orElseThrow(
-        // () -> new IllegalArgumentException("Value not found"));
-        // user.getLoves().add(shop);
-        // } else {
-
-        // user.getLoves().removeIf(v->v.getId()==findByShopIdAndLovesUserId.getId());
-
-        // }
-        /////////////////////////////////////////////////////////////////////////////
-        // User user = iUserRepository.findById(id).orElseThrow(
-        // () -> new IllegalArgumentException("Value not found"));
-        // Optional<Shop> findByIdAndDeleteIsFalse =
-        // iShopRepository.findByIdAndIsDeleteIsFalse(shopId);
-        // Shop shop = findByIdAndDeleteIsFalse.orElseThrow(
-        // () -> new IllegalArgumentException("Value not found"));
-        // boolean anyMatch = user.getLoves().stream().anyMatch(v -> v.equals(shop));
-        // if (anyMatch) {
-        // user.getLoves().remove(shop);
-        // } else {
-        // user.getLoves().add(shop);
-        // }
-
-        // user = iUserRepository.save(user);
-
         User user = iUserRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("Value not found"));
         List<Shop> loves = user.getLoves();
@@ -279,10 +248,5 @@ public class UserService implements IUserService {
         return iUserRepository.existsByAccount(user);
     }
 
-    @Override
-    public boolean checkUserPassword(String password, int id) {
-
-        // iUserRepository.
-    }
 
 }

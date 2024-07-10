@@ -27,7 +27,6 @@ public class CaptchaControllerTest {
 
     @Test
     public void testGenerateCaptcha() throws Exception {
-        // 模拟请求，并检查响应状态和会话中的验证码文本
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/register/captcha")
                         .param("timestamp", "1234567890"))
                 .andExpect(status().isOk())

@@ -34,7 +34,6 @@ public class SecurityLoginTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        // 这个方法可以用来设置一些初始数据或配置
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/register/captcha")
                 .param("timestamp", "1234567890"))
                 .andExpect(status().isOk())
@@ -47,15 +46,15 @@ public class SecurityLoginTest {
     @Test
     void testLoginWithValidCredentials() throws Exception {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/login")
-                .contentType(MediaType.APPLICATION_FORM_URLENCODED) // 设置 Content-Type 头部
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED) 
                 .session((MockHttpSession) session)
                 .param("username", "user@testgmail.com")
                 .param("password", "password")
                 .param("captcha", captchaText)
-                .param("rememberMe", "true"))// 添加 CSRF 令牌
-                .andExpect(MockMvcResultMatchers.status().isOk())
+                .param("rememberMe", "true"))
+                .andExpect(status().isOk())
                 .andReturn();
-        // System.out.println("result:" + result);
+        System.out.println("result:" + result);
 
     }
 

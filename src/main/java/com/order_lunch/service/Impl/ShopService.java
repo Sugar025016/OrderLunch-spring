@@ -136,8 +136,9 @@ public class ShopService implements IShopService {
         if (!findById.isPresent()) {
             throw new NullPointerException();
         }
-        Optional<ShopAddress> findById2 = iShopAddressRepository.findById(shopPutRequest.getAddress().getId());
-        if (!findById2.isPresent()) {
+
+        Optional<ShopAddress> addressOptional = iShopAddressRepository.findById(shopPutRequest.getAddress().getId());
+        if (!addressOptional.isPresent()) {
             throw new NullPointerException();
         }
 
@@ -146,22 +147,22 @@ public class ShopService implements IShopService {
         // throw new NullPointerException();
         // }
 
-        ShopAddress shopAddress = findById2.get();
+        ShopAddress shopAddress = addressOptional.get();
 
         // shopAddress.setAddress(shopPutRequest.getAddress());
 
         ShopAddress newShopAddress = shopAddressService.putShopAddress(shopAddress, shopPutRequest.getAddress());
 
-        ShopAddress save = iShopAddressRepository.save(newShopAddress);
+        ShopAddress address = iShopAddressRepository.save(newShopAddress);
         Shop shop = findById.get();
         // public void setShop(BackstageShopPutRequest shopPutRequest, ShopAddress
         // shopAddress, FileData fileData) {
 
         if (!findById3.isPresent()) {
-            shop.setShop(shopPutRequest, save);
+            shop.setShop(shopPutRequest, address);
         } else {
 
-            shop.setShop(shopPutRequest, save, findById3.get());
+            shop.setShop(shopPutRequest, address, findById3.get());
         }
 
         iShopRepository.save(shop);

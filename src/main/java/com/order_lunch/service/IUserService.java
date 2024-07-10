@@ -30,8 +30,6 @@ public interface IUserService {
 
     void putUserPassword(PasswordRequest passwordRequest, User user);
 
-    boolean checkUserPassword(String password, int id);
-
     List<Shop> findLoveByAccount(int id);
 
     Boolean addOrDeleteUserLove(int id, int shopId);

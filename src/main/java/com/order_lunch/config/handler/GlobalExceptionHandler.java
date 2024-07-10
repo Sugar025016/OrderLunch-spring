@@ -106,14 +106,22 @@ public class GlobalExceptionHandler extends Exception {
         // String exceptionClassName = ex.getClass().getName();
         ErrorResponse errorResponse = new ErrorResponse();
 
-        // validationError.addFieldError(exceptionClassName,ex.getReason());
-
-        // 获取异常消息
+        String fullClassName = ex.getReason();
 
         // 从异常消息中提取类名
-        String className = ex.getReason();
+        String className = null;
+        if (fullClassName != null) {
+            // 找到最后一个点号的位置
+            int lastDotIndex = fullClassName.lastIndexOf('.');
+            if (lastDotIndex != -1) {
+                // 提取类名
+                className = fullClassName.substring(lastDotIndex + 1);
+            } else {
+                // 如果没有点号，整个字符串就是类名
+                className = fullClassName;
+            }
+        }
 
-        // validationError.addFieldError(className, ex.getReason());
         errorResponse.setCode(402);
         errorResponse.setMessage(className);
 

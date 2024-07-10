@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -47,8 +46,8 @@ public class Product extends BaseEntity {
     @Column(name = "description", length = 255)
     private String description;
 
-    @Column(name = "prise", length = 255, nullable = false)
-    private int prise;
+    @Column(name = "price", length = 255, nullable = false)
+    private int price;
 
     @Column(name = "is_delete", length = 255, nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private boolean isDelete;
@@ -92,7 +91,7 @@ public class Product extends BaseEntity {
         return "Product{" +
                 "id=" + id +
                 ", name=" + name +
-                ", prise=" + prise +
+                ", price=" + price +
                 ", description=" + description +
                 '}';
     }

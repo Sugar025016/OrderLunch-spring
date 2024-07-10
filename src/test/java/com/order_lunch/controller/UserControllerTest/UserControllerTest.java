@@ -1,5 +1,6 @@
-package com.order_lunch.controller;
+package com.order_lunch.controller.UserControllerTest;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -19,15 +20,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
-// import com.order_lunch.util.SecurityUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
-@AutoConfigureMockMvc // 自动配置 MockMvc
+@AutoConfigureMockMvc // 自動配置 MockMvc
 @ActiveProfiles("test") // 加載 application-test.properties 文件配置
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserControllerTest {
@@ -44,21 +46,30 @@ public class UserControllerTest {
                                 .param("timestamp", "1234567890"))
                                 .andExpect(status().isOk())
                                 .andReturn();
+                String mvcResultContent = mvcResult.getResponse().getContentAsString();
+                System.out.println("mvcResult: " + mvcResult);
+                System.out.println("mvcResultContent: " + mvcResultContent);
                 session = mvcResult.getRequest().getSession();
                 captchaText = (String) session.getAttribute("captchaText");
-                mockMvc.perform(MockMvcRequestBuilders.post("/login")
+                MvcResult validRequestResult = mockMvc.perform(MockMvcRequestBuilders.post("/login")
                                 .contentType(MediaType.APPLICATION_FORM_URLENCODED) // 设置 Content-Type 头部
                                 .session((MockHttpSession) session)
                                 .param("username", "user@testgmail.com")
                                 .param("password", "password")
                                 .param("captcha", captchaText)
                                 .param("rememberMe", "true"))
-                                .andExpect(MockMvcResultMatchers.status().isOk())
+                                .andExpect(status().isOk())
                                 .andReturn();
+                String validResponseContent = validRequestResult.getResponse().getContentAsString();
+                System.out.println("mvcResult: " + mvcResult);
+                System.out.println("validRequestResult: " + validRequestResult);
+                System.out.println("validResponseContent: " + validResponseContent);
 
         }
 
         @Test
+        @Rollback
+        @Transactional
         void testGetUser_Success() throws Exception {
 
                 MvcResult validRequestResult = mockMvc.perform(MockMvcRequestBuilders.get("/user")
@@ -67,7 +78,9 @@ public class UserControllerTest {
                                 .andExpect(jsonPath("$.name").value("user"))
                                 .andExpect(jsonPath("$.email").isEmpty())
                                 .andExpect(jsonPath("$.phone").value("123456789"))
-                                .andExpect(jsonPath("$.favoriteShops").isEmpty())
+                                .andExpect(jsonPath("$.favoriteShops", hasSize(2)))
+                                .andExpect(jsonPath("$.favoriteShops[0].name").value("valueA"))
+                                .andExpect(jsonPath("$.favoriteShops[1].name").value("valueB"))
                                 .andExpect(jsonPath("$.cartShopId").value(0))
                                 .andExpect(jsonPath("$.cartCount").value(0))
                                 .andExpect(jsonPath("$.cartLat").isEmpty())
@@ -76,15 +89,16 @@ public class UserControllerTest {
                                 .andExpect(jsonPath("$.orderCount").value(0))
                                 .andExpect(jsonPath("$.shopOrderCount").value(0))
                                 .andExpect(jsonPath("$.address").isEmpty())
-
-                                .andExpect(MockMvcResultMatchers.status().isOk())
+                                .andExpect(status().isOk())
                                 .andReturn();
                 String validResponseContent = validRequestResult.getResponse().getContentAsString();
-                System.out.println("///////////////////////////: " + validRequestResult);
-                System.out.println("///////////////////////////: " + validResponseContent);
+                System.out.println("validRequestResult: " + validRequestResult);
+                System.out.println("validResponseContent: " + validResponseContent);
         }
 
         @Test
+        @Rollback
+        @Transactional
         void testPutUser_Success() throws Exception {
 
                 String userRequest = new JSONObject()
@@ -93,12 +107,16 @@ public class UserControllerTest {
                                 .put("email", "johndoe@example.com")
                                 .toString();
 
-                mockMvc.perform(MockMvcRequestBuilders.put("/user")
+                MvcResult validRequestResult1 = mockMvc.perform(MockMvcRequestBuilders.put("/user")
                                 .session((MockHttpSession) session)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(userRequest)
                                 .with(SecurityMockMvcRequestPostProcessors.csrf()))
-                                .andExpect(status().isOk());
+                                .andExpect(status().isOk())
+                                .andReturn();
+                String validResponseContent1 = validRequestResult1.getResponse().getContentAsString();
+                System.out.println("validRequestResult1: " + validRequestResult1);
+                System.out.println("validResponseContent1: " + validResponseContent1);
 
                 MvcResult validRequestResult = mockMvc.perform(MockMvcRequestBuilders.get("/user")
                                 .session((MockHttpSession) session))
@@ -106,7 +124,9 @@ public class UserControllerTest {
                                 .andExpect(jsonPath("$.name").value("John Doe"))
                                 .andExpect(jsonPath("$.email").isEmpty())
                                 .andExpect(jsonPath("$.phone").value("9876543211"))
-                                .andExpect(jsonPath("$.favoriteShops").isEmpty())
+                                .andExpect(jsonPath("$.favoriteShops", hasSize(2)))
+                                .andExpect(jsonPath("$.favoriteShops[0].name").value("valueA"))
+                                .andExpect(jsonPath("$.favoriteShops[1].name").value("valueB"))
                                 .andExpect(jsonPath("$.cartShopId").value(0))
                                 .andExpect(jsonPath("$.cartCount").value(0))
                                 .andExpect(jsonPath("$.cartLat").isEmpty())
@@ -115,8 +135,11 @@ public class UserControllerTest {
                                 .andExpect(jsonPath("$.orderCount").value(0))
                                 .andExpect(jsonPath("$.shopOrderCount").value(0))
                                 .andExpect(jsonPath("$.address").isEmpty())
-                                .andExpect(MockMvcResultMatchers.status().isOk())
+                                .andExpect(status().isOk())
                                 .andReturn();
+                String validResponseContent = validRequestResult.getResponse().getContentAsString();
+                System.out.println("validRequestResult: " + validRequestResult);
+                System.out.println("validResponseContent: " + validResponseContent);
         }
 
         @Test
@@ -143,10 +166,10 @@ public class UserControllerTest {
                                                 Matchers.is("size must be between 10 and 11"))))
                                 .andExpect(MockMvcResultMatchers.jsonPath("$.email").value(Matchers.anyOf(
                                                 Matchers.is("must not be blank"),
-                                                Matchers.is("size must be between 8 and 225")))); // 假设返回的 JSON
+                                                Matchers.is("must be a well-formed email address"),
+                                                Matchers.is("size must be between 8 and 225"))));
 
         }
-
 
         // 未必要在這邊驗證
         @Test
@@ -172,6 +195,8 @@ public class UserControllerTest {
         }
 
         @Test
+        @Rollback
+        @Transactional
         void testPutUserPassword_Success() throws Exception {
 
                 String userRequest = new JSONObject()
@@ -209,7 +234,7 @@ public class UserControllerTest {
                                                 Matchers.is("size must be between 8 and 16"))))
                                 .andExpect(MockMvcResultMatchers.jsonPath("$.newPassword").value(Matchers.anyOf(
                                                 Matchers.is("must not be blank"),
-                                                Matchers.is("size must be between 8 and 16")))); // 假设返回的 JSON
+                                                Matchers.is("size must be between 8 and 16"))));
 
         }
 
@@ -228,25 +253,146 @@ public class UserControllerTest {
                                 .with(SecurityMockMvcRequestPostProcessors.csrf()))
                                 .andExpect(status().isBadRequest())
                                 .andExpect(jsonPath("$.code").value(402))
-                                .andReturn(); // 假设返回的 JSON
+                                .andReturn();
 
                 String validResponseContent = validRequestResult.getResponse().getContentAsString();
-                System.out.println("///////////////////////////: " + validRequestResult);
-                System.out.println("///////////////////////////: " + validResponseContent);
-        }
-
-
-
-
-        
-        @Test
-        void testGetGoogle() {
-
+                System.out.println("validRequestResult: " + validRequestResult);
+                System.out.println("validResponseContent: " + validResponseContent);
         }
 
         @Test
-        void testGetLoves() {
+        void testGetLoves_Success() throws Exception {
+
+                MvcResult validRequestResult = mockMvc.perform(get("/user/favorite")
+                                .session((MockHttpSession) session)
+                                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                                .andExpect(status().isOk())
+                                .andExpect(content().contentType("application/json"))
+                                .andExpect(jsonPath("$[0].id").value(1))
+                                .andExpect(jsonPath("$[0].name").value("valueA"))
+                                .andExpect(jsonPath("$[0].description").value("description55555555555666"))
+                                .andExpect(jsonPath("$[0].imgUrl").value("http://localhost:8082/17015922948981374.jpg"))
+                                .andExpect(jsonPath("$[0].orderable").value(true))
+                                .andExpect(jsonPath("$[1].id").value(2))
+                                .andExpect(jsonPath("$[1].name").value("valueB"))
+                                .andExpect(jsonPath("$[1].imgUrl").value("http://localhost:8082/1691994708919221.jpg"))
+                                .andExpect(jsonPath("$[1].orderable").value(true))
+                                .andReturn();
+
+                String validResponseContent = validRequestResult.getResponse().getContentAsString();
+                System.out.println("validRequestResult: " + validRequestResult);
+                System.out.println("validResponseContent: " + validResponseContent);
+        }
+
+        @Test
+        @Rollback
+        @Transactional
+        void testAddOrDeleteUserLove_DeleteSuccess() throws Exception {
+                mockMvc.perform(put("/user/favorite/2")
+                                .session((MockHttpSession) session)
+                                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                                .andExpect(status().isOk())
+                                .andReturn();
+
+                MvcResult validRequestResult = mockMvc.perform(get("/user/favorite")
+                                .session((MockHttpSession) session)
+                                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                                .andExpect(status().isOk())
+                                .andExpect(content().contentType("application/json"))
+                                .andExpect(jsonPath("$[0].id").value(1))
+                                .andExpect(jsonPath("$[0].name").value("valueA"))
+                                .andExpect(jsonPath("$[0].description").value("description55555555555666"))
+                                .andExpect(jsonPath("$[0].imgUrl").value("http://localhost:8082/17015922948981374.jpg"))
+                                .andExpect(jsonPath("$[0].orderable").value(true))
+                                .andReturn();
+                String validResponseContent = validRequestResult.getResponse().getContentAsString();
+                System.out.println("validRequestResult: " + validRequestResult);
+                System.out.println("validResponseContent: " + validResponseContent);
 
         }
+
+        @Test
+        @Rollback
+        @Transactional
+        void testAddOrDeleteUserLove_AddSuccess() throws Exception {
+                mockMvc.perform(put("/user/favorite/5")
+                                .session((MockHttpSession) session)
+                                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                                .andExpect(status().isOk())
+                                .andReturn();
+
+                MvcResult validRequestResult = mockMvc.perform(get("/user/favorite")
+                                .session((MockHttpSession) session)
+                                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                                .andExpect(status().isOk())
+                                .andExpect(content().contentType("application/json"))
+                                .andExpect(jsonPath("$[0].id").value(1))
+                                .andExpect(jsonPath("$[0].name").value("valueA"))
+                                .andExpect(jsonPath("$[0].description").value("description55555555555666"))
+                                .andExpect(jsonPath("$[0].imgUrl").value("http://localhost:8082/17015922948981374.jpg"))
+                                .andExpect(jsonPath("$[0].orderable").value(true))
+                                .andExpect(jsonPath("$[1].id").value(2))
+                                .andExpect(jsonPath("$[1].name").value("valueB"))
+                                .andExpect(jsonPath("$[1].imgUrl").value("http://localhost:8082/1691994708919221.jpg"))
+                                .andExpect(jsonPath("$[1].orderable").value(true))
+                                .andExpect(jsonPath("$[2].id").value(5))
+                                .andExpect(jsonPath("$[2].name").value("newNAME"))
+                                .andExpect(jsonPath("$[2].description").value("description"))
+                                .andExpect(jsonPath("$[2].imgUrl").value("http://localhost:8082/1691922420438552.jpg"))
+                                .andExpect(jsonPath("$[2].orderable").value(false))
+                                .andReturn();
+
+                String validResponseContent = validRequestResult.getResponse().getContentAsString();
+                System.out.println("validRequestResult: " + validRequestResult);
+                System.out.println("validResponseContent: " + validResponseContent);
+
+        }
+
+        @Test
+        @Rollback
+        @Transactional
+        void testAddOrDeleteUserLove_Mismatch() throws Exception {
+                MvcResult validRequestResult = mockMvc.perform(put("/user/favorite/999")
+                                .session((MockHttpSession) session)
+                                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                                .andExpect(status().isBadRequest())
+                                .andExpect(jsonPath("$.code").value(611))
+                                .andExpect(jsonPath("$.message").value("商店不存在"))
+                                .andReturn();
+
+                String validResponseContent = validRequestResult.getResponse().getContentAsString();
+                System.out.println("validRequestResult: " + validRequestResult);
+                System.out.println("validResponseContent: " + validResponseContent);
+
+        }
+
+        @Test
+        @Rollback
+        @Transactional
+        void putDeliveryAddress_Success() throws Exception {
+                mockMvc.perform(put("/user/addressDelivery/40")
+                                .session((MockHttpSession) session)
+                                .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                                .andExpect(status().isOk())
+                                .andReturn();
+
+                                MvcResult validRequestResult = mockMvc.perform(MockMvcRequestBuilders.get("/user")
+                                .session((MockHttpSession) session))
+                                .andExpect(jsonPath("$.address.id").value(40))
+                                .andExpect(jsonPath("$.address.city").value("台南市"))
+                                .andExpect(jsonPath("$.address.area").value("南區"))
+                                .andExpect(jsonPath("$.address.street").value("大同路２段"))
+                                .andExpect(jsonPath("$.address.detail").value("123號"))
+                                .andExpect(jsonPath("$.address.lat").value(22.9779755))
+                                .andExpect(jsonPath("$.address.lng").value(120.2136988))
+                                .andExpect(status().isOk())
+                                .andReturn();
+
+                String validResponseContent = validRequestResult.getResponse().getContentAsString();
+                System.out.println("validRequestResult: " + validRequestResult);
+                System.out.println("validResponseContent: " + validResponseContent);
+
+        }
+
 
 }

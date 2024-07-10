@@ -1,5 +1,7 @@
 package com.order_lunch.model.request;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -10,7 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,33 +21,40 @@ public class BackstageShopPutRequest {
     @NotNull
     private Integer id;
 
-
     @JsonProperty("name")
+    @Size(min = 3, max = 16)
+    @NotBlank
     private String shopName;
 
-    @Size(min=8,max=255)
+    @Size( max = 255)
     private String description;
 
-    private AddressRequest address;
-
-    @Size(min=10,max=11)
+    @NotBlank
+    @Size(min = 10, max = 11)
     private String phone;
 
     private Integer imgId;
 
-    @NotNull
+    // @NotNull
     private String imgUrl;
-    
 
     @NotNull
-    private double deliveryKm;
+    private Double deliveryKm;
 
     @NotNull
-    private int deliveryPrice;
+    private Integer deliveryPrice;
 
+    @Valid
+    @NotNull
+    private AddressRequest address;
+
+    @NotNull
     @JsonProperty("orderable")
-    private boolean isOrderable;
+    private Boolean isOrderable;
+
+    @NotNull
     @JsonProperty("disable")
-    private boolean isDisable;
+    private Boolean isDisable;
+
     private boolean isDelete;
 }

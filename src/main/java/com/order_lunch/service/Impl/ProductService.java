@@ -163,7 +163,7 @@ public class ProductService implements IProductService {
     public boolean putSellProduct(SellProductRequest sellProductRequest ,int productId,int userId) {
 
         Optional<Product> findById2 = iProductRepository.findByIdAndShopUserIdAndIsDeleteIsFalse(productId,userId);
-        Product product = findById2.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Product product = findById2.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
 
         product.setSellProduct(sellProductRequest);
 

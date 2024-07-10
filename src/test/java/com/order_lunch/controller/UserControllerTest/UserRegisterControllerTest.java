@@ -1,4 +1,4 @@
-package com.order_lunch.controller;
+package com.order_lunch.controller.UserControllerTest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.ActiveProfiles;
-// import com.order_lunch.util.SecurityUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -28,7 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 
 @SpringBootTest
-@AutoConfigureMockMvc // 自动配置 MockMvc
+@AutoConfigureMockMvc // 自動配置 MockMvc
 @ActiveProfiles("test") // 加載 application-test.properties 文件配置
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserRegisterControllerTest {
@@ -108,8 +107,8 @@ public class UserRegisterControllerTest {
                                 .andReturn();
 
                 String validResponseContent = validRequestResult.getResponse().getContentAsString();
-                // System.out.println("///////////////////////////: " + validRequestResult);
-                // System.out.println("///////////////////////////: " + validResponseContent);
+                System.out.println("validRequestResult: " + validRequestResult);
+                System.out.println("validResponseContent: " + validResponseContent);
 
         }
 

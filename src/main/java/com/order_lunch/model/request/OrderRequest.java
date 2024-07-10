@@ -6,10 +6,9 @@ import javax.validation.constraints.Size;
 
 import com.order_lunch.validator.DateTimeAfter;
 
-import lombok.Data;
 import lombok.NonNull;
 
-@Data
+// @Data
 public class OrderRequest {
 
     @NonNull
@@ -26,5 +25,30 @@ public class OrderRequest {
         this.addressId = addressId;
         this.remark = remark;
     }
+
+    public LocalDateTime getTakeTime() {
+        return takeTime;
+    }
+
+    public void setTakeTime(LocalDateTime takeTime) {
+        this.takeTime = takeTime;
+    }
+
+    public int getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(int addressId) {
+        this.addressId = addressId;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+    
     
 }

@@ -8,7 +8,9 @@ import lombok.Data;
 
 @Data
 public class AddressResponse {
-    private Integer id;
+    private int id;
+
+    private int addressDataId;
 
     private String city;
 
@@ -31,6 +33,7 @@ public class AddressResponse {
         this.city = addressData.getCity();
         this.area = addressData.getArea();
         this.street = addressData.getStreet();
+        this.addressDataId = addressData.getId();
     }
 
     public AddressResponse(com.order_lunch.entity.ShopAddress shopAddress) {

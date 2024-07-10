@@ -1,5 +1,6 @@
 package com.order_lunch.entity;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -161,7 +162,7 @@ public class Shop extends BaseEntity {
         this.deliveryKm = shopPutRequest.getDeliveryKm();
         this.deliveryPrice = shopPutRequest.getDeliveryPrice();
 
-        setIsDelete(shopPutRequest.isDelete(), shopPutRequest.isDisable(), shopPutRequest.isOrderable());
+        setIsDelete(shopPutRequest.isDelete(), shopPutRequest.getIsDisable(), shopPutRequest.getIsOrderable());
 
         this.fileData = fileData;
         this.shopAddress = shopAddress;
@@ -176,23 +177,40 @@ public class Shop extends BaseEntity {
         this.deliveryKm = shopPutRequest.getDeliveryKm();
         this.deliveryPrice = shopPutRequest.getDeliveryPrice();
 
-        setIsDelete(shopPutRequest.isDelete(), shopPutRequest.isDisable(), shopPutRequest.isOrderable());
+        setIsDelete(shopPutRequest.isDelete(), shopPutRequest.getIsDisable(), shopPutRequest.getIsOrderable());
 
         this.shopAddress = shopAddress;
         this.fileData = null;
     }
 
     public List<Schedule> getSchedulesForOpen() {
-        return this.schedules.stream().filter(v -> v.getType() == 0).collect(Collectors.toList());
+        if (this.schedules != null) {
+            return this.schedules.stream().filter(v -> v.getType() == 0).collect(Collectors.toList());
+        } else {
+            // 处理 schedules 为 null 的情况，可能返回空列表或者抛出异常，取决于实际需求
+            return Collections.emptyList(); // 返回空列表或者其他处理
+        }
     }
 
     public List<Schedule> getSchedulesForDayOfWeek(int week) {
-        return this.schedules.stream().filter(v -> v.getWeek() == week && v.getType() == 0)
-                .collect(Collectors.toList());
+
+        if (this.schedules != null) {
+            return this.schedules.stream().filter(v -> v.getWeek() == week && v.getType() == 0)
+                    .collect(Collectors.toList());
+        } else {
+            // 处理 schedules 为 null 的情况，可能返回空列表或者抛出异常，取决于实际需求
+            return Collections.emptyList(); // 返回空列表或者其他处理
+        }
     }
 
     public List<Product> getProductsForNotDelete() {
-        return this.products.stream().filter(v -> !v.isDelete()).collect(Collectors.toList());
+
+        if (this.products != null) {
+            return this.products.stream().filter(v -> !v.isDelete()).collect(Collectors.toList());
+        } else {
+            // 处理 schedules 为 null 的情况，可能返回空列表或者抛出异常，取决于实际需求
+            return Collections.emptyList(); // 返回空列表或者其他处理
+        }
     }
 
 }

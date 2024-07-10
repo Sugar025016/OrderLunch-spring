@@ -33,6 +33,7 @@ import com.order_lunch.repository.IAddressDataRepository;
 import com.order_lunch.service.Impl.AddressDataService;
 import com.order_lunch.service.Impl.AddressService;
 import com.order_lunch.service.Impl.CartService;
+import com.order_lunch.service.Impl.ShopService;
 import com.order_lunch.service.Impl.UserService;
 
 @RestController
@@ -53,6 +54,9 @@ public class UserController {
 
     @Autowired
     AddressDataService addressDataService;
+
+    @Autowired
+    ShopService shopService;
 
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<?> addUser(HttpSession session,
@@ -88,9 +92,11 @@ public class UserController {
         }
 
         if (userService.accountExists(userRequest.getAccount())) {
-            ErrorResponse errorResponse = new ErrorResponse(NewErrorStatus.ACCOUNT_EXISTS.getKey(),
-                    NewErrorStatus.ACCOUNT_EXISTS.getChinese());
-
+            // ErrorResponse errorResponse = new ErrorResponse(NewErrorStatus.ACCOUNT_EXISTS.getKey(),
+            //         NewErrorStatus.ACCOUNT_EXISTS.getChinese());
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setCode(NewErrorStatus.ACCOUNT_EXISTS.getKey());
+            errorResponse.setMessage(NewErrorStatus.ACCOUNT_EXISTS.getChinese());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
 
@@ -145,11 +151,31 @@ public class UserController {
     }
 
     @RequestMapping(path = "/favorite/{shopId}", method = RequestMethod.PUT)
-    public ResponseEntity<Boolean> addOrDeleteUserLove(@PathVariable int shopId,
+    public ResponseEntity<?> addOrDeleteUserLove(@PathVariable int shopId,
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        Shop shopById = shopService.getShopById(shopId);
+        if (shopById == null) {
+            ErrorResponse errorResponse = new ErrorResponse();
+            errorResponse.setCode(NewErrorStatus.SHOP_NOT_FOUND.getKey());
+            errorResponse.setMessage(NewErrorStatus.SHOP_NOT_FOUND.getChinese());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+        }
         Boolean findLoveByAccount = userService.addOrDeleteUserLove(customUserDetails.getId(),
                 shopId);
         return ResponseEntity.ok().body(findLoveByAccount);
+    }
+
+
+    @RequestMapping(path = "/addressDelivery/{addressId}", method = RequestMethod.PUT)
+    public ResponseEntity<?> putDeliveryAddress(
+            @AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @PathVariable int addressId) {
+
+        userService.putUserAddressDelivery(customUserDetails.getId(), addressId);
+
+        return ResponseEntity.ok().build();
+
     }
 
 }

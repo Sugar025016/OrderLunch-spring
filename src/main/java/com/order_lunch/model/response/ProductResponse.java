@@ -21,7 +21,7 @@ public class ProductResponse {
     private String description;
     private String imgUrl;
     private boolean isOrderable;
-    private int prise;
+    private int price;
     private int shopId;
 
     // private int total;

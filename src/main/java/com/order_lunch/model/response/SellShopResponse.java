@@ -40,7 +40,7 @@ public class SellShopResponse {
 
     @JsonProperty("tabProducts")
     private List<TabProductResponse> tabProductResponses;
-    
+
     @JsonProperty("products")
     private List<ProductResponse> productResponses;
 
@@ -51,7 +51,7 @@ public class SellShopResponse {
     // private int totalOriginPrice;
     public SellShopResponse(Shop shop) {
         BeanUtils.copyProperties(shop, this);
-        shopAddress=new AddressResponse(shop.getShopAddress());
+        shopAddress = new AddressResponse(shop.getShopAddress());
         if (shop.getFileData() != null) {
             this.imgId = shop.getFileData().getId();
             this.imgUrl = shop.getFileData().getFileName();
@@ -61,19 +61,25 @@ public class SellShopResponse {
         for (int i = 0; i < 7; i++) {
             arrayList.add(new Schedule(i));
         }
-
         arrayList.stream().forEach(v -> {
             List<TimePeriod> collect = shop.getSchedulesForOpen().stream()
-                    .filter(v2 -> v2.getWeek() == v.getWeek() && v2.getType()==0  )
+                    .filter(v2 -> v2.getWeek() == v.getWeek() && v2.getType() == 0)
                     .map(v3 -> new TimePeriod(v3.getStartTime(), v3.getEndTime()))
                     .collect(Collectors.toList());
 
             v.setTimePeriods(collect);
         });
+
         this.schedules = arrayList;
-        tabProductResponses = shop.getTabs().stream().map(v -> new TabProductResponse(v,shop.getId())).collect(Collectors.toList());
-        productResponses = shop.getProductsForNotDelete().stream().map(v -> new ProductResponse(v , shop.getId())).collect(Collectors.toList());
-        
+        if (shop.getTabs() != null) {
+            tabProductResponses = shop.getTabs().stream().map(v -> new TabProductResponse(v, shop.getId()))
+                    .collect(Collectors.toList());
+        }
+        if (shop.getProductsForNotDelete() != null) {
+            productResponses = shop.getProductsForNotDelete().stream().map(v -> new ProductResponse(v, shop.getId()))
+                    .collect(Collectors.toList());
+        }
+
     }
 
     public class Schedule {
@@ -102,24 +108,24 @@ public class SellShopResponse {
 
     // public class TimePeriod {
 
-    //     @NonNull
-    //     LocalTime startTime;
+    // @NonNull
+    // LocalTime startTime;
 
-    //     @NonNull
-    //     LocalTime endTime;
+    // @NonNull
+    // LocalTime endTime;
 
-    //     TimePeriod(LocalTime startTime, LocalTime endTime) {
-    //         this.startTime = startTime.truncatedTo(ChronoUnit.MINUTES);
-    //         this.endTime = endTime.truncatedTo(ChronoUnit.MINUTES);
-    //     }
+    // TimePeriod(LocalTime startTime, LocalTime endTime) {
+    // this.startTime = startTime.truncatedTo(ChronoUnit.MINUTES);
+    // this.endTime = endTime.truncatedTo(ChronoUnit.MINUTES);
+    // }
 
-    //     public LocalTime getStartTime() {
-    //         return startTime;
-    //     }
+    // public LocalTime getStartTime() {
+    // return startTime;
+    // }
 
-    //     public LocalTime getEndTime() {
-    //         return endTime;
-    //     }
+    // public LocalTime getEndTime() {
+    // return endTime;
+    // }
 
     // }
 

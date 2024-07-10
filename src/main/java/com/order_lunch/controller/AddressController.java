@@ -137,20 +137,6 @@ public class AddressController {
         return ResponseEntity.badRequest().build();
     }
 
-    @RequestMapping(path = "/delivery/{addressId}", method = RequestMethod.PUT)
-    public ResponseEntity<?> putDeliveryAddress(
-            @AuthenticationPrincipal CustomUserDetails customUserDetails,
-            @PathVariable int addressId) {
 
-        // try {
-        userService.putUserAddressDelivery(customUserDetails.getId(), addressId);
-        // } catch (Exception ex) {
-        // // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body();
-        // return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        // .body("Failed to save entity: " + ex.getMessage());
-        // }
-        return ResponseEntity.ok().build();
-
-    }
 
 }

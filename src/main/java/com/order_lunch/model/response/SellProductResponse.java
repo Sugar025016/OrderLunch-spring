@@ -14,7 +14,7 @@ public class SellProductResponse {
     // @JsonProperty("productName")
     private String name;
     private String description;
-    private Integer prise;
+    private Integer price;
 
     private boolean isOrderable;
 

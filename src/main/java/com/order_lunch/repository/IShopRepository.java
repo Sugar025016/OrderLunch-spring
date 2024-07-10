@@ -113,18 +113,7 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 			@Param("other") String other,
 			Pageable pageable);
 
-
-
 	@Query(value = "SELECT s FROM Shop s " +
-	"LEFT JOIN s.category c " +
-	"LEFT JOIN s.shopAddress a " +
-	"LEFT JOIN s.tabs t " +
-	"LEFT JOIN t.products p " +
-	"WHERE ST_Distance_Sphere(point(:lng, :lat), point(a.lng, a.lat)) < s.deliveryKm * 1000 " +
-	"AND (:categoryId IS NULL OR c.id = :categoryId) " +
-	"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%) " +
-	"AND (s.isDelete = false) " +
-	"group by s.id", countQuery = "SELECT count(s) FROM Shop s " +
 			"LEFT JOIN s.category c " +
 			"LEFT JOIN s.shopAddress a " +
 			"LEFT JOIN s.tabs t " +
@@ -132,14 +121,23 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 			"WHERE ST_Distance_Sphere(point(:lng, :lat), point(a.lng, a.lat)) < s.deliveryKm * 1000 " +
 			"AND (:categoryId IS NULL OR c.id = :categoryId) " +
 			"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%) " +
-			"AND (s.isDelete = false)" +
-			"group by s.id")
-Page<Shop> findBy(
-	@Param("lat") Double lat,
-	@Param("lng") Double lng,
-	@Param("categoryId") Integer categoryId,
-	@Param("other") String other,
-	Pageable pageable);
+			"AND (s.isDelete = false) " +
+			"group by s.id", countQuery = "SELECT count(s) FROM Shop s " +
+					"LEFT JOIN s.category c " +
+					"LEFT JOIN s.shopAddress a " +
+					"LEFT JOIN s.tabs t " +
+					"LEFT JOIN t.products p " +
+					"WHERE ST_Distance_Sphere(point(:lng, :lat), point(a.lng, a.lat)) < s.deliveryKm * 1000 " +
+					"AND (:categoryId IS NULL OR c.id = :categoryId) " +
+					"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%) " +
+					"AND (s.isDelete = false)" +
+					"group by s.id")
+	Page<Shop> findBy(
+			@Param("lat") Double lat,
+			@Param("lng") Double lng,
+			@Param("categoryId") Integer categoryId,
+			@Param("other") String other,
+			Pageable pageable);
 
 	Optional<Shop> findByIdAndIsDeleteIsFalse(int id);
 
@@ -153,6 +151,6 @@ Page<Shop> findBy(
 
 	Optional<Shop> findByIdAndLovesId(int shopId, int userId);
 
-    boolean existsByName(String name);
- 
+	boolean existsByName(String name);
+
 }
