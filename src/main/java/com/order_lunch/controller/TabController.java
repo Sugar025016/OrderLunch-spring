@@ -36,30 +36,44 @@ public class TabController {
     public ResponseEntity<List<TabProductResponse>> getTabProducts(@PathVariable int shopId) {
         Set<Tab> findTabByShopId = tabService.findTabByShopId(shopId);
 
-        List<TabProductResponse> collect = findTabByShopId.stream().map(v -> new TabProductResponse(v,shopId))
+        List<TabProductResponse> collect = findTabByShopId.stream().map(v -> new TabProductResponse(v, shopId))
                 .collect(Collectors.toList());
         return ResponseEntity.ok().body(collect);
     }
 
     @RequestMapping(path = "/{tabId}", method = RequestMethod.PUT)
-    public ResponseEntity<Boolean> putTabProducts(@NonNull @AuthenticationPrincipal CustomUserDetails customUserDetails,
+    public ResponseEntity<?> putTabProducts(@NonNull @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable int tabId, @Valid @RequestBody TabProductRequest tabProductRequest) {
-
-        return ResponseEntity.ok().body(tabService.setTabByShopId(tabId, tabProductRequest, customUserDetails.getId()));
+        if (tabService.setTabByShopId(tabId, tabProductRequest, customUserDetails.getId())) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public ResponseEntity<Boolean> putTabProducts(@AuthenticationPrincipal CustomUserDetails customUserDetails,
-           @Valid @RequestBody TabProductRequest tabProductRequest) {
-        return ResponseEntity.ok().body(tabService.addTabByShopId(tabProductRequest, customUserDetails.getId()));
+    public ResponseEntity<?> putTabProducts(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+            @Valid @RequestBody TabProductRequest tabProductRequest) {
+        // return ResponseEntity.ok().body(tabService.addTabByShopId(tabProductRequest,
+        // customUserDetails.getId()));
+
+        if (tabService.addTabByShopId(tabProductRequest, customUserDetails.getId())) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @RequestMapping(path = "/{tabId}", method = RequestMethod.DELETE)
     public ResponseEntity<Boolean> deleteTabProducts(
             @NonNull @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable int tabId) {
-                
-
-        return ResponseEntity.ok().body(tabService.deleteTab(tabId,  customUserDetails.getId()));
+        if (tabService.deleteTab(tabId, customUserDetails.getId())) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+        // return ResponseEntity.ok().body(tabService.deleteTab(tabId,
+        // customUserDetails.getId()));
     }
 }

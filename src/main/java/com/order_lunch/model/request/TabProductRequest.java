@@ -3,6 +3,8 @@ package com.order_lunch.model.request;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -16,15 +18,18 @@ import lombok.NoArgsConstructor;
 public class TabProductRequest {
 
     private Integer id;
+
+    @NotNull
     private Integer shopId;
 
-    @NotBlank(message = "不能為空")
+    @NotBlank
+    @Size(min = 3, max = 16)
     private String name;
-
 
     @JsonProperty("shelve")
     private boolean isShelve;
 
+    @NotNull
     private List<Integer> productIds;
 
     public Integer getId() {
@@ -66,8 +71,5 @@ public class TabProductRequest {
     public void setProductIds(List<Integer> productIds) {
         this.productIds = productIds;
     }
-
-
-
 
 }
