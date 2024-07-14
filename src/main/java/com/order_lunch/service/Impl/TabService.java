@@ -77,9 +77,12 @@ public class TabService implements ITabService {
     @Override
     public boolean deleteTab(int tabId, int userId) {
 
-        iTabRepository.getByIdAndShopUserId(tabId, userId)
+        Tab orElseThrow = iTabRepository.getByIdAndShopUserId(tabId, userId)
                 .orElseThrow(() -> new IllegalArgumentException("Value not found"));
-        iTabRepository.deleteById(tabId);
+
+        Shop shop = orElseThrow.getShop();
+        shop.getTabs().remove(orElseThrow);
+        iTabRepository.delete(orElseThrow);
 
         return !iTabRepository.findById(tabId).isPresent();
     }

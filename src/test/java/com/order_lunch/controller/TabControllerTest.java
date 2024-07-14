@@ -246,10 +246,9 @@ public class TabControllerTest {
     @Test
     @Rollback
     @Transactional
-    // 刪除測試失敗，暫時找不到原因
     void testDeleteTabProduct() throws Exception {
 
-        int tabId = 18;
+        int tabId = 7;
 
         mockMvc.perform(delete("/tab/{tabId}", tabId)
                 .session((MockHttpSession) session)
@@ -262,10 +261,10 @@ public class TabControllerTest {
                 .session((MockHttpSession) session)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.tabProducts", hasSize(2)))
-                // .andExpect(jsonPath("$.tabProducts[0].id", is(8)))
-                // .andExpect(jsonPath("$.tabProducts[0].name", is("value1C")))
-                // .andExpect(jsonPath("$.tabProducts[0].products", hasSize(1)))
+                .andExpect(jsonPath("$.tabProducts", hasSize(1)))
+                .andExpect(jsonPath("$.tabProducts[0].id", is(8)))
+                .andExpect(jsonPath("$.tabProducts[0].name", is("value1C")))
+                .andExpect(jsonPath("$.tabProducts[0].products", hasSize(1)))
                 .andReturn();
         String validResponseContent = validRequestResult.getResponse().getContentAsString();
         System.out.println("validRequestResult: " + validRequestResult);
