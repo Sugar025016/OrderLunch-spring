@@ -86,7 +86,7 @@ public class ShopCartResponse {
             public ProductResponse(Product product) {
                 this.productId = product.getId();
                 this.productName = product.getName();
-                this.price = product.getPrise();
+                this.price = product.getPrice();
                 this.isOrderable = product.isOrderable();
             }
 

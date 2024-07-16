@@ -54,6 +54,8 @@ public class GlobalExceptionHandler extends Exception {
     // return ResponseEntity.badRequest().body(errorMessage);
     // }
 
+    // ----------------------------------------------------------------------------------------------------
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();

@@ -61,7 +61,7 @@ public class OrderDetail extends BaseEntity {
     public OrderDetail(Cart cart, Order order) {
         BeanUtils.copyProperties(cart, this);
         // this.id=0;
-        this.prise = cart.getProduct().getPrise();
+        this.prise = cart.getProduct().getPrice();
         this.order=order;
     }
 

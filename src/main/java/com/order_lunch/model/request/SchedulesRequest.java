@@ -2,8 +2,13 @@ package com.order_lunch.model.request;
 
 import java.util.List;
 
-import com.order_lunch.model.ScheduleWeek;
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.order_lunch.model.ScheduleWeek;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,8 +21,13 @@ import lombok.Setter;
 @Setter
 public class SchedulesRequest {
 
-    private int type;
+    @NotNull
+    @Min(0)
+    @Max(1)
+    private Integer type;
 
+    @Valid
+    @NotNull
     @JsonProperty("schedules")
     private List<ScheduleWeek> scheduleWeeks;
 

@@ -22,7 +22,7 @@ public class AddressRequest {
     private String street;
 
     @NotBlank
-    @Size(max = 255)
+    @Size(min = 3, max = 255)
     private String detail;
 
 }

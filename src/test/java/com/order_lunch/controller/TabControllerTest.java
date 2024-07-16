@@ -17,7 +17,6 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -47,8 +46,6 @@ public class TabControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @InjectMocks
-    private ShopController shopController;
 
     @BeforeEach
     void setUp() throws Exception {

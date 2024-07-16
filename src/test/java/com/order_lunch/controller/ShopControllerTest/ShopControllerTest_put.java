@@ -156,10 +156,10 @@ public class ShopControllerTest_put {
 
                 JSONObject addressJson = new JSONObject();
                 addressJson.put("id", 6);
-                addressJson.put("city", "台南市");
+                addressJson.put("city", "");
                 addressJson.put("area", " ");
                 addressJson.put("street", " ");
-                addressJson.put("detail", "333");
+                addressJson.put("detail", "1");
 
                 JSONObject requestJson = new JSONObject();
                 requestJson.put("id", null);
@@ -181,8 +181,9 @@ public class ShopControllerTest_put {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestJson.toString())
                                 .with(SecurityMockMvcRequestPostProcessors.csrf()))
-                                .andDo(print())  // Print the response for debugging
+                                .andDo(print()) // Print the response for debugging
                                 .andExpect(status().isBadRequest())
+
                                 .andExpect(jsonPath("$.id").value(Matchers.anyOf(
                                                 Matchers.is("must not be null"))))
                                 .andExpect(jsonPath("$.shopName").value(Matchers.anyOf(
@@ -202,18 +203,17 @@ public class ShopControllerTest_put {
                                 .andExpect(jsonPath("$.isDisable").value(Matchers.anyOf(
                                                 Matchers.is("must not be null"))))
 
-                                //不知道為什麼，address無法驗證
-                                // .andExpect(jsonPath("$.address.street").value("must not be blank"))
-                                // .andExpect(jsonPath("$.address.city").value("台南市"))
-                                // .andExpect(jsonPath("$.address.city").value(Matchers.anyOf(
-                                // Matchers.is("must not be blank"))))
-                                // .andExpect(jsonPath("$.address.area").value(Matchers.anyOf(
-                                // Matchers.is("must not be blank"))))
-                                // .andExpect(jsonPath("$.address.street").value(Matchers.anyOf(
-                                // Matchers.is("must not be blank"))))
-                                // .andExpect(jsonPath("$.address.detail").value(Matchers.anyOf(
-                                // Matchers.is("must not be blank"),
-                                // Matchers.is("size must be between 10 and 11"))))
+                                // 注意address.street是連在一起的字串key要用['']包括起來才不會變成物件
+                                .andExpect(jsonPath("$.['address.street']").value("must not be blank"))
+                                .andExpect(jsonPath("$.['address.city']").value(Matchers.anyOf(
+                                                Matchers.is("must not be blank"))))
+                                .andExpect(jsonPath("$.['address.area']").value(Matchers.anyOf(
+                                                Matchers.is("must not be blank"))))
+                                .andExpect(jsonPath("$.['address.street']").value(Matchers.anyOf(
+                                                Matchers.is("must not be blank"))))
+                                .andExpect(jsonPath("$.['address.detail']").value(Matchers.anyOf(
+                                                Matchers.is("must not be blank"),
+                                                Matchers.is("size must be between 3 and 255"))))
                                 .andReturn();
 
                 String validResponseContent = validRequestResult.getResponse().getContentAsString();

@@ -2,6 +2,11 @@ package com.order_lunch.model;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Getter;
@@ -11,11 +16,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-// @Setter
 public class ScheduleWeek {
 
-    private int week;
+    @NotNull
+    @Min(0)
+    @Max(6)
+    private Integer week;
 
+    @NotNull
+    @Valid
     @JsonProperty("timePeriods")
     private List<TimePeriod> timePeriods;
 

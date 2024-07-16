@@ -48,8 +48,6 @@ public class AddressController {
     @Autowired
     AddressDataService addressDataService;
 
-
-
     @RequestMapping(path = "", method = RequestMethod.GET)
     public ResponseEntity<List<AddressResponse>> getAddress(
             @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -113,30 +111,23 @@ public class AddressController {
 
     @Transactional
     @RequestMapping(path = "/{addressId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Boolean> deleteAddress(
+    public ResponseEntity<?> deleteAddress(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable int addressId) {
 
         User user = userService.findById(customUserDetails.getId());
-        boolean deleteAddressDelivery = false;
-        if (user.getAddressDelivery().getId() == addressId) {
+        if (user.getAddressDelivery() != null && user.getAddressDelivery().getId() == addressId) {
             List<Cart> carts = user.getCarts();
             if (carts.size() > 0) {
                 cartService.deleteAllCart(user);
             }
-            deleteAddressDelivery = userService.deleteAddressDelivery(customUserDetails.getId(), addressId);
+            userService.deleteAddressDelivery(customUserDetails.getId(), addressId);
         }
 
-        boolean deleteUserAddress = addressService.deleteUserAddress(customUserDetails.getId(), addressId);
-        if (deleteAddressDelivery && deleteUserAddress) {
-            // throw new ConcurrentModificationException("Encountered a serious system
-            // error");
-            return ResponseEntity.ok().build();
-        }
+        addressService.deleteUserAddress(customUserDetails.getId(), addressId);
 
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
+
     }
-
-
 
 }
