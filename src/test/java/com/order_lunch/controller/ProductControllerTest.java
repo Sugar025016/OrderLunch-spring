@@ -132,7 +132,6 @@ public class ProductControllerTest {
     @Test
     void testGetSellProducts_Null() throws Exception {
         int id = 1;
-        // Perform GET request and validate the response
         MvcResult validRequestResult = mockMvc.perform(get("/product/sell/{shopId}", id)
                 .session((MockHttpSession) session)
                 .contentType(MediaType.APPLICATION_JSON))
@@ -151,7 +150,6 @@ public class ProductControllerTest {
     @Transactional
     void testDeleteProduct() throws Exception {
         int id = 16;
-        // Perform GET request and validate the response
         MvcResult validRequestResult = mockMvc.perform(delete("/product/{productId}", id)
                 .session((MockHttpSession) session)
                 .with(SecurityMockMvcRequestPostProcessors.csrf())

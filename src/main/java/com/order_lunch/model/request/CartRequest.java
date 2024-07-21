@@ -1,11 +1,10 @@
 package com.order_lunch.model.request;
 
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 
 @Getter
@@ -15,16 +14,16 @@ import lombok.Setter;
 public class CartRequest {
 
 
-    @NotEmpty
-    private int productId;
+    @NotNull
+    private Integer productId;
 
     private String department;
 
-    @NonNull
+    @NotNull
     private String orderUsername;
 
-    @NotEmpty
-    private int qty;
+    @NotNull
+    private Integer qty;
 
     private String remark;
     
