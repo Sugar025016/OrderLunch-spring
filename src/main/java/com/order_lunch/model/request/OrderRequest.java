@@ -2,6 +2,7 @@ package com.order_lunch.model.request;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.order_lunch.validator.DateTimeAfter;
@@ -11,7 +12,7 @@ import lombok.NonNull;
 // @Data
 public class OrderRequest {
 
-    @NonNull
+    @NotNull
     @DateTimeAfter
     private LocalDateTime takeTime;
 

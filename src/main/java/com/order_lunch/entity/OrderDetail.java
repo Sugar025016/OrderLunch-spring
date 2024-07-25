@@ -44,11 +44,11 @@ public class OrderDetail extends BaseEntity {
     @Column(name = "qty", nullable = true)
     private int qty;
 
-    @Column(name = "prise", nullable = false)
-    private int prise;
+    @Column(name = "price", nullable = false)
+    private int price;
 
     // @Column(name = "remark", nullable = true)
-    @Column(name = "remark", length = 256, columnDefinition = "VARCHAR(11) DEFAULT ''")
+    @Column(name = "remark", length = 256, columnDefinition = "VARCHAR(255) DEFAULT ''")
     private String remark;
 
 
@@ -61,7 +61,7 @@ public class OrderDetail extends BaseEntity {
     public OrderDetail(Cart cart, Order order) {
         BeanUtils.copyProperties(cart, this);
         // this.id=0;
-        this.prise = cart.getProduct().getPrice();
+        this.price = cart.getProduct().getPrice();
         this.order=order;
     }
 

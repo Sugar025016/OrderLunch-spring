@@ -43,7 +43,6 @@ import com.order_lunch.service.Impl.UserService;
 @RequestMapping("/order")
 public class OrderController {
 
-
     @Autowired
     OrderService orderService;
 
@@ -62,7 +61,6 @@ public class OrderController {
     public ResponseEntity<?> addOrder(@AuthenticationPrincipal CustomUserDetails customUserDetails,
             @Valid @RequestBody OrderRequest orderRequest) {
         ErrorResponse errorResponse = new ErrorResponse();
-
 
         List<Cart> carts = cartService.getAllByUserId(customUserDetails.getId());
         if (carts.size() == 0) {
@@ -108,16 +106,13 @@ public class OrderController {
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable int page) {
 
-        Pageable pageable = PageRequest.of(page - 1, 10);
-
+        // Pageable pageable = PageRequest.of(page - 1, 10);
+        Pageable pageable = PageRequest.of(page - 1, 10, Sort.by(Sort.Direction.DESC, "id"));
+        Page<OrderResponse> order = orderService.getOrder(customUserDetails.getId(), OrderCategory.END.getValue(),
+                pageable);
         return ResponseEntity.ok()
-                .body(orderService.getOrder(customUserDetails.getId(), OrderCategory.END.getValue(), pageable));
+                .body(order);
     }
-
-
-
-
-
 
     @RequestMapping(path = "/sell/{shopId}", method = RequestMethod.GET)
     public ResponseEntity<Page<OrderFinishResponse>> getOrderByShop(
@@ -133,8 +128,6 @@ public class OrderController {
         return ResponseEntity.ok()
                 .body(orderService.getOrderByShop(customUserDetails.getId(), shopId, keyByClassify, pageRequest));
     }
-
-
 
     @RequestMapping(path = "/{shop}/{status}", method = RequestMethod.PUT)
     public ResponseEntity<Boolean> putOrderByShop(
@@ -156,10 +149,15 @@ public class OrderController {
     }
 
     @RequestMapping(path = "/{status}", method = RequestMethod.PUT)
-    public ResponseEntity<Boolean> putOrderStatus(
+    public ResponseEntity<?> putOrderStatus(
             @AuthenticationPrincipal CustomUserDetails customUserDetails,
             @PathVariable @Valid @Min(12) int status, @RequestBody List<Integer> orderIds) {
-        return ResponseEntity.ok()
-                .body(orderService.putOrderStatus(customUserDetails.getId(), status, orderIds));
+        if (orderService.putOrderStatus(customUserDetails.getId(), status, orderIds)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
+
     }
+
 }

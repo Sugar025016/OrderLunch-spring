@@ -50,7 +50,7 @@ public class OrderFinishResponse {
         this.shopName = shop.getName();
         this.description = shop.getDescription();
         List<OrderDetail> orderDetail = order.getOrderDetail();
-        this.totalPrise = orderDetail.stream().mapToInt(v -> v.getQty() * v.getPrise()).sum();
+        this.totalPrise = orderDetail.stream().mapToInt(v -> v.getQty() * v.getPrice()).sum();
         this.orderTime = order.getCreateTime();
         this.status = order.getStatus();
         this.statusChinese = OrderStatus.getStatus(order.getStatus()).getChinese();

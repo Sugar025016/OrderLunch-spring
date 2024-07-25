@@ -20,8 +20,8 @@ import com.order_lunch.entity.Cart;
 import com.order_lunch.entity.Order;
 import com.order_lunch.entity.OrderDetail;
 import com.order_lunch.entity.Shop;
+import com.order_lunch.entity.ShopAddress;
 import com.order_lunch.entity.User;
-import com.order_lunch.enums.NewErrorStatus;
 import com.order_lunch.enums.OrderStatus;
 import com.order_lunch.model.request.OrderRequest;
 import com.order_lunch.model.response.OrderFinishResponse;
@@ -50,6 +50,32 @@ public class OrderService implements IOrderService {
     @Autowired
     IOrderDetailRepository iOrderDetailRepository;
 
+    private static final double EARTH_RADIUS = 6371.01; // 地球半徑，單位為公里
+
+    /**
+     * 計算兩個地理座標點之間的距離（使用球面距離公式）
+     * 
+     * @param lat1 第一個點的緯度
+     * @param lng1 第一個點的經度
+     * @param lat2 第二個點的緯度
+     * @param lng2 第二個點的經度
+     * @return 距離，單位為公里
+     */
+    public static double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
+        // 將經緯度從度轉換為弧度
+        double lat1Rad = Math.toRadians(lat1);
+        double lng1Rad = Math.toRadians(lng1);
+        double lat2Rad = Math.toRadians(lat2);
+        double lng2Rad = Math.toRadians(lng2);
+
+        // 使用球面距離公式計算距離
+        double distance = EARTH_RADIUS * Math.acos(
+                Math.sin(lat1Rad) * Math.sin(lat2Rad) +
+                        Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.cos(lng1Rad - lng2Rad));
+
+        return distance;
+    }
+
     @Override
     @Transactional
     public boolean addOrder(int userId, OrderRequest orderRequest) {
@@ -63,6 +89,14 @@ public class OrderService implements IOrderService {
         Cart orElseThrow2 = carts.stream().findAny()
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cart is null"));
         Shop shop = orElseThrow2.getProduct().getShop();
+        ShopAddress shopAddress = shop.getShopAddress();
+
+        double calculateDistance = calculateDistance(address.getLat(), address.getLng(), shopAddress.getLat(),
+                shopAddress.getLng());
+
+        if (calculateDistance > shop.getDeliveryKm()) {
+            return false;
+        }
 
         Order order = new Order(orderRequest.getTakeTime(), orderRequest.getRemark(), shop, user, address);
         iOrderRepository.save(order);
@@ -168,7 +202,7 @@ public class OrderService implements IOrderService {
     }
 
     public void checkOrderStatus(List<Order> orders, OrderStatus becomeStatus) {
-        Set<Integer> beforeByStatus = NewErrorStatus.getBeforeByStatus(becomeStatus.getKey());
+        Set<Integer> beforeByStatus = OrderStatus.getBeforeByStatus(becomeStatus.getKey());
         orders.stream().forEach(v -> {
             boolean anyMatch = beforeByStatus.stream().anyMatch(s -> s == v.getStatus());
             if (!anyMatch) {

@@ -42,8 +42,6 @@ public class ProductControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    // @InjectMocks
-    // private ShopController shopController;
 
     @BeforeEach
     void setUp() throws Exception {
