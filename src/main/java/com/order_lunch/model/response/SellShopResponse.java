@@ -44,6 +44,8 @@ public class SellShopResponse {
     @JsonProperty("products")
     private List<ProductResponse> productResponses;
 
+    private List<AddMealsResponse> addMeals;
+
     // private int qty;
 
     // private int total;
@@ -77,6 +79,10 @@ public class SellShopResponse {
         }
         if (shop.getProductsForNotDelete() != null) {
             productResponses = shop.getProductsForNotDelete().stream().map(v -> new ProductResponse(v, shop.getId()))
+                    .collect(Collectors.toList());
+        }
+        if (shop.getAddMeals() != null) {
+            this.addMeals = shop.getAddMeals().stream().map(v -> new AddMealsResponse(v))
                     .collect(Collectors.toList());
         }
 

@@ -102,6 +102,11 @@ public class Shop extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "shop")
     private List<Order> orders;
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "shop", fetch = FetchType.LAZY)
+    private List<AddMeals> addMeals;
+
+
     // 給關聯過來的回傳值
     @Override
     public String toString() {

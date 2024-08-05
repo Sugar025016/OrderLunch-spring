@@ -36,6 +36,7 @@ public class UserResponse {
     private Double cartDeliveryKm;
     private int orderCount;
     private int shopOrderCount;
+    private List<ShopNames> shopNames;
 
     @JsonProperty("address")
     private AddressResponse address;
@@ -71,6 +72,7 @@ public class UserResponse {
         }
         // this.address = user.getAddressDelivery();
         this.favoriteShops = user.getLoves().stream().map(v -> new FavoriteShop(v)).collect(Collectors.toList());
+        this.shopNames = user.getShops().stream().map(shop -> new ShopNames(shop)).collect(Collectors.toList());
 
     }
 
@@ -99,6 +101,24 @@ public class UserResponse {
             AddressData addressData = shop.getShopAddress().getAddressData();
             this.address = addressData.getCity() + addressData.getArea() + addressData.getStreet()
                     + shop.getShopAddress().getDetail();
+
+        }
+    }
+
+    @Getter
+    @Setter
+    public class ShopNames {
+
+        private Integer id;
+
+        private String name;
+
+        public ShopNames(Shop shop) {
+            BeanUtils.copyProperties(shop, this);
+            if (!shop.isDelete()) {
+                this.id = shop.getId();
+                this.name = shop.getName();
+            }
 
         }
     }

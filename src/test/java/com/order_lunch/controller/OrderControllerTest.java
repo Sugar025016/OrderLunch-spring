@@ -92,9 +92,7 @@ public class OrderControllerTest {
                                 .andExpect(status().isOk())
                                 .andReturn();
                 String validResponseContent = validRequestResult.getResponse().getContentAsString();
-
                 System.out.println("validRequestResult: " + validRequestResult);
-
                 System.out.println("validResponseContent: " + validResponseContent);
         }
 
@@ -116,9 +114,7 @@ public class OrderControllerTest {
                                 .andExpect(status().isBadRequest())
                                 .andReturn();
                 String validResponseContent = validRequestResult.getResponse().getContentAsString();
-
                 System.out.println("validRequestResult: " + validRequestResult);
-
                 System.out.println("validResponseContent: " + validResponseContent);
         }
 
@@ -134,7 +130,7 @@ public class OrderControllerTest {
                                 .andExpect(jsonPath("$[0].userName").value("user"))
                                 .andExpect(jsonPath("$[0].description").value("description"))
                                 .andExpect(jsonPath("$[0].imgUrl").value("http://localhost:8082/16932027106902359.jpg"))
-                                .andExpect(jsonPath("$[0].totalPrise").value(99999))
+                                .andExpect(jsonPath("$[0].totalPrice").value(99999))
                                 .andExpect(jsonPath("$[0].remark").value(""))
                                 .andExpect(jsonPath("$[0].statusChinese").value("等待店家接收中"))
                                 .andExpect(jsonPath("$[0].status").value(11))
@@ -152,16 +148,14 @@ public class OrderControllerTest {
                                 .andExpect(jsonPath("$[0].orderDetails[0].productId").value(11))
                                 .andExpect(jsonPath("$[0].orderDetails[0].productName").value("VVVVVV"))
                                 .andExpect(jsonPath("$[0].orderDetails[0].qty").value(1))
-                                .andExpect(jsonPath("$[0].orderDetails[0].prise").value(0))
+                                .andExpect(jsonPath("$[0].orderDetails[0].price").value(0))
                                 .andExpect(jsonPath("$[0].orderDetails[0].remark").value(""))
                                 .andExpect(jsonPath("$[0].orderDetails[0].status").value(0))
                                 .andExpect(jsonPath("$[0].orderDetails[0].imgUrl")
                                                 .value("http://localhost:8082/16937508048951735.JPG"))
                                 .andReturn();
                 String validResponseContent = validRequestResult.getResponse().getContentAsString();
-
                 System.out.println("validRequestResult: " + validRequestResult);
-
                 System.out.println("validResponseContent: " + validResponseContent);
         }
 
@@ -184,7 +178,7 @@ public class OrderControllerTest {
                                 .andExpect(jsonPath("$.content[0].description").value("description"))
                                 .andExpect(jsonPath("$.content[0].imgUrl")
                                                 .value("http://localhost:8082/16932027106902359.jpg"))
-                                .andExpect(jsonPath("$.content[0].totalPrise").value(0))
+                                .andExpect(jsonPath("$.content[0].totalPrice").value(0))
                                 .andExpect(jsonPath("$.content[0].remark").value(""))
                                 .andExpect(jsonPath("$.content[0].statusChinese").value("訂單完成"))
                                 .andExpect(jsonPath("$.content[0].status").value(99))
@@ -204,7 +198,7 @@ public class OrderControllerTest {
                                 .andExpect(jsonPath("$.content[1].description").value("description"))
                                 .andExpect(jsonPath("$.content[1].imgUrl")
                                                 .value("http://localhost:8082/16932027106902359.jpg"))
-                                .andExpect(jsonPath("$.content[1].totalPrise").value(40))
+                                .andExpect(jsonPath("$.content[1].totalPrice").value(40))
                                 .andExpect(jsonPath("$.content[1].remark").value(""))
                                 .andExpect(jsonPath("$.content[1].statusChinese").value("店家拒接單"))
                                 .andExpect(jsonPath("$.content[1].status").value(93))
@@ -222,7 +216,7 @@ public class OrderControllerTest {
                                 .andExpect(jsonPath("$.content[1].orderDetails[0].productId").value(10))
                                 .andExpect(jsonPath("$.content[1].orderDetails[0].productName").value("value1D"))
                                 .andExpect(jsonPath("$.content[1].orderDetails[0].qty").value(1))
-                                .andExpect(jsonPath("$.content[1].orderDetails[0].prise").value(0))
+                                .andExpect(jsonPath("$.content[1].orderDetails[0].price").value(0))
                                 .andExpect(jsonPath("$.content[1].orderDetails[0].remark").value(""))
                                 .andExpect(jsonPath("$.content[1].orderDetails[0].status").value(0))
                                 .andExpect(jsonPath("$.content[1].orderDetails[0].imgUrl").isEmpty())
@@ -245,7 +239,7 @@ public class OrderControllerTest {
                                 .andExpect(jsonPath("$.content[0].description").value("description"))
                                 .andExpect(jsonPath("$.content[0].imgUrl")
                                                 .value("http://localhost:8082/16932027106902359.jpg"))
-                                .andExpect(jsonPath("$.content[0].totalPrise").value(99999))
+                                .andExpect(jsonPath("$.content[0].totalPrice").value(99999))
                                 .andExpect(jsonPath("$.content[0].statusChinese").value("等待店家接收中"))
                                 .andExpect(jsonPath("$.content[0].status").value(11))
                                 .andExpect(jsonPath("$.content[0].orderTime").value("2023-11-07T16:55:10.842628"))
@@ -292,7 +286,7 @@ public class OrderControllerTest {
                                 .andExpect(jsonPath("$.content[0].description").value("description"))
                                 .andExpect(jsonPath("$.content[0].imgUrl")
                                                 .value("http://localhost:8082/16932027106902359.jpg"))
-                                .andExpect(jsonPath("$.content[0].totalPrise").value(99999))
+                                .andExpect(jsonPath("$.content[0].totalPrice").value(99999))
                                 .andExpect(jsonPath("$.content[0].statusChinese").value("店家已接收"))
                                 .andExpect(jsonPath("$.content[0].status").value(12))
                                 .andExpect(jsonPath("$.content[0].orderTime").value("2023-11-07T16:41:34.82042"))
@@ -343,7 +337,7 @@ public class OrderControllerTest {
                                 .andExpect(jsonPath("$.content[0].description").value("description55555555555666"))
                                 .andExpect(jsonPath("$.content[0].imgUrl")
                                                 .value("http://localhost:8082/17015922948981374.jpg"))
-                                .andExpect(jsonPath("$.content[0].totalPrise").value(590))
+                                .andExpect(jsonPath("$.content[0].totalPrice").value(590))
                                 .andExpect(jsonPath("$.content[0].statusChinese").value("店家已接收"))
                                 .andExpect(jsonPath("$.content[0].status").value(12))
                                 .andExpect(jsonPath("$.content[0].orderTime").value("2023-11-07T13:04:10.224239"))
@@ -356,7 +350,7 @@ public class OrderControllerTest {
                                 .andExpect(jsonPath("$.content[1].description").value("description商店介紹"))
                                 .andExpect(jsonPath("$.content[1].imgUrl")
                                                 .value("http://localhost:8082/1691994708919221.jpg"))
-                                .andExpect(jsonPath("$.content[1].totalPrise").value(500))
+                                .andExpect(jsonPath("$.content[1].totalPrice").value(500))
                                 .andExpect(jsonPath("$.content[1].statusChinese").value("店家已接收"))
                                 .andExpect(jsonPath("$.content[1].status").value(12))
                                 .andExpect(jsonPath("$.content[1].orderTime").value("2023-11-07T16:54:55.003852"))
@@ -369,7 +363,7 @@ public class OrderControllerTest {
                                 .andExpect(jsonPath("$.content[2].description").value("description"))
                                 .andExpect(jsonPath("$.content[2].imgUrl")
                                                 .value("http://localhost:8082/16932027106902359.jpg"))
-                                .andExpect(jsonPath("$.content[2].totalPrise").value(99999))
+                                .andExpect(jsonPath("$.content[2].totalPrice").value(99999))
                                 .andExpect(jsonPath("$.content[2].statusChinese").value("等待店家接收中"))
                                 .andExpect(jsonPath("$.content[2].status").value(11))
                                 .andExpect(jsonPath("$.content[2].orderTime").value("2023-11-07T16:55:10.842628"))

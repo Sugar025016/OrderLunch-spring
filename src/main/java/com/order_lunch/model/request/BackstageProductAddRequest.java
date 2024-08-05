@@ -34,7 +34,7 @@ public class BackstageProductAddRequest {
     @Size(min=8,max=255)
     private String description;
     
-    private Integer prise;
+    private Integer price;
     
     private Integer imgId;
 

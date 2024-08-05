@@ -21,7 +21,7 @@ public class BackstageProductResponse {
     @JsonProperty("productName")
     private String name;
     private String description;
-    private Integer prise;
+    private Integer price;
 
     private boolean isDelete;
     private boolean isOrderable;

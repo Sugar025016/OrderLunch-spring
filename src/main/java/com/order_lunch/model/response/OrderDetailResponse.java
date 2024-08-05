@@ -23,7 +23,7 @@ public class OrderDetailResponse {
     // @JsonProperty("aaaa")
     private int qty;
 
-    private int prise;
+    private int price;
     private String remark;
     private int status;
 

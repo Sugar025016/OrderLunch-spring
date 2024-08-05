@@ -302,7 +302,7 @@ VALUES
 --     (10, '555555', 5);
 
 -- INSERT
---     IGNORE INTO product (id, name, prise, tab_id,file_data, is_delete, is_orderable,
+--     IGNORE INTO product (id, name, price, tab_id,file_data, is_delete, is_orderable,
 --         create_time,
 --         update_time)
 -- VALUES

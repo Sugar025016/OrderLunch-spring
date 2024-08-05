@@ -53,7 +53,7 @@ public class OrderDetail extends BaseEntity {
 
 
     
-    public OrderDetail(Product product, Order order, String department, String orderName, int qty, int prise,
+    public OrderDetail(Product product, Order order, String department, String orderName, int qty, int price,
             String remark) {
 
     }

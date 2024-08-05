@@ -29,7 +29,7 @@ public class OrderFinishResponse {
     private String userName;
     private String description;
     private String imgUrl;
-    private int totalPrise;
+    private int totalPrice;
     private String remark;
     private String statusChinese;
     private int status;
@@ -50,7 +50,7 @@ public class OrderFinishResponse {
         this.shopName = shop.getName();
         this.description = shop.getDescription();
         List<OrderDetail> orderDetail = order.getOrderDetail();
-        this.totalPrise = orderDetail.stream().mapToInt(v -> v.getQty() * v.getPrice()).sum();
+        this.totalPrice = orderDetail.stream().mapToInt(v -> v.getQty() * v.getPrice()).sum();
         this.orderTime = order.getCreateTime();
         this.status = order.getStatus();
         this.statusChinese = OrderStatus.getStatus(order.getStatus()).getChinese();

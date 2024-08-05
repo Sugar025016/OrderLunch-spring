@@ -1,5 +1,6 @@
 package com.order_lunch.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,12 +35,12 @@ public class AddMealsDetail {
 
     @JsonIgnore
     @JoinColumn(name = "add_meals_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.DETACH,fetch = FetchType.LAZY)
     private AddMeals addMeals;
 
     @JsonIgnore
     @JoinColumn(name = "product_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.DETACH,fetch = FetchType.LAZY)
     private Product product;
 
     @Column(name = "price", length = 255, nullable = false)

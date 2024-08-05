@@ -58,21 +58,68 @@ public class AddMealsService implements IAddMealsService {
 
         addMeals.setName(addMealsProductRequest.getName());
         addMeals.setShelve(addMealsProductRequest.isShelve());
+        List<AddMealsDetail> addMealsDetails = addMeals.getAddMealsDetails();
+        for(int i=0;addMealsDetails.size()>i;i++ ){
+            // @Modifying 
+            // iAddMealsDetailRepository.delete(addMealsDetails.get(i));
+            // Product product = addMealsDetails.get(i).getProduct();
+            // AddMealsDetail addMealsDetail = addMealsDetails.get(i);
+            // addMealsDetail.remove(addMealsDetail.getProduct());
+            // addMealsDetail.se
+            
+        }
+
+
+        iAddMealsDetailRepository.deleteAllByAddMeals_id(addMeals.getId());
+        addMeals.getAddMealsDetails().removeAll(addMealsDetails);
+
+
+        // 
+        // addMealsDetails.stream().forEach(v->
+        // iAddMealsDetailRepository.deleteAll(v));
+        for(int i=0;addMealsDetails.size()>i;i++ ){
+            // @Modifying 
+            iAddMealsDetailRepository.delete(addMealsDetails.get(i));
+        }
+        
+        // iAddMealsDetailRepository.deleteAll(addMealsDetails);
+
+
+        // @Modifying
+        // iAddMealsDetailRepository.deleteAll(addMealsDetails);
+        // addMeals.setAddMealsDetails(addMealsDetails);
+
+        // Shop shop = orElseThrow.getShop();
+        // shop.getTabs().remove(orElseThrow);
+        // iTabRepository.delete(orElseThrow);
+
+
+        // addMeals.setAddMealsDetails(null);
+        // List<AddMealsDetail> addMealsDetails = addMeals.getAddMealsDetails();
+        // addMealsDetails.stream().forEach(v->{
+        //     iAddMealsDetailRepository.delete(v);
+        //     // iAddMealsDetailRepository.save(v);
+        // });
+        // addMeals.setAddMealsDetails(new ArrayList<>());
+        // iAddMealsDetailRepository.deleteAll(addMeals.getAddMealsDetails());
         addMeals.setShop(shop);
+
         iAddMealsRepository.save(addMeals);
 
-        iAddMealsDetailRepository.deleteAllByAddMeals_id(addMealsId);
-        if (addMeals.getAddMealsDetails().size() > 0) {
-            throw new UnsupportedOperationException("Unimplemented method 'setAddMealsByShopId'");
-        }
+        List<AddMealsDetail> collect = addMealsProductRequest.getAddProducts().stream()
+                .map(v -> new AddMealsDetail(addMeals, iProductService.getProductById(v.getProductId()), v.getPrice()))
+                .collect(Collectors.toList());
+
+        addMeals.setAddMealsDetails(collect);
+        iAddMealsRepository.save(addMeals);
 
         // List<AddMealsDetail> insertAddMealsDetails = saveAddMealsDetail(addMeals,
         // addMealsProductRequest);
         // return insertAddMealsDetails.size() !=
         // addMealsProductRequest.getAddProducts().size();
 
-        saveAddMealsDetail(addMeals,
-                addMealsProductRequest);
+        // saveAddMealsDetail(addMeals,
+        //         addMealsProductRequest);
 
         AddMeals addMeals2 = findAddMeals(userId, addMeals.getId());
 
@@ -96,7 +143,7 @@ public class AddMealsService implements IAddMealsService {
         }
 
         ArrayList<AddMealsDetail> arrayList = new ArrayList<AddMealsDetail>();
-                    for( AddMealsRequest.AddProduct v:addMealsProductRequest.getAddProducts()){
+        for (AddMealsRequest.AddProduct v : addMealsProductRequest.getAddProducts()) {
 
             Product product = iProductService.getProductById(v.getProductId());
             AddMealsDetail addMealsDetail = new AddMealsDetail(addMeals, product, v.getPrice());
@@ -114,9 +161,9 @@ public class AddMealsService implements IAddMealsService {
 
         findAddMeals(userId, addMealsId);
 
-        Set<AddMeals> deleteByAddMealsId = iAddMealsRepository.deleteByAddMealsId(addMealsId);
-
-        return deleteByAddMealsId.isEmpty();
+        iAddMealsRepository.deleteById(addMealsId);
+        Optional<AddMeals> byId = iAddMealsRepository.findByIdAndShopUserId(addMealsId, userId);
+        return !byId.isPresent();
     }
 
     public AddMeals findAddMeals(int userId, int addMealsId) {
@@ -156,8 +203,10 @@ public class AddMealsService implements IAddMealsService {
         // .collect(Collectors.toList());
 
         // addMealsProductRequest.getAddProducts().stream()
-        //         .forEach(v -> iAddMealsDetailRepository.insertAddMealsDetails(addMeals.getId(), v.getProductId(),
-        //                 v.getPrice()));
+        // .forEach(v ->
+        // iAddMealsDetailRepository.insertAddMealsDetails(addMeals.getId(),
+        // v.getProductId(),
+        // v.getPrice()));
 
     }
 

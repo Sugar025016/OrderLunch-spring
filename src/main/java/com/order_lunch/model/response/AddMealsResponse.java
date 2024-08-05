@@ -20,6 +20,7 @@ import lombok.Setter;
 public class AddMealsResponse {
 
     private String name;
+    private int id;
 
     @JsonProperty("shelve")
     private boolean isShelve = true;
@@ -29,12 +30,20 @@ public class AddMealsResponse {
 
     public AddMealsResponse(AddMeals addMeals) {
         this.name = addMeals.getName();
-        Integer id = addMeals.getShop().getId();
+        this.id = addMeals.getId();
 
-        this.addProducts =addMeals.getAddMealsDetails().stream().map(AddProduct::new).collect(Collectors.toList());
+        int shopId = addMeals.getShop().getId();
+
+        // this.addProducts =
+        // addMeals.getAddMealsDetails().stream().map(AddProduct::new).collect(Collectors.toList());
+        this.addProducts = addMeals.getAddMealsDetails().stream().map(v -> new AddProduct(v, shopId))
+                .collect(Collectors.toList());
+
+        // this.addProducts = addMeals.getAddMealsDetails().stream().map(v->{
+        // return new AddProduct(v);
+        // }).collect(Collectors.toList());
 
     }
-
 
     public static class AddProduct {
 
@@ -43,11 +52,11 @@ public class AddMealsResponse {
         private Integer price;
         private ProductResponse product;
 
-        public AddProduct(AddMealsDetail addMealsDetail) {
-            BeanUtils.copyProperties(addMealsDetail,this);
-            this.productId=addMealsDetail.getId();
-            
-            this.product =new ProductResponse( addMealsDetail.getProduct(),addMealsDetail.getProduct().getShop().getId()) ;
+        public AddProduct(AddMealsDetail addMealsDetail, int shopId) {
+            BeanUtils.copyProperties(addMealsDetail, this);
+            this.productId = addMealsDetail.getId();
+            this.price = addMealsDetail.getPrice();
+            this.product = new ProductResponse(addMealsDetail.getProduct(), shopId);
 
         }
 
