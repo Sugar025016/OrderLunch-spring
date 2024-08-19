@@ -1,5 +1,7 @@
 package com.order_lunch.model.request;
 
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -35,5 +37,7 @@ public class SellProductRequest {
     private Integer imgId;
 
     private String imgUrl;
+
+    private List<Integer> addMealsIdList;
 
 }

@@ -1,5 +1,6 @@
 package com.order_lunch.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -10,9 +11,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -50,6 +54,14 @@ public class AddMeals {
 
     @Column(name = "is_shelve", length = 255, nullable = false)
     private boolean isShelve;
+
+    @ManyToMany
+    @JoinTable(name = "add_meals_product", // 聯合表的名稱
+            joinColumns = @JoinColumn(name = "add_meals_id"), // AddMeals 的外鍵
+            inverseJoinColumns = @JoinColumn(name = "product_id"), // Product 的外鍵
+            uniqueConstraints = @UniqueConstraint(columnNames = { "add_meals_id", "product_id" }) // 唯一約束
+    )
+    private List<Product> products = new ArrayList<>();
 
     @Override
     public String toString() {

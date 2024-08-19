@@ -1,5 +1,6 @@
 package com.order_lunch.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -54,25 +56,11 @@ public class Product extends BaseEntity {
 
     @Column(name = "is_orderable", length = 255, nullable = false, columnDefinition = "BOOLEAN DEFAULT false")
     private boolean isOrderable;
-
-    // @Column(name = "is_sold_out", length = 255, nullable = false,
-    // columnDefinition = "BOOLEAN DEFAULT false")
-    // private boolean is_sold_out;
-
+    
     @JsonIgnore
     @JoinColumn(name = "shop_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private Shop shop;
-
-    // @JsonIgnore
-    // @JoinColumn(name = "tab_id")
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // private Tab tab;
-
-    //     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
-    // // @JoinTable(name = "tab_product", joinColumns = @JoinColumn(name = "tab_id"), inverseJoinColumns = @JoinColumn(name = "product_id"), uniqueConstraints = @UniqueConstraint(columnNames = {
-    // //     "tab_id", "product_id" }))
-    // private List<Tab> tabs;
 
     @JoinColumn(name = "file_data")
     @OneToOne(cascade = CascadeType.ALL)
@@ -82,9 +70,13 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<Cart> cart;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product",fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "product", fetch = FetchType.LAZY)
     // @OneToMany(cascade = CascadeType.ALL)
     private List<OrderDetail> orderDetail;
+
+
+    @ManyToMany(mappedBy = "products") // 這裡的 "products" 是 AddMeals 實體中的對應屬性名稱
+    private List<AddMeals> addMealsList = new ArrayList<>();
 
     @Override
     public String toString() {
@@ -122,5 +114,5 @@ public class Product extends BaseEntity {
 
     }
 
-    
+
 }

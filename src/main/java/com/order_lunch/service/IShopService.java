@@ -29,7 +29,7 @@ public interface IShopService {
     Set<Shop> findShopsLim();
     List<Shop> findShopsByName(String name);
     List<Shop> getShopsByUserId(int id);
-    Shop getShop(int shopId,int userId);
+    Shop getShop(int userId,int shopId);
     boolean deleteShop(int id);
     boolean existsByName(String name);
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -20,7 +21,7 @@ import lombok.Setter;
 public class AddMealsRequest {
 
 
-    @NonNull
+    @NotNull
     private Integer shopId;
 
     @NotBlank(message = "不能為空")

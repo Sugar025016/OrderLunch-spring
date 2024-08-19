@@ -1,7 +1,9 @@
 package com.order_lunch.service.Impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.order_lunch.entity.AddMeals;
 import com.order_lunch.entity.FileData;
 import com.order_lunch.entity.Product;
 import com.order_lunch.entity.Shop;
@@ -147,23 +150,24 @@ public class ProductService implements IProductService {
         product.setOrderable(isOrderable);
 
         iProductRepository.save(product);
-        return !(iProductRepository.save(product)==null);
+        return !(iProductRepository.save(product) == null);
     }
 
     @Override
     public List<Product> getProductsByShopIdAndUserID(int shopId, int userId) {
 
-        List<Product> productOptional = iProductRepository.getProductByShopIdAndShopUserIdAndIsDeleteIsFalse(shopId, userId);
+        List<Product> productOptional = iProductRepository.getProductByShopIdAndShopUserIdAndIsDeleteIsFalse(shopId,
+                userId);
         return productOptional;
     }
 
-
     @Transactional
     @Override
-    public boolean putSellProduct(SellProductRequest sellProductRequest ,int productId,int userId) {
+    public boolean putSellProduct(SellProductRequest sellProductRequest, int productId, int userId) {
 
-        Optional<Product> findById2 = iProductRepository.findByIdAndShopUserIdAndIsDeleteIsFalse(productId,userId);
-        Product product = findById2.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+        Optional<Product> findById2 = iProductRepository.findByIdAndShopUserIdAndIsDeleteIsFalse(productId, userId);
+        Product product = findById2
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
 
         product.setSellProduct(sellProductRequest);
 
@@ -171,21 +175,39 @@ public class ProductService implements IProductService {
             FileData fileById = fileService.getFileById(sellProductRequest.getImgId());
             product.setFileData(fileById);
         }
+        Shop shop = product.getShop();
+
+        product.getAddMealsList().clear();
+        List<AddMeals> matchedAddMeals=new ArrayList<AddMeals>();
+        if(sellProductRequest.getAddMealsIdList().size()>0){
+            matchedAddMeals = shop.getAddMeals().stream()
+            .filter(addMeals -> sellProductRequest.getAddMealsIdList().contains(addMeals.getId()))
+            .collect(Collectors.toList());
+        }
+        product.setAddMealsList(matchedAddMeals);
 
         Product save = iProductRepository.save(product);
 
-        return save.getId()!=null;
+        return save.getId() != null;
     }
 
     @Transactional
     @Override
-    public boolean addSellProduct(SellProductRequest sellProductRequest,int shopId,int userId) {
-        
+    public boolean addSellProduct(SellProductRequest sellProductRequest, int shopId, int userId) {
+
         Shop shopByUserId = iShopService.getShop(userId, shopId);
 
         Product product = new Product(sellProductRequest);
 
         product.setShop(shopByUserId);
+
+        List<AddMeals> matchedAddMeals=new ArrayList<AddMeals>();
+        if(sellProductRequest.getAddMealsIdList().size()>0){
+            matchedAddMeals = shopByUserId.getAddMeals().stream()
+            .filter(addMeals -> sellProductRequest.getAddMealsIdList().contains(addMeals.getId()))
+            .collect(Collectors.toList());
+        }
+        product.setAddMealsList(matchedAddMeals);
 
         if (sellProductRequest.getImgId() != null) {
             FileData fileById = fileService.getFileById(sellProductRequest.getImgId());
@@ -194,6 +216,6 @@ public class ProductService implements IProductService {
 
         Product save = iProductRepository.save(product);
 
-        return save.getId()!=null;
+        return save.getId() != null;
     }
 }

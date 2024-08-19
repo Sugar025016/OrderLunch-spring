@@ -53,7 +53,7 @@ public class AddMealsController {
     }
 
     @RequestMapping(path = "", method = RequestMethod.POST)
-    public ResponseEntity<Boolean> putAddMeals(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+    public ResponseEntity<Boolean> addAddMeals(@AuthenticationPrincipal CustomUserDetails customUserDetails,
             @Valid @RequestBody AddMealsRequest addMealsRequest) {
 
         return ResponseEntity.ok()

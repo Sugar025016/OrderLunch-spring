@@ -131,7 +131,7 @@ public class AddMealsService implements IAddMealsService {
     @Override
     public boolean addAddMealsByShopId(int userId, AddMealsRequest addMealsProductRequest) {
 
-        Shop shop = iShopService.getShop(addMealsProductRequest.getShopId(), userId);
+        Shop shop = iShopService.getShop(userId, addMealsProductRequest.getShopId());
 
         checkAddMealsDetailProduct(shop, addMealsProductRequest);
 
