@@ -10,16 +10,20 @@ import javax.imageio.ImageIO;
 import javax.servlet.http.HttpSession;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc // 自動配置 MockMvc
+@ActiveProfiles("test") // 加載 application-test.properties 文件配置
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CaptchaControllerTest {
 
     @Autowired
@@ -33,6 +37,7 @@ public class CaptchaControllerTest {
                 .andReturn();
 
         HttpSession session = mvcResult.getRequest().getSession();
+        @SuppressWarnings("null")//取消session 空值警告
         String captchaText = (String) session.getAttribute("captchaText");
         assertThat(captchaText).isNotNull();
 

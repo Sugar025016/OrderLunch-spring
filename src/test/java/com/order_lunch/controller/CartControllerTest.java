@@ -295,6 +295,8 @@ public class CartControllerTest {
     @Rollback
     @Transactional
     void testAddCart_NewShop() throws Exception {
+
+        //需要設定回傳值排序問題
         JSONObject cartRequestJson = new JSONObject();
         cartRequestJson.put("productId", 11);
         cartRequestJson.put("department", "department");

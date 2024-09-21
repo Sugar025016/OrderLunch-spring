@@ -1,5 +1,6 @@
 package com.order_lunch.model.request;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -38,6 +39,10 @@ public class SellProductRequest {
 
     private String imgUrl;
 
-    private List<Integer> addMealsIdList;
+    // private List<Integer> addMealsIdList;
+
+    private List<Integer> addMealsIdList = new ArrayList<Integer>() {
+        
+    };
 
 }
