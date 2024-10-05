@@ -57,7 +57,7 @@ public class CartService implements ICartService {
         User userOptional = iUserRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
-        Product product = iProductRepository.findById(cartRequest.getProductId())
+        Product product = iProductRepository.findByIdAndShopIsDeleteIsFalseAndShopIsOpenIsTrueAndShopIsOrderableIsTrue(cartRequest.getProductId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         this.getClass().getName() + "Product not found"));
 

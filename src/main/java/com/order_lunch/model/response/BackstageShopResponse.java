@@ -33,7 +33,9 @@ public class BackstageShopResponse {
     private String imgUrl;
     private Integer imgId;
     private boolean isOrderable;
-    private boolean isDisable;
+
+    // @JsonProperty("isDisable")
+    private boolean isOpen;
     private boolean isDelete;
 
     private LocalDateTime createTime;

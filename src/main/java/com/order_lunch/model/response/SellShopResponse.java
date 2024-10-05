@@ -35,7 +35,7 @@ public class SellShopResponse {
     private String imgUrl;
     private String phone;
     private boolean isOrderable;
-    private boolean isDisable;
+    private boolean isOpen;
     private List<Schedule> schedules;
 
     @JsonProperty("tabProducts")

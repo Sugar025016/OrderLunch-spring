@@ -42,7 +42,7 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 			"LEFT JOIN s.tabs t " +
 			"LEFT JOIN t.products p " +
 			"WHERE s.isDelete = false " +
-			"AND s.isDisable = false " +
+			"AND s.isOpen = false " +
 			"AND (:city IS NULL OR a.addressData.city = :city) " +
 			"AND (:area IS NULL OR a.addressData.area = :area) " +
 			"AND (:categoryId IS NULL OR c.id = :categoryId)" +

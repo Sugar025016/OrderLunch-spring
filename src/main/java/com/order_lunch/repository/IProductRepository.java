@@ -55,5 +55,9 @@ public interface IProductRepository extends JpaRepository<Product, Integer> {
     List<Product> getProductByShopIdAndShopUserId(int shopId, int userId);
 
     List<Product> getProductByShopIdAndShopUserIdAndIsDeleteIsFalse(int shopId, int userId);
+
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<Product> findByIdAndShopIsDeleteIsFalseAndShopIsOpenIsTrueAndShopIsOrderableIsTrue(int id);
     
 }

@@ -200,7 +200,7 @@ public class ShopControllerTest_put {
                                                 Matchers.is("must not be null"))))
                                 .andExpect(jsonPath("$.isOrderable").value(Matchers.anyOf(
                                                 Matchers.is("must not be null"))))
-                                .andExpect(jsonPath("$.isDisable").value(Matchers.anyOf(
+                                .andExpect(jsonPath("$.isOpen").value(Matchers.anyOf(
                                                 Matchers.is("must not be null"))))
 
                                 // 注意address.street是連在一起的字串key要用['']包括起來才不會變成物件

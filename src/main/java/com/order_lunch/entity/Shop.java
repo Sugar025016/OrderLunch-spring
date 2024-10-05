@@ -54,7 +54,7 @@ public class Shop extends BaseEntity {
     @Column(name = "is_orderable", length = 512, nullable = false, columnDefinition = "VARCHAR(11) DEFAULT false")
     private boolean isOrderable;
     @Column(name = "is_disable", length = 512, nullable = false, columnDefinition = "VARCHAR(11) DEFAULT false")
-    private boolean isDisable;
+    private boolean isOpen;
     @Column(name = "is_delete", length = 512, nullable = false)
     private boolean isDelete;
     @Column(name = "delivery_km")
@@ -131,10 +131,10 @@ public class Shop extends BaseEntity {
         this.user = user;
     }
 
-    public void setIsDelete(boolean isDelete, boolean isDisable, boolean isOrderable) {
+    public void setIsDelete(boolean isDelete, boolean isOpen, boolean isOrderable) {
 
         this.isOrderable = isOrderable;
-        setIsDisable(isDisable);
+        setIsOpen(isOpen);
         setIsDelete(isDelete);
 
     }
@@ -143,18 +143,18 @@ public class Shop extends BaseEntity {
 
         this.isDelete = is_delete;
 
-        if (this.isDelete) {
-            this.isDisable = true;
-            this.isOrderable = true;
-        }
+        // if (this.isDelete) {
+        //     this.isDisable = true;
+        //     this.isOrderable = true;
+        // }
     }
 
-    private void setIsDisable(boolean is_disable) {
+    private void setIsOpen(boolean isOpen) {
 
-        this.isDisable = is_disable;
+        this.isOpen = isOpen;
 
-        if (this.isDisable) {
-            this.isOrderable = true;
+        if (!this.isOpen) {
+            this.isOrderable = false;
         }
     }
 
@@ -163,11 +163,10 @@ public class Shop extends BaseEntity {
         this.name = shopPutRequest.getShopName();
         this.description = shopPutRequest.getDescription();
         this.phone = shopPutRequest.getPhone();
-        this.description = shopPutRequest.getDescription();
         this.deliveryKm = shopPutRequest.getDeliveryKm();
         this.deliveryPrice = shopPutRequest.getDeliveryPrice();
 
-        setIsDelete(shopPutRequest.isDelete(), shopPutRequest.getIsDisable(), shopPutRequest.getIsOrderable());
+        setIsDelete(shopPutRequest.isDelete(), shopPutRequest.getIsOpen(), shopPutRequest.getIsOrderable());
 
         this.fileData = fileData;
         this.shopAddress = shopAddress;
@@ -178,11 +177,11 @@ public class Shop extends BaseEntity {
         this.name = shopPutRequest.getShopName();
         this.description = shopPutRequest.getDescription();
         this.phone = shopPutRequest.getPhone();
-        this.description = shopPutRequest.getDescription();
+        this.isOrderable = shopPutRequest.getIsOrderable();
         this.deliveryKm = shopPutRequest.getDeliveryKm();
         this.deliveryPrice = shopPutRequest.getDeliveryPrice();
 
-        setIsDelete(shopPutRequest.isDelete(), shopPutRequest.getIsDisable(), shopPutRequest.getIsOrderable());
+        setIsDelete(shopPutRequest.isDelete(), shopPutRequest.getIsOpen(), shopPutRequest.getIsOrderable());
 
         this.shopAddress = shopAddress;
         this.fileData = null;

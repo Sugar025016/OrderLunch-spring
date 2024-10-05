@@ -24,5 +24,6 @@ public interface ICartService {
     ShopCartResponse getCartByUserId(int id);
     
     User deleteAllCart( User user) ;
+    
 
 }
