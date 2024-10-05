@@ -143,10 +143,10 @@ public class Shop extends BaseEntity {
 
         this.isDelete = is_delete;
 
-        // if (this.isDelete) {
-        //     this.isDisable = true;
-        //     this.isOrderable = true;
-        // }
+        if (this.isDelete) {
+            this.isOpen = false;
+            this.isOrderable = false;
+        }
     }
 
     private void setIsOpen(boolean isOpen) {
