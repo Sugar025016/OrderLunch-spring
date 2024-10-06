@@ -95,6 +95,7 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 			"AND (:categoryId IS NULL OR c.id = :categoryId)" +
 			"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%)" +
 			"AND (s.isDelete = false)" +
+			"AND (s.isOpen = true)" +
 			"group by s.id", countQuery = "SELECT count(s) FROM Shop s " +
 					"LEFT JOIN s.category c " +
 					"LEFT JOIN s.shopAddress a " +
@@ -105,6 +106,7 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 					"AND (:categoryId IS NULL OR c.id = :categoryId)" +
 					"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%)" +
 					"AND (s.isDelete = false)" +
+					"AND (s.isOpen = true)" +
 					"group by s.id")
 	Page<Shop> findByShopAddress_CityAndShopAddress_AreaAndCategory_IdAndCategory_name(
 			@Param("city") String city,
@@ -122,6 +124,7 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 			"AND (:categoryId IS NULL OR c.id = :categoryId) " +
 			"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%) " +
 			"AND (s.isDelete = false) " +
+			"AND (s.isOpen = true)" +
 			"group by s.id", countQuery = "SELECT count(s) FROM Shop s " +
 					"LEFT JOIN s.category c " +
 					"LEFT JOIN s.shopAddress a " +
@@ -131,6 +134,7 @@ public interface IShopRepository extends JpaRepository<Shop, Integer> {
 					"AND (:categoryId IS NULL OR c.id = :categoryId) " +
 					"AND (:other IS NULL OR c.name like %:other% OR p.name like %:other% OR s.name like %:other%) " +
 					"AND (s.isDelete = false)" +
+					"AND (s.isOpen = true)" +
 					"group by s.id")
 	Page<Shop> findBy(
 			@Param("lat") Double lat,
