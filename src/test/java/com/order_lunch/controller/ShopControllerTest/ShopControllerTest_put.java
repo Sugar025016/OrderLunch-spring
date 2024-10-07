@@ -94,7 +94,7 @@ public class ShopControllerTest_put {
                 requestJson.put("deliveryKm", 5.0);
                 requestJson.put("deliveryPrice", 200);
                 requestJson.put("orderable", true);
-                requestJson.put("disable", false);
+                requestJson.put("open", false);
                 requestJson.put("delete", false);
 
                 MvcResult validRequestResult = mockMvc.perform(put("/shop/sell")
@@ -133,7 +133,7 @@ public class ShopControllerTest_put {
                 requestJson.put("deliveryKm", 5.0);
                 requestJson.put("deliveryPrice", 200);
                 requestJson.put("orderable", true);
-                requestJson.put("disable", false);
+                requestJson.put("open", false);
                 requestJson.put("delete", false);
 
                 MvcResult validRequestResult = mockMvc.perform(put("/shop/sell")
@@ -173,7 +173,7 @@ public class ShopControllerTest_put {
                 requestJson.put("deliveryKm", null);
                 requestJson.put("deliveryPrice", null);
                 requestJson.put("orderable", null);
-                requestJson.put("disable", null);
+                requestJson.put("open", null);
                 requestJson.put("delete", false);
 
                 MvcResult validRequestResult = mockMvc.perform(put("/shop/sell")

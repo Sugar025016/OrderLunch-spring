@@ -46,7 +46,7 @@ public class Tab {
     @ManyToOne(fetch = FetchType.LAZY)
     private Shop shop;
 
-    @Column(name = "is_shelve", length = 255, nullable = false)
+    @Column(name = "is_shelve", length = 255, nullable = false, columnDefinition = "TINYINT(1) DEFAULT false")
     private boolean isShelve;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)

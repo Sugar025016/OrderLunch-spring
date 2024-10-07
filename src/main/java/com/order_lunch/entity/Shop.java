@@ -51,11 +51,11 @@ public class Shop extends BaseEntity {
     private String phone;
     @Column(name = "description", length = 512, nullable = false)
     private String description;
-    @Column(name = "is_orderable", length = 512, nullable = false, columnDefinition = "VARCHAR(11) DEFAULT false")
+    @Column(name = "is_orderable", length = 512, nullable = false, columnDefinition = "TINYINT(1) DEFAULT false")
     private boolean isOrderable;
-    @Column(name = "is_disable", length = 512, nullable = false, columnDefinition = "VARCHAR(11) DEFAULT false")
+    @Column(name = "is_open", length = 512, nullable = false, columnDefinition = "TINYINT(1) DEFAULT false")
     private boolean isOpen;
-    @Column(name = "is_delete", length = 512, nullable = false)
+    @Column(name = "is_delete", length = 512, nullable = false, columnDefinition = "TINYINT(1) DEFAULT false")
     private boolean isDelete;
     @Column(name = "delivery_km")
     private Double deliveryKm = 0.0;

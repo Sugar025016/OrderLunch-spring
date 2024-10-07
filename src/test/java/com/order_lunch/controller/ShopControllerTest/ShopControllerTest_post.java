@@ -146,7 +146,7 @@ public class ShopControllerTest_post {
                                 .andExpect(jsonPath("$.schedules[5].week").value(5))
                                 .andExpect(jsonPath("$.schedules[6].week").value(6))
                                 .andExpect(jsonPath("$.orderable").value(false))
-                                .andExpect(jsonPath("$.disable").value(false))
+                                .andExpect(jsonPath("$.open").value(false))
                                 .andExpect(jsonPath("$.address.city").value("台北市"))
                                 .andExpect(jsonPath("$.address.area").value("中正區"))
                                 .andExpect(jsonPath("$.address.street").value("八德路１段"))

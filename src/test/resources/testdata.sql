@@ -513,7 +513,7 @@ INSERT INTO
         update_time,
         description,
         is_delete,
-        is_disable,
+        is_open,
         is_orderable,
         name,
         phone,

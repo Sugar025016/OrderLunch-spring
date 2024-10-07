@@ -53,7 +53,7 @@ public class User extends BaseEntity {
     private String password;
     @Column(name = "role", length = 11, nullable = false)
     private String role = "user";
-    @Column(name = "register")
+    @Column(name = "register", columnDefinition = "TINYINT(1) DEFAULT false")
     private boolean register = false;
 
     // @Email
