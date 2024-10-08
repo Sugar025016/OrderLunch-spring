@@ -106,7 +106,6 @@ public class Shop extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "shop", fetch = FetchType.LAZY)
     private List<AddMeals> addMeals;
 
-
     // 給關聯過來的回傳值
     @Override
     public String toString() {
@@ -158,26 +157,17 @@ public class Shop extends BaseEntity {
         }
     }
 
-    public void setShop(BackstageShopPutRequest shopPutRequest, ShopAddress shopAddress, FileData fileData) {
-
-        this.name = shopPutRequest.getShopName();
-        this.description = shopPutRequest.getDescription();
-        this.phone = shopPutRequest.getPhone();
-        this.deliveryKm = shopPutRequest.getDeliveryKm();
-        this.deliveryPrice = shopPutRequest.getDeliveryPrice();
-
-        setIsDelete(shopPutRequest.isDelete(), shopPutRequest.getIsOpen(), shopPutRequest.getIsOrderable());
-
+    public void setShop(BackstageShopPutRequest shopPutRequest, ShopAddress shopAddress, List<Category> categoryList,
+            FileData fileData) {
+        this.setShop(shopPutRequest, shopAddress,categoryList);
         this.fileData = fileData;
-        this.shopAddress = shopAddress;
 
     }
 
-    public void setShop(BackstageShopPutRequest shopPutRequest, ShopAddress shopAddress) {
+    public void setShop(BackstageShopPutRequest shopPutRequest, ShopAddress shopAddress, List<Category> categoryList) {
         this.name = shopPutRequest.getShopName();
         this.description = shopPutRequest.getDescription();
         this.phone = shopPutRequest.getPhone();
-        this.isOrderable = shopPutRequest.getIsOrderable();
         this.deliveryKm = shopPutRequest.getDeliveryKm();
         this.deliveryPrice = shopPutRequest.getDeliveryPrice();
 
@@ -185,6 +175,7 @@ public class Shop extends BaseEntity {
 
         this.shopAddress = shopAddress;
         this.fileData = null;
+        this.category = categoryList;
     }
 
     public List<Schedule> getSchedulesForOpen() {

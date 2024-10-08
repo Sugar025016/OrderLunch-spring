@@ -46,6 +46,7 @@ public class SellShopResponse {
 
     private List<AddMealsResponse> addMeals;
 
+    private List<Integer> category;
     // private int qty;
 
     // private int total;
@@ -85,6 +86,8 @@ public class SellShopResponse {
             this.addMeals = shop.getAddMeals().stream().map(v -> new AddMealsResponse(v))
                     .collect(Collectors.toList());
         }
+
+        this.category=shop.getCategory().stream().map( v->v.getId() ).collect(Collectors.toList());
 
     }
 

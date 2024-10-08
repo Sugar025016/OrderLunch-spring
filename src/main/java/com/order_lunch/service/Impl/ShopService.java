@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.order_lunch.entity.Address;
 import com.order_lunch.entity.AddressData;
+import com.order_lunch.entity.Category;
 import com.order_lunch.entity.FileData;
 import com.order_lunch.entity.Shop;
 import com.order_lunch.entity.ShopAddress;
@@ -24,6 +25,7 @@ import com.order_lunch.model.request.ShopRequest;
 import com.order_lunch.model.request.ShopSearchRequest;
 import com.order_lunch.model.response.BackstageShopResponse;
 import com.order_lunch.model.response.ShopResponse;
+import com.order_lunch.repository.ICategoryRepository;
 import com.order_lunch.repository.IFileDateRepository;
 import com.order_lunch.repository.IShopAddressRepository;
 import com.order_lunch.repository.IShopRepository;
@@ -48,6 +50,8 @@ public class ShopService implements IShopService {
     ShopAddressService shopAddressService;
     @Autowired
     IUserRepository iUserRepository;
+    @Autowired
+    ICategoryRepository iCategoryRepository;
 
     // @Lazy
     // @Autowired
@@ -130,10 +134,10 @@ public class ShopService implements IShopService {
 
     @Transactional
     @Override
-    public boolean putShop(BackstageShopPutRequest shopPutRequest) {
+    public boolean  putShop(BackstageShopPutRequest shopPutRequest) {
 
-        Optional<Shop> findById = iShopRepository.findById(shopPutRequest.getId());
-        if (!findById.isPresent()) {
+        Optional<Shop> shopOptional = iShopRepository.findById(shopPutRequest.getId());
+        if (!shopOptional.isPresent()) {
             throw new NullPointerException();
         }
 
@@ -142,7 +146,7 @@ public class ShopService implements IShopService {
             throw new NullPointerException();
         }
 
-        Optional<FileData> findById3 = iFileDateRepository.findById(shopPutRequest.getImgId());
+        Optional<FileData> fileDataOptional = iFileDateRepository.findById(shopPutRequest.getImgId());
         // if (!findById3.isPresent()) {
         // throw new NullPointerException();
         // }
@@ -154,15 +158,17 @@ public class ShopService implements IShopService {
         ShopAddress newShopAddress = shopAddressService.putShopAddress(shopAddress, shopPutRequest.getAddress());
 
         ShopAddress address = iShopAddressRepository.save(newShopAddress);
-        Shop shop = findById.get();
+        Shop shop = shopOptional.get();
+
+        List<Category> categoryList = iCategoryRepository.getCategoryByIdIn(shopPutRequest.getCategory());
         // public void setShop(BackstageShopPutRequest shopPutRequest, ShopAddress
         // shopAddress, FileData fileData) {
 
-        if (!findById3.isPresent()) {
-            shop.setShop(shopPutRequest, address);
+        if (!fileDataOptional.isPresent()) {
+            shop.setShop(shopPutRequest, address ,categoryList);
         } else {
 
-            shop.setShop(shopPutRequest, address, findById3.get());
+            shop.setShop(shopPutRequest, address, categoryList,fileDataOptional.get());
         }
 
         iShopRepository.save(shop);

@@ -1,5 +1,7 @@
 package com.order_lunch.model.request;
 
+import java.util.List;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -57,4 +59,6 @@ public class BackstageShopPutRequest {
     private Boolean isOpen;
 
     private boolean isDelete;
+
+    private List<Integer> category;
 }
